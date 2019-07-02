@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-02T06:18:31.801Z</updated>
+    <updated>2019-07-02T06:19:08.301Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -63,8 +63,8 @@ user_name	userName</p>
 <p>我们需要做到<br>
 <em>实体类中的属性和数据库表的字段名称保持一致。</em></p>
 <h2 id="5-mybatis的入门">5、mybatis的入门</h2>
-<p>mybatis环境搭建demo的基本架构</p>
- <div align=left>![](https://ArtZoick.github.io//post-images/mybatis/1.png)</div>
+<p>mybatis环境搭建demo的基本架构
+<img src="https://ArtZoick.github.io//post-images/mybatis/1.png" alt=""></p>
 <p><strong>第一步：创建maven工程并导入坐标</strong><br>
 <strong>第二步：创建实体类和dao的接口</strong><br>
 <strong>第三步：创建Mybatis的主配置文件</strong></p>
