@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mybatis框架 | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562046331508">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562047062128">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -20,7 +20,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562046331508" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562047062128" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -103,34 +103,34 @@
 <strong>持久层：</strong><br>
 是和数据库交互的</p>
 <h2 id="3-持久层技术解决方案">3、持久层技术解决方案</h2>
-<p><strong>JDBC技术：</strong>
-Connection
-PreparedStatement
-ResultSet
-<strong>Spring的JdbcTemplate：</strong>
-Spring中对jdbc的简单封装
-<strong>Apache的DBUtils：</strong>
-它和Spring的JdbcTemplate很像，也是对Jdbc的简单封装
-以上这些都不是框架
+<p><strong>JDBC技术：</strong><br>
+Connection<br>
+PreparedStatement<br>
+ResultSet<br>
+<strong>Spring的JdbcTemplate：</strong><br>
+Spring中对jdbc的简单封装<br>
+<strong>Apache的DBUtils：</strong><br>
+它和Spring的JdbcTemplate很像，也是对Jdbc的简单封装<br>
+以上这些都不是框架<br>
 JDBC是规范</p>
 <p>Spring的JdbcTemplate和Apache的DBUtils都只是工具类</p>
 <h2 id="4-mybatis的概述">4、mybatis的概述</h2>
-<p>mybatis是一个持久层框架，用java编写的。
-它封装了jdbc操作的很多细节，使开发者只需要关注sql语句本身，而无需关注注册驱动，创建连接等繁杂过程。
+<p>mybatis是一个持久层框架，用java编写的。<br>
+它封装了jdbc操作的很多细节，使开发者只需要关注sql语句本身，而无需关注注册驱动，创建连接等繁杂过程。<br>
 它使用了ORM思想实现了结果集的封装。</p>
-<p><strong>ORM：</strong>
-Object Relational Mappging 对象关系映射
-简单的说：就是把数据库表和实体类及实体类的属性对应起来，让我们可以操作实体类就实现操作数据库表。
-user					User
+<p><strong>ORM：</strong><br>
+Object Relational Mappging 对象关系映射<br>
+简单的说：就是把数据库表和实体类及实体类的属性对应起来，让我们可以操作实体类就实现操作数据库表。<br>
+user					User<br>
 id						userId
 user_name	userName</p>
-<p>我们需要做到
+<p>我们需要做到<br>
 <em>实体类中的属性和数据库表的字段名称保持一致。</em></p>
 <h2 id="5-mybatis的入门">5、mybatis的入门</h2>
 <p>mybatis环境搭建demo的基本架构
 <img src="https://ArtZoick.github.io//post-images/1562038352167.png" alt=""></p>
-<p><strong>第一步：创建maven工程并导入坐标</strong>
-<strong>第二步：创建实体类和dao的接口</strong>
+<p><strong>第一步：创建maven工程并导入坐标</strong><br>
+<strong>第二步：创建实体类和dao的接口</strong><br>
 <strong>第三步：创建Mybatis的主配置文件</strong></p>
 <p><em>SqlMapConifg.xml</em></p>
 <pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
@@ -165,7 +165,7 @@ user_name	userName</p>
 
 &lt;/configuration&gt;
 </code></pre>
-<p><strong>第四步：创建映射配置文件</strong>
+<p><strong>第四步：创建映射配置文件</strong><br>
 <em>IUserDao.xml</em></p>
 <pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE mapper
