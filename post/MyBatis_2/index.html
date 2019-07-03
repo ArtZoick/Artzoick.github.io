@@ -1,0 +1,491 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyBatis_2	基本的CRUD | 清汤牛肉锅</title>
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562163262442">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://ArtZoick.github.io/">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562163262442" alt="">
+  </a>
+  <h1 class="site-title">
+    清汤牛肉锅
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/beef" class="menu">
+          牛肉锅
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              MyBatis_2	基本的CRUD
+            </h2>
+            <div class="post-info">
+              <time class="post-time">
+                · 2019-07-03 ·
+              </time>
+              
+                <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
+                  # 框架
+                </a>
+              
+                <a href="https://ArtZoick.github.io//tag/MyBatis" class="post-tag">
+                  # MyBatis
+                </a>
+              
+            </div>
+            
+            <div class="post-content">
+              <h2 id="接口类代码">接口类代码</h2>
+<pre><code class="language-java">public interface IUserDao {
+
+    //  查询所有
+    List&lt;User&gt; findAll();
+
+    //保存用户
+    void saveUser(User user);
+
+    //更新用户
+    void updataUser(User user);
+
+    //删除用户
+    void deleteUser(int id);
+
+    //根据id找到用户
+    User findById(int id);
+
+    //模糊查询用户信息
+    List&lt;User&gt; findByName(String username);
+
+    ////获取用户的总记录条数
+    int findTotal();
+
+}
+
+</code></pre>
+<h2 id="完整mapper代码">完整mapper代码</h2>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        &lt;!DOCTYPE mapper
+                PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+                &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+        &lt;!--namespace指的是你的dao接口--&gt;
+&lt;mapper namespace=&quot;com.daniel.dao.IUserDao&quot;&gt;
+
+
+    
+&lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
+    &lt;select id=&quot;findAll&quot; resultType=&quot;com.daniel.domain.User&quot;&gt;
+        select * from user;
+    &lt;/select&gt;
+
+    &lt;!--保存用户    parameterType 说明带参--&gt;
+    &lt;!--  &lt;insert id=&quot;saveUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
+          insert into user(username,address,sex,birthday)
+           value(#{username},#{address},#{sex},#{birthday});
+      &lt;/insert&gt;--&gt;
+
+    &lt;!--保存用户    parameterType 说明带参  同时获取用户的id--&gt;
+    &lt;insert id=&quot;saveUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
+        &lt;!--  keyProperty id的属性名称 keyColumn id的列名 order 执行的顺序--&gt;
+        &lt;selectKey keyProperty=&quot;id&quot; keyColumn=&quot;id&quot; resultType=&quot;int&quot; order=&quot;AFTER&quot;&gt;
+            select last_insert_id();
+        &lt;/selectKey&gt;
+        insert into user(username,address,sex,birthday)
+         value(#{username},#{address},#{sex},#{birthday});
+    &lt;/insert&gt;
+
+
+    &lt;!--更新用户    parameterType 说明带参--&gt;
+    &lt;update id=&quot;updataUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
+
+        update user set
+        username=#{username},address=#{address},sex=#{sex},birthday=#{birthday}
+         where id = #{id};
+
+    &lt;/update&gt;
+
+
+    &lt;!--删除用户--&gt;
+    &lt;delete id=&quot;deleteUser&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
+          delete from user where id = #{uid};
+    &lt;/delete&gt;
+
+    &lt;!--模糊查询用户--&gt;
+    &lt;select id=&quot;findByName&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;String&quot;&gt;
+     &lt;!--   select * from user where username like #{username};--&gt;  &lt;!--由于是PreparStatemen类型!占位符安全!  推荐使用这种--&gt;
+
+        select * from user where username like '%${value}%'&lt;!--由于是statemen类型的不安全开发不用  字符串拼接--&gt;
+    &lt;/select&gt;
+
+    &lt;!--获取用户的总记录条数--&gt;
+    &lt;select id=&quot;findTotal&quot; resultType=&quot;int&quot; &gt;
+        select count(id) from user ;
+    &lt;/select&gt;
+
+    &lt;!--根据queryVo的条件查询用户  使用了OGNL表达式  object graphic navigation language  对象图导航语言--&gt;
+    &lt;select id=&quot;findUserByVo&quot; parameterType=&quot;com.daniel.domain.QueryVo&quot; resultType=&quot;com.daniel.domain.User&quot; &gt;
+         select * from user where username like #{user.username} ;
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+
+</code></pre>
+<h2 id="完整测试类代码">完整测试类代码</h2>
+<pre><code class="language-java">public class MybatisTest {
+
+    private  InputStream inputStream;
+    private SqlSession sqlSession;
+    private IUserDao userDao;
+
+    @Before
+    public void init() throws Exception{
+        //1.读取配置文件
+      inputStream = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+//2.创建SqlSessionFactory工厂
+        SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory factory = builder.build(inputStream);
+//3.使用工厂创建SqlSession（真正操作数据库的对象！）
+        sqlSession =factory.openSession();
+//4.使用SqlSession创建dao接口的代理对象
+        userDao =sqlSession.getMapper(IUserDao.class);
+
+
+    }
+    @After
+    public  void destory() throws Exception{
+        sqlSession.close();
+        inputStream.close();
+    }
+//查询所有
+    @Test
+    public  void findAll( ) throws Exception {
+
+        List&lt;User&gt; users = userDao.findAll();
+        for (User user:users
+             ) {
+            System.out.println(user);
+        }
+
+    }
+//添加+查询添加以后的id
+    @Test
+    public void testSave() {
+        User user = new User();
+        user.setUsername(&quot;yrq&quot;);
+        user.setAddress(&quot;长沙&quot;);
+        user.setSex(&quot;男&quot;);
+        user.setBirthday(new Date());
+
+       System.out.println(&quot;before :&quot;+user);
+
+        userDao.saveUser(user);
+        sqlSession.commit();
+        System.out.println(user);
+    }
+//更新
+    @Test
+    public void updataUser(){
+        User user = new User();
+        user.setId(49);
+        user.setUsername(&quot;yrqqqq&quot;);
+        user.setAddress(&quot;长沙&quot;);
+        user.setSex(&quot;男&quot;);
+        user.setBirthday(new Date());
+
+        userDao.updataUser(user);
+        sqlSession.commit();
+
+
+    }
+//根据id删除
+    @Test
+    public void deleteUser(){
+        userDao.deleteUser(49);
+        sqlSession.commit();
+    }
+//根据id查询
+    @Test
+    public void findById(){
+        User user = userDao.findById(48);
+        System.out.println(user);
+        sqlSession.commit();
+    }
+
+    //模糊查询用户信息
+    @Test
+    public void findByName(){
+       List&lt;User&gt; users = userDao.findByName(&quot;王&quot;);
+        for (User user:users
+             ) {
+            System.out.println(user);
+        }
+        sqlSession.commit();
+    }
+
+    //获取用户的总记录条数
+    @Test
+    public void findTotal(){
+        int count = userDao.findTotal();
+        System.out.println(count);
+    }
+
+    //pojo包装类的测试 （其中的mapper使用了ognl表达式）
+    @Test
+    public void findByVo(){
+
+        QueryVo vo = new QueryVo();
+        User user = new User();
+        user.setUsername(&quot;%王%&quot;);
+        vo.setUser(user);
+        List&lt;User&gt; users = userDao.findUserByVo(vo);
+        for (User u:users
+        ) {
+            System.out.println(u);
+        }
+        sqlSession.commit();
+    }
+
+}
+
+</code></pre>
+<h2 id="一些配置xml中的属性标签">一些配置xml中的属性标签</h2>
+<h3 id="1properties">1.properties</h3>
+<p>使用外部配置有两种</p>
+<pre><code class="language-xml">&lt;properties url=&quot;file:///G:/idea_workspace/Mybatis/yrq_02MybatisDao/src/main/resources/jdbcConfig.properties&quot;&gt;
+
+&lt;/properties&gt;
+</code></pre>
+<p><strong>第二种resource属性（常用）</strong></p>
+<pre><code class="language-xml">&lt;properties resource=&quot;jdbcConfig.properties&quot;&gt;
+
+&lt;/properties&gt;
+
+</code></pre>
+<p>详细配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;!--mybaits的主配置文件--&gt;
+&lt;configuration&gt;
+&lt;!--注意各个标签之间有顺序--&gt;
+ &lt;properties resource=&quot;jdbcConfig.properties&quot;&gt;&lt;/properties&gt;
+
+	 &lt;typeAliases&gt;
+        &lt;!--type只能指定实体类全类名 alias属性指定别名 区分大小写--&gt;
+         &lt;!--&lt;typeAlias type=&quot;com.daniel.domain.User&quot; alias=&quot;user&quot;&gt;&lt;/typeAlias&gt;--&gt;
+        &lt;!--现在就不区分大小写了--&gt;
+        &lt;package name=&quot;com.daniel.domain&quot;&gt;&lt;/package&gt;
+    &lt;/typeAliases&gt;
+    &lt;!--配置properties
+        可以在标签内部配置信息 也可以通过外部文件来配置信息
+        resource 属性：
+            用于指定配置文件的位置，是按照类路径来写的
+        URL属性 Uniform Resource Locator  统一资源定位符 可以唯一标志一个资源的位置
+        写法必须是
+            协议 主机 端口 URI
+
+            URL&gt;URI（精准性）
+         URI属性 Uniform Resource Identifier 统一资源标识符 是在应用中可以可以唯一标志一个资源的位置
+    --&gt;
+
+    &lt;!--配置环境--&gt;
+    &lt;environments default=&quot;mysql&quot;&gt;
+        &lt;!--配置mysql环境--&gt;
+        &lt;environment id=&quot;mysql&quot;&gt;
+            &lt;!--配置事务类型--&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;&gt;&lt;/transactionManager&gt;
+            &lt;!--配置数据源（连接池）--&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;!--配置数据源（连接池）的基本信息--&gt;
+               &lt;!-- &lt;property name=&quot;driver&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;--&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;!--指定映射配置文件的位置，映射配置文件指的是每个dao配置的文件--&gt;
+    &lt;mappers&gt;
+         &lt;package name=&quot;com.daniel.dao&quot;&gt;&lt;/package&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<h3 id="2package">2.package</h3>
+<p>目的 提高开发效率</p>
+<p>1.实体类</p>
+<pre><code class="language-xml"> &lt;!--配置别名 只能配置domain中的类 --&gt;
+    &lt;typeAliases&gt;
+        &lt;!--type只能指定实体类全类名 alias属性指定别名 区分大小写--&gt;
+         &lt;!--&lt;typeAlias type=&quot;com.daniel.domain.User&quot; alias=&quot;user&quot;&gt;&lt;/typeAlias&gt;--&gt;
+
+        &lt;!--现在就不区分大小写了--&gt;
+        &lt;package name=&quot;com.daniel.domain&quot;&gt;&lt;/package&gt;
+    &lt;/typeAliases&gt;
+
+</code></pre>
+<p>2.接口</p>
+<pre><code class="language-xml"> &lt;!--指定映射配置文件的位置，映射配置文件指的是每个dao配置的文件--&gt;
+    &lt;mappers&gt;
+
+        &lt;package name=&quot;com.daniel.dao&quot;&gt;&lt;/package&gt;
+        &lt;!--&lt;mapper resource=&quot;com/daniel/dao/IUserDao.xml&quot;/&gt;  --&gt;
+   &lt;/mappers&gt;
+</code></pre>
+<p><strong>当数据库中的列名与实体类中的属性名对应不上的时候</strong></p>
+<p>1.起别名<br>
+select id as userId<br>
+2.resultmap 结果集映射</p>
+<pre><code class="language-xml"> &lt;resultMap id=&quot;userMap&quot; type=&quot;com.daniel.domain.User&quot;&gt;
+        &lt;!--主键字段的对应 property实体属性的id(严格区分大小写)  column数据库列表中的id--&gt;
+        &lt;id property=&quot;userId&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+        &lt;!--非主键字段的对应--&gt;
+        &lt;result property=&quot;userName&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userAddress&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userSex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userBirthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+    &lt;/resultMap&gt;
+
+    &lt;!--配置查询所有  使用resultMap的时候   这样写开发效率快！！但是运行效率慢--&gt;
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;userMap&quot;&gt;
+        &lt;!--select id as userId   这样起别名的方法 运行效率快--&gt;
+        select * from user;
+    &lt;/select&gt;
+</code></pre>
+<p>测试类业务逻辑代码</p>
+<pre><code class="language-java">@Test
+    public  void findAll( ) throws Exception {
+
+        List&lt;User&gt; users = userDao.findAll();
+        for (User user:users
+             ) {
+            System.out.println(user);
+        }
+    }
+</code></pre>
+
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://ArtZoick.github.io//post/MyBatis_1">
+              <h3 class="post-title">
+                MyBatis_1	简介
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a2471d09bddb5be481ee',
+    clientSecret: '05d427fb27f873cfabace27b9f042f2c7f23000f',
+    repo: '',
+    owner: '',
+    admin: [''],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank">学习强国</a> | 
+  <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
