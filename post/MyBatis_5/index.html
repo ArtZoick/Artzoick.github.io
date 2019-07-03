@@ -1,0 +1,282 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyBatis_5	延迟加载 缓存 | 清汤牛肉锅</title>
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562162417373">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://ArtZoick.github.io/">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562162417373" alt="">
+  </a>
+  <h1 class="site-title">
+    清汤牛肉锅
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/beef" class="menu">
+          牛肉锅
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              MyBatis_5	延迟加载 缓存
+            </h2>
+            <div class="post-info">
+              <time class="post-time">
+                · 2019-07-03 ·
+              </time>
+              
+                <a href="https://ArtZoick.github.io//tag/MyBatis" class="post-tag">
+                  # MyBatis
+                </a>
+              
+                <a href="https://ArtZoick.github.io//tag/gridea" class="post-tag">
+                  # Gridea
+                </a>
+              
+            </div>
+            
+            <div class="post-content">
+              <h1 id="mybatis_5延迟加载-缓存">MyBatis_5	延迟加载 缓存</h1>
+<h2 id="一对一延迟加载">一对一延迟加载</h2>
+<h3 id="1在sqlmapconfigxml中配置setting标签">1.在SqlMapConfig.xml中配置setting标签</h3>
+<p>详情看中文官网（http://www.mybatis.org/mybatis-3/zh/configuration.html#settings）</p>
+<pre><code class="language-xml">&lt;settings&gt;
+        &lt;!-- 配置全局缓存--&gt;
+        &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;true&quot;/&gt;
+
+        &lt;setting name=&quot;aggressiveLazyLoading&quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+</code></pre>
+<h3 id="2在iaccoutdaoxml中配置association标签">2.在IAccoutDao.xml中配置association标签</h3>
+<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
+        &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+
+        &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
+
+        &lt;!--一对一的关系映射，配置封装user的内容
+        select属性的内容，查询用户的唯一标识符
+        column属性的内容:用户根据id查询时，所需要参数的值--&gt;
+        &lt;association property=&quot;user&quot; column=&quot;uid&quot; javaType=&quot;User&quot; select=&quot;com.daniel.dao.IUserDao.findById&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+        &lt;/association&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;accountUserMap&quot;&gt;
+        select * from  account
+    &lt;/select&gt;
+</code></pre>
+<h3 id="3测试类">3.测试类</h3>
+<pre><code class="language-java"> @Test
+    public void findAll(){
+        List&lt;Account&gt; accounts = accoutDao.findAll();
+        for (Account account:
+             accounts) {
+            System.out.println(&quot;每一个account的信息&quot;);
+            System.out.println(account);
+            System.out.println(account.getUser());
+        }
+    }
+</code></pre>
+<h3 id="4成功运行">4.成功运行</h3>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/12.png" alt=""></p>
+<h2 id="一对多延迟加载">一对多延迟加载</h2>
+<p>和一对一没有太多区别</p>
+<h3 id="2在iuserdaoxml中配置collection标签">2.在IUserDao.xml中配置collection标签</h3>
+<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
+         &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+        &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+
+        &lt;!--一对一的关系映射，配置封装user的内容
+        select属性的内容，查询用户的唯一标识符
+        column属性的内容:用户根据id查询时，所需要参数的值--&gt;
+    	&lt;collection property=&quot;accounts&quot; ofType=&quot;Account&quot; select=&quot;com.daniel.dao.IAccoutDao.findAccountByUid&quot; column=&quot;id&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;aid&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+</code></pre>
+<h1 id="缓存">缓存</h1>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/13.png" alt=""></p>
+<h2 id="一级缓存">一级缓存</h2>
+<p>其实mybatis中默认就是一级缓存了（平时的测试类就是一级缓存存在SqlSession中）</p>
+<h2 id="二级缓存">二级缓存</h2>
+<h3 id="1sqlmaoconfigxml中">1.SqlMaoConfig.xml中</h3>
+<pre><code class="language-xml">&lt;settings&gt;
+        &lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<h3 id="2在需要使用二级缓存的实体类的mapper中">2.在需要使用二级缓存的实体类的mapper中</h3>
+<pre><code class="language-xml"> &lt;!--开启user支持二级缓存--&gt;
+    &lt;cache/&gt;
+
+ &lt;!-- 根据id查询用户   注意属性useCache --&gt;
+    &lt;select id=&quot;findById&quot; parameterType=&quot;INT&quot; resultType=&quot;user&quot; useCache=&quot;true&quot;&gt;
+        select * from user where id = #{uid}
+    &lt;/select&gt;
+</code></pre>
+<h3 id="3测试类-2">3.测试类</h3>
+<pre><code class="language-java">public class SecondLevelCacheTest {
+
+    private InputStream in;
+    private  SqlSessionFactory factory;
+
+    @Before//用于在测试方法执行之前执行
+    public void init()throws Exception{
+        //1.读取配置文件，生成字节输入流
+        in = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+        //2.获取SqlSessionFactory
+        factory = new SqlSessionFactoryBuilder().build(in);
+
+    }
+
+    @After//用于在测试方法执行之后执行
+    public void destroy()throws Exception{
+        in.close();
+    }
+
+    /**
+     * 测试二级缓存
+     */
+    @Test
+    public void testFirstLevelCache(){
+        SqlSession sqlSession1 = factory.openSession();
+        IUserDao dao1 = sqlSession1.getMapper(IUserDao.class);
+        User user1 = dao1.findById(41);
+        System.out.println(user1);
+        sqlSession1.close();//一级缓存消失
+
+        SqlSession sqlSession2 = factory.openSession();
+        IUserDao dao2 = sqlSession2.getMapper(IUserDao.class);
+        User user2 = dao2.findById(41);
+        System.out.println(user2);
+        sqlSession2.close();
+
+        System.out.println(user1 == user2);
+    }
+
+}
+</code></pre>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/14.png" alt=""></p>
+<p>注意：<br>
+从图中可以看出来第二次findbyId根本没有走数据库（数据都是从SqlSessionFactory的二级缓存中拿的 不是对象！）</p>
+
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a2471d09bddb5be481ee',
+    clientSecret: '05d427fb27f873cfabace27b9f042f2c7f23000f',
+    repo: '',
+    owner: '',
+    admin: [''],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank">学习强国</a> | 
+  <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
