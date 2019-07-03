@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-03T02:26:07.385Z</updated>
+    <updated>2019-07-03T02:31:13.915Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -116,23 +116,23 @@ user_name	userName</p>
 &lt;/mapper&gt;
 </code></pre>
 <h3 id="环境搭建的注意事项">环境搭建的注意事项：</h3>
-<p>**第一个：**创建IUserDao.xml 和 IUserDao.java时名称是为了和我们之前的知识保持一致。<br>
+<p><strong>第一个：</strong> 创建IUserDao.xml 和 IUserDao.java时名称是为了和我们之前的知识保持一致。<br>
 在Mybatis中它把持久层的操作接口名称和映射文件也叫做：Mapper<br>
 所以：IUserDao 和 IUserMapper是一样的<br>
-**第二个：**在idea中创建目录的时候，它和包是不一样的<br>
+<strong>第二个：</strong> 在idea中创建目录的时候，它和包是不一样的<br>
 包在创建时：com.itheima.dao它是三级结构<br>
 目录在创建时：com.itheima.dao是一级目录<br>
-**第三个：**mybatis的映射配置文件位置必须和dao接口的包结构相同<br>
-**第四个：**映射配置文件的mapper标签namespace属性的取值必须是dao接口的全限定类名<br>
-**第五个：**映射配置文件的操作配置（select），id属性的取值必须是dao接口的方法名</p>
+<strong>第三个：</strong> mybatis的映射配置文件位置必须和dao接口的包结构相同<br>
+<strong>第四个：</strong> 映射配置文件的mapper标签namespace属性的取值必须是dao接口的全限定类名<br>
+<strong>第五个：</strong> 映射配置文件的操作配置（select），id属性的取值必须是dao接口的方法名</p>
 <p>当我们遵从了第三，四，五点之后，我们在开发中就无须再写dao的实现类。<br>
 mybatis的入门案例<br>
-**第一步：**读取配置文件<br>
-**第二步：**创建SqlSessionFactory工厂<br>
-**第三步：**创建SqlSession<br>
-**第四步：**创建Dao接口的代理对象<br>
-**第五步：**执行dao中的方法<br>
-**第六步：**释放资源</p>
+<strong>第一步：</strong> 读取配置文件<br>
+<strong>第二步：</strong> 创建SqlSessionFactory工厂<br>
+<strong>第三步：</strong> 创建SqlSession<br>
+<strong>第四步：</strong> 创建Dao接口的代理对象<br>
+<strong>第五步：</strong> 执行dao中的方法<br>
+<strong>第六步：</strong> 释放资源</p>
 <p><strong>注意事项：</strong><br>
 不要忘记在映射配置中告知mybatis要封装到哪个实体类中<br>
 配置的方式：指定实体类的全限定类名</p>
