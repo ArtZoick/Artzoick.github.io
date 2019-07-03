@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-02T13:33:13.166Z</updated>
+    <updated>2019-07-03T02:25:28.272Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -25,7 +25,8 @@
         <link href="https://ArtZoick.github.io//post/mybatis">
         </link>
         <updated>2019-07-02T03:02:35.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="mybatis第一天">Mybatis第一天</h1>
+        <content type="html"><![CDATA[<p>学习笔记：从<a href="https://me.csdn.net/qq_41910103">Qing丶Jack</a>处整理而来</p>
+<h1 id="mybatis第一天">Mybatis第一天</h1>
 <h2 id="1-什么是框架">1、什么是框架？</h2>
 <p>它是我们软件开发中的一套解决方案，不同的框架解决的是不同的问题
 使用框架的好处：
@@ -62,8 +63,8 @@ user_name	userName</p>
 <p>我们需要做到<br>
 <em>实体类中的属性和数据库表的字段名称保持一致。</em></p>
 <h2 id="5-mybatis的入门">5、mybatis的入门</h2>
-<p>mybatis环境搭建demo的基本架构
-<img src="https://ArtZoick.github.io//post-images/mybatis/1.png" alt=""></p>
+<h3 id="mybatis环境搭建demo的基本架构">mybatis环境搭建demo的基本架构</h3>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/1.png" alt=""></p>
 <p><strong>第一步：创建maven工程并导入坐标</strong><br>
 <strong>第二步：创建实体类和dao的接口</strong><br>
 <strong>第三步：创建Mybatis的主配置文件</strong></p>
@@ -114,6 +115,45 @@ user_name	userName</p>
     &lt;/select&gt;
 &lt;/mapper&gt;
 </code></pre>
+<h3 id="环境搭建的注意事项">环境搭建的注意事项：</h3>
+<p>**第一个：**创建IUserDao.xml 和 IUserDao.java时名称是为了和我们之前的知识保持一致。<br>
+在Mybatis中它把持久层的操作接口名称和映射文件也叫做：Mapper<br>
+所以：IUserDao 和 IUserMapper是一样的<br>
+**第二个：**在idea中创建目录的时候，它和包是不一样的<br>
+包在创建时：com.itheima.dao它是三级结构<br>
+目录在创建时：com.itheima.dao是一级目录<br>
+**第三个：**mybatis的映射配置文件位置必须和dao接口的包结构相同<br>
+**第四个：**映射配置文件的mapper标签namespace属性的取值必须是dao接口的全限定类名<br>
+**第五个：**映射配置文件的操作配置（select），id属性的取值必须是dao接口的方法名</p>
+<p>当我们遵从了第三，四，五点之后，我们在开发中就无须再写dao的实现类。<br>
+mybatis的入门案例<br>
+**第一步：**读取配置文件<br>
+**第二步：**创建SqlSessionFactory工厂<br>
+**第三步：**创建SqlSession<br>
+**第四步：**创建Dao接口的代理对象<br>
+**第五步：**执行dao中的方法<br>
+**第六步：**释放资源</p>
+<p><strong>注意事项：</strong><br>
+不要忘记在映射配置中告知mybatis要封装到哪个实体类中<br>
+配置的方式：指定实体类的全限定类名</p>
+<p><strong>mybatis基于注解的入门案例：</strong><br>
+把IUserDao.xml移除，在dao接口的方法上使用@Select注解，并且指定SQL语句<br>
+同时需要在SqlMapConfig.xml中的mapper配置时，使用class属性指定dao接口的全限定类名。<br>
+明确：<br>
+我们在实际开发中，都是越简便越好，所以都是采用不写dao实现类的方式。<br>
+不管使用XML还是注解配置。</p>
+<p>但是Mybatis它是支持写dao实现类的。</p>
+<h2 id="6-自定义mybatis的分析">6、自定义Mybatis的分析</h2>
+<p>mybatis在使用代理dao的方式实现增删改查时做什么事呢？
+只有两件事：
+第一：创建代理对象
+第二：在代理对象中调用selectList</p>
+<p>自定义mybatis能通过入门案例看到类
+class Resources
+class SqlSessionFactoryBuilder
+interface SqlSessionFactory
+interface SqlSession</p>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/2.png" alt=""></p>
 ]]></content>
     </entry>
 </feed>
