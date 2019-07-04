@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-03T14:22:43.754Z</updated>
+    <updated>2019-07-04T02:18:53.090Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -16,6 +16,279 @@
         <link href="https://ArtZoick.github.io//post/MyBatis_6">
         </link>
         <updated>2019-07-03T14:53:40.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="注解开发的crud">注解开发的crud</h1>
+<h2 id="1iuserdao接口中使用注解">1.IUserDao接口中使用注解</h2>
+<pre><code class="language-java">public interface IUserDao {
+
+    /**
+     * 查询所有用户
+     * @return
+     */
+    @Select(&quot;select * from user&quot;)
+    List&lt;User&gt; findAll();
+
+    /**
+     * 保存用户
+     * @param user
+     */
+    @Insert(&quot;insert into user(username,address,sex,birthday)values(#{username},#{address},#{sex},#{birthday})&quot;)
+    void saveUser(User user);
+
+    /**
+     * 更新用户
+     * @param user
+     */
+    @Update(&quot;update user set username=#{username},sex=#{sex},birthday=#{birthday},address=#{address} where id=#{id}&quot;)
+    void updateUser(User user);
+
+    /**
+     * 删除用户
+     * @param userId
+     */
+    @Delete(&quot;delete from user where id=#{id} &quot;)
+    void deleteUser(Integer userId);
+
+    /**
+     * 根据id查询用户
+     * @param userId
+     * @return
+     */
+    @Select(&quot;select * from user  where id=#{id} &quot;)
+    User findById(Integer userId);
+
+    /**
+     * 根据用户名称模糊查询
+     * @param username
+     * @return
+     */
+//    @Select(&quot;select * from user where username like #{username} &quot;)
+    @Select(&quot;select * from user where username like '%${value}%' &quot;)
+    List&lt;User&gt; findUserByName(String username);
+
+    /**
+     * 查询总用户数量
+     * @return
+     */
+    @Select(&quot;select count(*) from user &quot;)
+    int findTotalUser();
+}
+</code></pre>
+<h2 id="2测试类">2.测试类</h2>
+<pre><code class="language-java">public class AnnotationCRUDTest {
+    private InputStream in;
+    private SqlSessionFactory factory;
+    private SqlSession session;
+    private IUserDao userDao;
+
+    @Before
+    public  void init()throws Exception{
+        in = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+        factory = new SqlSessionFactoryBuilder().build(in);
+        session = factory.openSession();
+        userDao = session.getMapper(IUserDao.class);
+    }
+
+    @After
+    public  void destroy()throws  Exception{
+        session.commit();
+        session.close();
+        in.close();
+    }
+
+
+    @Test
+    public void testSave(){
+        User user = new User();
+        user.setUsername(&quot;mybatis annotation&quot;);
+        user.setAddress(&quot;北京市昌平区&quot;);
+
+        userDao.saveUser(user);
+    }
+
+    @Test
+    public void testUpdate(){
+        User user = new User();
+        user.setId(57);
+        user.setUsername(&quot;mybatis annotation update&quot;);
+        user.setAddress(&quot;北京市海淀区&quot;);
+        user.setSex(&quot;男&quot;);
+        user.setBirthday(new Date());
+
+        userDao.updateUser(user);
+    }
+
+
+    @Test
+    public void testDelete(){
+        userDao.deleteUser(51);
+    }
+
+    @Test
+    public void testFindOne(){
+        User user = userDao.findById(57);
+        System.out.println(user);
+    }
+
+
+    @Test
+    public  void testFindByName(){
+//        List&lt;User&gt; users = userDao.findUserByName(&quot;%mybatis%&quot;);
+        List&lt;User&gt; users = userDao.findUserByName(&quot;mybatis&quot;);
+        for(User user : users){
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public  void testFindTotal(){
+        int total = userDao.findTotalUser();
+        System.out.println(total);
+    }
+}
+</code></pre>
+<h1 id="注解开发的多表查询">注解开发的多表查询</h1>
+<p>可以这么记忆：<br>
+你所需要对应的表是很多个注解用many<br>
+对应一个的话就用one</p>
+<p>demo功能阐述:<br>
+查询用户账户的时候 返回用户的信息<br>
+因为多个账户或者一个账户才对应一个用户</p>
+<h2 id="多对一一对一">多对一（一对一）</h2>
+<h3 id="1iaccountdao接口中使用注解">1.IAccountDao接口中使用注解</h3>
+<pre><code class="language-java">public interface IAccountDao {
+
+    /**
+     * 查询所有账户，并且获取每个账户所属的用户信息
+     * @return
+     */
+    @Select(&quot;select * from account&quot;)
+    @Results(id=&quot;accountMap&quot;,value = {
+            @Result(id=true,column = &quot;id&quot;,property = &quot;id&quot;),
+            @Result(column = &quot;uid&quot;,property = &quot;uid&quot;),
+            @Result(column = &quot;money&quot;,property = &quot;money&quot;),
+            //这个注解是引入主表        FetchType(加载时机)  EAGER(立即加载)
+            @Result(property = &quot;user&quot;,column = &quot;uid&quot;,one=@One(select=&quot;com.itheima.dao.IUserDao.findById&quot;,fetchType= FetchType.EAGER))
+    })
+    List&lt;Account&gt; findAll();
+
+    /**
+     * 根据用户id查询账户信息
+     * @param userId
+     * @return
+     */
+    @Select(&quot;select * from account where uid = #{userId}&quot;)
+    List&lt;Account&gt; findAccountByUid(Integer userId);
+}
+</code></pre>
+<h3 id="2account类中从表类">2.Account类中（从表类）</h3>
+<pre><code class="language-java"> //多对一（mybatis中称之为一对一）的映射：一个账户只能属于一个用户
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+</code></pre>
+<h3 id="3测试类">3.测试类</h3>
+<pre><code class="language-java">public class AccountTest {
+    private InputStream in;
+    private SqlSessionFactory factory;
+    private SqlSession session;
+    private IAccountDao accountDao;
+
+    @Before
+    public  void init()throws Exception{
+        in = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+        factory = new SqlSessionFactoryBuilder().build(in);
+        session = factory.openSession();
+        accountDao = session.getMapper(IAccountDao.class);
+    }
+
+    @After
+    public  void destroy()throws  Exception{
+        session.commit();
+        session.close();
+        in.close();
+    }
+
+    @Test
+    public  void  testFindAll(){
+        List&lt;Account&gt; accounts = accountDao.findAll();
+        for(Account account : accounts){
+            System.out.println(&quot;----每个账户的信息-----&quot;);
+            System.out.println(account);
+            System.out.println(account.getUser());
+        }
+    }
+
+}
+
+</code></pre>
+<h2 id="一对多多对多">一对多（多对多）</h2>
+<p>demo功能阐述<br>
+查询用户信息的时候 返回用户的账户信息<br>
+因为一个用户对应多个用户的账户信息</p>
+<p>使用的是延迟加载</p>
+<h3 id="1iuserdao接口中使用注解-2">1.IUserDao接口中使用注解</h3>
+<pre><code class="language-java">public interface IUserDao {
+
+    /**
+     * 查询所有用户
+     * @return
+     */
+    @Select(&quot;select * from user&quot;)
+    @Results(id=&quot;userMap&quot;,value={
+            @Result(id=true,column = &quot;id&quot;,property = &quot;userId&quot;),
+            @Result(column = &quot;username&quot;,property = &quot;userName&quot;),
+            @Result(column = &quot;address&quot;,property = &quot;userAddress&quot;),
+            @Result(column = &quot;sex&quot;,property = &quot;userSex&quot;),
+            @Result(column = &quot;birthday&quot;,property = &quot;userBirthday&quot;),
+            @Result(property = &quot;accounts&quot;,column = &quot;id&quot;,
+                    many = @Many(select = &quot;com.itheima.dao.IAccountDao.findAccountByUid&quot;,
+                                fetchType = FetchType.LAZY))
+    })
+    List&lt;User&gt; findAll();
+
+    /**
+     * 根据id查询用户
+     * @param userId
+     * @return
+     */
+    @Select(&quot;select * from user  where id=#{id} &quot;)
+    @ResultMap(&quot;userMap&quot;)
+    User findById(Integer userId);
+
+    /**
+     * 根据用户名称模糊查询
+     * @param username
+     * @return
+     */
+    @Select(&quot;select * from user where username like #{username} &quot;)
+    @ResultMap(&quot;userMap&quot;)
+    List&lt;User&gt; findUserByName(String username);
+
+}
+</code></pre>
+<h3 id="2user类中从表类">2.User类中（从表类）</h3>
+<pre><code class="language-java"> //一对多关系映射：一个用户对应多个账户
+    private List&lt;Account&gt; accounts;
+
+    public List&lt;Account&gt; getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List&lt;Account&gt; accounts) {
+        this.accounts = accounts;
+    }
+</code></pre>
+<h1 id="注解开启二级缓存">注解开启二级缓存</h1>
+<p>哪个Dao接口需要就写在哪儿</p>
+<pre><code class="language-java">@CacheNamespace(blocking = true)
+</code></pre>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[MyBatis_5	延迟加载 缓存 ]]></title>
@@ -23,6 +296,140 @@
         <link href="https://ArtZoick.github.io//post/MyBatis_5">
         </link>
         <updated>2019-07-03T14:52:49.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="一对一延迟加载">一对一延迟加载</h2>
+<h3 id="1在sqlmapconfigxml中配置setting标签">1.在SqlMapConfig.xml中配置setting标签</h3>
+<p>详情看中文官网（http://www.mybatis.org/mybatis-3/zh/configuration.html#settings）</p>
+<pre><code class="language-xml">&lt;settings&gt;
+        &lt;!-- 配置全局缓存--&gt;
+        &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;true&quot;/&gt;
+
+        &lt;setting name=&quot;aggressiveLazyLoading&quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+</code></pre>
+<h3 id="2在iaccoutdaoxml中配置association标签">2.在IAccoutDao.xml中配置association标签</h3>
+<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
+        &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+
+        &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
+
+        &lt;!--一对一的关系映射，配置封装user的内容
+        select属性的内容，查询用户的唯一标识符
+        column属性的内容:用户根据id查询时，所需要参数的值--&gt;
+        &lt;association property=&quot;user&quot; column=&quot;uid&quot; javaType=&quot;User&quot; select=&quot;com.daniel.dao.IUserDao.findById&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+        &lt;/association&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;accountUserMap&quot;&gt;
+        select * from  account
+    &lt;/select&gt;
+</code></pre>
+<h3 id="3测试类">3.测试类</h3>
+<pre><code class="language-java"> @Test
+    public void findAll(){
+        List&lt;Account&gt; accounts = accoutDao.findAll();
+        for (Account account:
+             accounts) {
+            System.out.println(&quot;每一个account的信息&quot;);
+            System.out.println(account);
+            System.out.println(account.getUser());
+        }
+    }
+</code></pre>
+<h3 id="4成功运行">4.成功运行</h3>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/12.png" alt=""></p>
+<h2 id="一对多延迟加载">一对多延迟加载</h2>
+<p>和一对一没有太多区别</p>
+<h3 id="2在iuserdaoxml中配置collection标签">2.在IUserDao.xml中配置collection标签</h3>
+<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
+         &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+        &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+
+        &lt;!--一对一的关系映射，配置封装user的内容
+        select属性的内容，查询用户的唯一标识符
+        column属性的内容:用户根据id查询时，所需要参数的值--&gt;
+    	&lt;collection property=&quot;accounts&quot; ofType=&quot;Account&quot; select=&quot;com.daniel.dao.IAccoutDao.findAccountByUid&quot; column=&quot;id&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;aid&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+</code></pre>
+<h1 id="缓存">缓存</h1>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/13.png" alt=""></p>
+<h2 id="一级缓存">一级缓存</h2>
+<p>其实mybatis中默认就是一级缓存了（平时的测试类就是一级缓存存在SqlSession中）</p>
+<h2 id="二级缓存">二级缓存</h2>
+<h3 id="1sqlmaoconfigxml中">1.SqlMaoConfig.xml中</h3>
+<pre><code class="language-xml">&lt;settings&gt;
+        &lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<h3 id="2在需要使用二级缓存的实体类的mapper中">2.在需要使用二级缓存的实体类的mapper中</h3>
+<pre><code class="language-xml"> &lt;!--开启user支持二级缓存--&gt;
+    &lt;cache/&gt;
+
+ &lt;!-- 根据id查询用户   注意属性useCache --&gt;
+    &lt;select id=&quot;findById&quot; parameterType=&quot;INT&quot; resultType=&quot;user&quot; useCache=&quot;true&quot;&gt;
+        select * from user where id = #{uid}
+    &lt;/select&gt;
+</code></pre>
+<h3 id="3测试类-2">3.测试类</h3>
+<pre><code class="language-java">public class SecondLevelCacheTest {
+
+    private InputStream in;
+    private  SqlSessionFactory factory;
+
+    @Before//用于在测试方法执行之前执行
+    public void init()throws Exception{
+        //1.读取配置文件，生成字节输入流
+        in = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+        //2.获取SqlSessionFactory
+        factory = new SqlSessionFactoryBuilder().build(in);
+
+    }
+
+    @After//用于在测试方法执行之后执行
+    public void destroy()throws Exception{
+        in.close();
+    }
+
+    /**
+     * 测试二级缓存
+     */
+    @Test
+    public void testFirstLevelCache(){
+        SqlSession sqlSession1 = factory.openSession();
+        IUserDao dao1 = sqlSession1.getMapper(IUserDao.class);
+        User user1 = dao1.findById(41);
+        System.out.println(user1);
+        sqlSession1.close();//一级缓存消失
+
+        SqlSession sqlSession2 = factory.openSession();
+        IUserDao dao2 = sqlSession2.getMapper(IUserDao.class);
+        User user2 = dao2.findById(41);
+        System.out.println(user2);
+        sqlSession2.close();
+
+        System.out.println(user1 == user2);
+    }
+
+}
+</code></pre>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/14.png" alt=""></p>
+<p>注意：<br>
+从图中可以看出来第二次findbyId根本没有走数据库（数据都是从SqlSessionFactory的二级缓存中拿的 不是对象！）</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[MyBatis_4	多表查询 ]]></title>
@@ -30,6 +437,283 @@
         <link href="https://ArtZoick.github.io//post/MyBatis_4">
         </link>
         <updated>2019-07-03T14:13:33.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="当有多个mapperxml的时候">当有多个mapper.xml的时候</h2>
+<h3 id="错误写法">错误写法</h3>
+<pre><code class="language-xml">&lt;mappers&gt;
+        &lt;mapper resource=&quot;com/daniel/dao/IUserDao.xml&quot;/&gt;
+        &lt;mapper resource=&quot;com/daniel/dao/IAccountDao.xml&quot;/&gt;
+ &lt;/mappers&gt;
+</code></pre>
+<h3 id="正确写法">正确写法</h3>
+<pre><code class="language-xml"> &lt;!--指定映射配置文件的位置，映射配置文件指的是每个dao配置的文件--&gt;
+    &lt;mappers&gt;
+        &lt;package name=&quot;com.daniel.dao&quot;&gt;&lt;/package&gt;
+    &lt;/mappers&gt;
+</code></pre>
+<p>大致的demo的框架</p>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/5.png" alt=""></p>
+<h2 id="一对一的关系映射">一对一的关系映射</h2>
+<p>查询所有账户的时候同时获得当前账户的所有信息（多表查询常用方法）</p>
+<h4 id="sql-语句">sql 语句</h4>
+<p>sql 语句查询所有账户的时候同时获得当前账户的所有信息 findAll</p>
+<pre><code class="language-sql">select u.*,a.id as aid,a.uid,a.money from account a ,user u where u.id=a.uid;
+</code></pre>
+<p>sql 语句查询所有账户的时候同时获得当前账户的所地址和姓名</p>
+<pre><code class="language-sql"> select a.*,u.username,u.address from account a ,user u where u.id=a.uid;
+</code></pre>
+<h3 id="1从表实体应该包含一个主表实体的对象引用">1.	从表实体应该包含一个主表实体的对象引用</h3>
+<p>在Account类中</p>
+<pre><code class="language-java">//从表实体应该包含一个主表实体的对象引用
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+</code></pre>
+<h3 id="2accountdao的接口中">2.AccountDao的接口中</h3>
+<pre><code class="language-java"> //查询所有账户
+    List&lt;Account&gt; findAll();
+</code></pre>
+<h3 id="3accountdao的mapper中">3.AccountDao的mapper中</h3>
+<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
+        &lt;id property=&quot;id&quot; column=&quot;aid&quot;&gt;&lt;/id&gt;
+
+        &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
+
+        &lt;!--一对一的关系映射，account配置封装user的内容 column中指名从表的外键 property=&quot;user&quot;指的是单个实体类的引用 --&gt;
+        &lt;association property=&quot;user&quot; column=&quot;uid&quot; javaType=&quot;User&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+        &lt;/association&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;accountUserMap&quot;&gt;
+        select u.*,a.id as aid,a.uid,a.money from account a ,user u where u.id=a.uid;
+    &lt;/select&gt;
+</code></pre>
+<p>注意事项中的javaType=“User” 一定要指名主体表的实体类名然后column中指名从表的外键！！</p>
+<pre><code class="language-xml">&lt;association property=&quot;user&quot; column=&quot;uid&quot; javaType=&quot;User&quot;&gt;
+</code></pre>
+<h3 id="4accountdao的测试类中">4.AccountDao的测试类中</h3>
+<pre><code class="language-java"> @Test
+    public void findAll(){
+        List&lt;Account&gt; accounts = accoutDao.findAll();
+        for (Account account:
+             accounts) {
+            System.out.println(&quot;每一个account的信息&quot;);
+            System.out.println(account);
+            System.out.println(account.getUser());
+        }
+    }
+</code></pre>
+<h3 id="5成功运行实现上述功能">5.成功运行（实现上述功能）</h3>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/6.png" alt=""></p>
+<h3 id="第二种方法是创建一个accountuser类">第二种方法是创建一个AccountUser类</h3>
+<p>由于不常用就不细叙了</p>
+<h2 id="一对多的关系映射">一对多的关系映射</h2>
+<p>主表实体中应该包含从表实体的集合引用</p>
+<h4 id="sql语句">sql语句</h4>
+<pre><code class="language-sql">select * from user u left outer join account a on [u.id](http://u.id/) = a.uid
+</code></pre>
+<p>left join（左连接）是left outer join的简写，返回左表中所有记录和右表中连接字段相等的记录，即返回的记录数和左表的记录数一样</p>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/7.png" alt=""></p>
+<h3 id="1主表实体中应该包含从表实体的集合引用">1.主表实体中应该包含从表实体的集合引用</h3>
+<p>User类中</p>
+<pre><code class="language-java"> //主表实体中应该包含从表实体的集合引用
+    private List&lt;Account&gt; accounts;
+</code></pre>
+<h3 id="2userdao的接口中">2.UserDao的接口中</h3>
+<pre><code class="language-java">//  查询所有用户
+ List&lt;User&gt; findAll();
+</code></pre>
+<h3 id="3userdao的mapper中">3.UserDao的mapper中</h3>
+<pre><code class="language-xml"> &lt;!--定义封装user和account的resultMap type主表实体类--&gt;
+    &lt;resultMap id=&quot;userAccountMap&quot; type=&quot;User&quot;&gt;
+
+        &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+        &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+
+        &lt;!--一对多的关系映射，配置user封装accounts的内容--&gt;
+        &lt;!--其中的property指的是从表的集合引用 ofType从表实体类--&gt;
+        &lt;collection property=&quot;accounts&quot; ofType=&quot;Account&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;aid&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+
+    &lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  --&gt;
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;userAccountMap&quot;&gt;
+       select * from user u left outer join account a on u.id = a.uid
+    &lt;/select&gt;
+</code></pre>
+<h3 id="4userdao的测试类中">4.UserDao的测试类中</h3>
+<pre><code class="language-java">//查询所有（一个用户下的账号信息）
+    @Test
+    public  void findAll( ) throws Exception {
+
+        List&lt;User&gt; users = userDao.findAll();
+        for (User user:users
+             ) {
+            System.out.println(&quot;每个用户的信息&quot;);
+            System.out.println(user);
+            System.out.println(user.getAccounts());
+        }
+
+    }
+</code></pre>
+<h3 id="5成功运行实现上述功能-2">5.成功运行（实现上述功能）</h3>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/8.png" alt=""></p>
+<h2 id="多对多的关系映射">多对多的关系映射</h2>
+<h4 id="需要实现的功能">需要实现的功能</h4>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/9.png" alt=""></p>
+<h4 id="sql语句多表外链接查询语句">sql语句(多表外链接查询语句)</h4>
+<p>select u.*, r.id as rid,r.role_name,r.role_desc from role r<br>
+left outer join user_role ur on r.id = ur.rid<br>
+left outer join user u on u.id=ur.uid</p>
+<p>注意其中每行末尾的空格<br>
+分析从role表中为准的左表( role r)中所有记录和右表（user_role ur）中连接字段相等的记录，即返回的记录数和左表的记录数一样(而且还可以输出不关联的行)再以此合并的表为基础( role r user_role ur )中连接和右表( user u )中连接字段相等的记录</p>
+<p>多表外链接查询语句</p>
+<p>use+数据库</p>
+<p>select+查询列名</p>
+<p>from+表1</p>
+<p>left/right (outer) join +表2</p>
+<p>on 表2的列=表1的列</p>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/10.png" alt=""></p>
+<h3 id="1一个实体表中包含另一个实体表的集合引用">1.一个实体表中包含另一个实体表的集合引用</h3>
+<p>由于是多对多的关系所有不分从表和主表</p>
+<pre><code class="language-java">//多对多的关系映射：一个角色可以赋予多个用户
+    private List&lt;User&gt; users;
+
+    public List&lt;User&gt; getUsers() {
+        return users;
+    }
+
+    public void setUsers(List&lt;User&gt; users) {
+        this.users = users;
+    }
+
+</code></pre>
+<h3 id="2roledao的接口中定义该方法">2.RoleDao的接口中定义该方法</h3>
+<pre><code class="language-java">List&lt;Role&gt; findAll();
+</code></pre>
+<h3 id="3roledao的mapper中">3.RoleDao的mapper中</h3>
+<pre><code class="language-xml"> &lt;resultMap id=&quot;roleMap&quot; type=&quot;role&quot;&gt;
+        &lt;id property=&quot;roleId&quot; column=&quot;rid&quot;&gt;&lt;/id&gt;
+        &lt;result property=&quot;roleName&quot; column=&quot;role_name&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;roleDesc&quot; column=&quot;role_desc&quot;&gt;&lt;/result&gt;
+        &lt;collection property=&quot;users&quot; ofType=&quot;user&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+
+
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;roleMap&quot;&gt;
+       select u.*,r.id as rid,r.role_name,r.role_desc from role r
+        left outer join user_role ur on r.id = ur.rid
+        left outer join user u on u.id=ur.uid
+    &lt;/select&gt;
+</code></pre>
+<h3 id="4roledao的测试类中">4.RoleDao的测试类中</h3>
+<pre><code class="language-java">@Test
+    public void findAll(){
+        List&lt;Role&gt; roles  = roleDao.findAll();
+        for (Role role:roles
+             ) {
+            System.out.println(&quot;=====每个角色的信息=====&quot;);
+            System.out.println(role);
+            System.out.println(role.getUsers());
+        }
+    }
+</code></pre>
+<h3 id="5成功运行实现上述功能-3">5.成功运行（实现上述功能）</h3>
+<h3 id="同理可得功能二">===同理可得功能二===</h3>
+<h4 id="sql语句-2">sql语句</h4>
+<pre><code class="language-sql">select u.*, r.id as rid,r.role_name,r.role_desc from user u
+left outer join user_role ur on u.id = ur.uid
+left outer join role r on r.id=ur.rid
+</code></pre>
+<h3 id="6一个实体表中包含另一个实体表的集合引用">6.一个实体表中包含另一个实体表的集合引用</h3>
+<pre><code class="language-java">private List&lt;Role&gt; roles;
+
+public List&lt;Role&gt; getRoles() {
+        return roles;
+}
+
+public void setRoles(List&lt;Role&gt; roles) {
+        this.roles = roles;
+}
+
+</code></pre>
+<h3 id="7userdao的接口中定义该方法">7.UserDao的接口中定义该方法</h3>
+<pre><code class="language-java">  //  查询所有
+    List&lt;User&gt; findAll();
+</code></pre>
+<h3 id="8userdao的mapper中">8.UserDao的mapper中</h3>
+<pre><code class="language-xml"> &lt;resultMap id=&quot;userMap&quot; type=&quot;user&quot;&gt;
+
+        &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+        &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+
+
+        &lt;collection property=&quot;roles&quot; ofType=&quot;role&quot;&gt;
+            &lt;id property=&quot;roleId&quot; column=&quot;rid&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;roleName&quot; column=&quot;role_name&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;roleDesc&quot; column=&quot;role_desc&quot;&gt;&lt;/result&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+
+
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;userMap&quot;&gt;
+       select u.*,r.id as rid,r.role_name,r.role_desc from user u
+
+      left outer join user_role ur on u.id = ur.uid
+
+       left outer join role r on r.id=ur.rid
+    &lt;/select&gt;
+
+</code></pre>
+<h3 id="9userdao的测试类中">9.UserDao的测试类中</h3>
+<pre><code> @Test
+    public  void findAll( ) throws Exception {
+
+        List&lt;User&gt; users = userDao.findAll();
+        for (User user:users
+             ) {
+            System.out.println(&quot;====每个用户的信息====&quot;);
+            System.out.println(user);
+            System.out.println(user.getRoles());
+        }
+
+    }
+</code></pre>
+<h3 id="10成功运行实现上述功能">10.成功运行（实现上述功能）</h3>
+<hr>
+<h1 id="jndi">JNDI</h1>
+<p>JNDI是 Java 命名与目录接口（Java Naming and Directory Interface），在J2EE规范中是重要的规范之一。</p>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/11.png" alt=""></p>
+<hr>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[MyBatis_3	动态SQL]]></title>
@@ -37,6 +721,120 @@
         <link href="https://ArtZoick.github.io//post/MyBatis_3">
         </link>
         <updated>2019-07-03T14:11:42.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="if标签的使用">if标签的使用</h2>
+<h3 id="1接口中定义">1.接口中定义</h3>
+<pre><code class="language-java"> List&lt;User&gt; findByCondition(User user);
+</code></pre>
+<h3 id="2mapper中定义">2.mapper中定义</h3>
+<pre><code class="language-xml">&lt;select id=&quot;findByCondition&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
+        select * from user where 1=1
+        &lt;if test=&quot;username!=null&quot;&gt;
+            and username=#{username}
+        &lt;/if&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="3测试代码">3.测试代码</h3>
+<pre><code class="language-java">@Test
+    public void findByCondition(){
+        User u =new User();
+        u.setUsername(&quot;老王&quot;);
+        List&lt;User&gt; users = userDao.findByCondition(u);
+        for (User user:users
+        ) {
+            System.out.println(user);
+        }
+        sqlSession.commit();
+    }
+</code></pre>
+<h3 id="4测试结果">4.测试结果</h3>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/3.png" alt=""></p>
+<h2 id="where和foreach标签的使用">where和foreach标签的使用</h2>
+<p>用于多个查询的sql<br>
+select * from user where id in(41,42,46)<br>
+通过一个类中传入集合的方法<br>
+QueryVo类</p>
+<pre><code class="language-java">public class QueryVo {
+  
+    private List&lt;Integer&gt; ids;
+
+    public List&lt;Integer&gt; getIds() {
+        return ids;
+    }
+
+    public void setIds(List&lt;Integer&gt; ids) {
+        this.ids = ids;
+    }
+}
+</code></pre>
+<h3 id="1接口中定义-2">1.接口中定义</h3>
+<pre><code class="language-java"> //根据QueryVo 中提供的id集合，查询用户信息
+    List&lt;User&gt; findByIds(QueryVo vo);
+</code></pre>
+<h3 id="2mapper中定义-2">2.mapper中定义</h3>
+<pre><code class="language-xml">&lt;select id=&quot;findByIds&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;com.daniel.domain.QueryVo&quot;&gt;
+        select * from user
+        &lt;where&gt;
+              &lt;if test=&quot;ids != null and ids.size()&gt;0&quot;&gt;
+                  &lt;foreach collection=&quot;ids&quot; open=&quot;and id in (&quot; close=&quot;)&quot; item=&quot;uid&quot; separator=&quot;,&quot;&gt;
+                      #{uid}
+                  &lt;/foreach&gt;
+              &lt;/if&gt;
+        &lt;/where&gt;
+
+    &lt;/select&gt;
+</code></pre>
+<p>第一次测试了很久都报错<br>
+注意if标签中的内容都是来源于parameterType! 参数</p>
+<h3 id="3测试代码-2">3.测试代码</h3>
+<pre><code class="language-java"> @Test
+    public void findByIds(){
+        QueryVo queryVo = new QueryVo();
+        List&lt;Integer&gt; list = new ArrayList&lt;Integer&gt;();
+        list.add(41);
+        list.add(42);
+        list.add(46);
+        queryVo.setIds(list);
+
+        List&lt;User&gt; users = userDao.findByIds(queryVo);
+        for (User user:users) {
+            System.out.println(user);
+        }
+        sqlSession.commit();
+    }
+</code></pre>
+<h3 id="4测试结果-2">4.测试结果</h3>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/4.png" alt=""></p>
+<h2 id="抽取重复的sql">抽取重复的sql</h2>
+<h3 id="1定义">1.定义</h3>
+<pre><code class="language-xml">&lt;!--抽取重复的sql语句--&gt;
+    &lt;sql id=&quot;defaultUser&quot;&gt;
+        select * from user
+    &lt;/sql&gt;
+</code></pre>
+<h3 id="2使用">2.使用</h3>
+<pre><code class="language-xml">&lt;include refid=&quot;defaultUser&quot;&gt;&lt;/include&gt;
+</code></pre>
+<pre><code class="language-xml">!--抽取重复的sql语句--&gt;
+    &lt;sql id=&quot;defaultUser&quot;&gt;
+        select * from user
+    &lt;/sql&gt;
+
+    &lt;select id=&quot;findByIds&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;com.daniel.domain.QueryVo&quot;&gt;
+
+        &lt;include refid=&quot;defaultUser&quot;&gt;&lt;/include&gt;
+        &lt;where&gt;
+              &lt;if test=&quot;ids != null and ids.size()&gt;0&quot;&gt;
+                  &lt;foreach collection=&quot;ids&quot; open=&quot;and id in (&quot; close=&quot;)&quot; item=&quot;uid&quot; separator=&quot;,&quot;&gt;
+                      #{uid}
+                  &lt;/foreach&gt;
+              &lt;/if&gt;
+        &lt;/where&gt;
+
+    &lt;/select&gt;
+</code></pre>
+<h2 id="个人总结">个人总结</h2>
+<p>建议在mapper中写的sql语句不要带 分号； 以便于拼接</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[MyBatis_2	基本的CRUD]]></title>
@@ -44,6 +842,341 @@
         <link href="https://ArtZoick.github.io//post/MyBatis_2">
         </link>
         <updated>2019-07-03T14:09:56.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="接口类代码">接口类代码</h2>
+<pre><code class="language-java">public interface IUserDao {
+
+    //  查询所有
+    List&lt;User&gt; findAll();
+
+    //保存用户
+    void saveUser(User user);
+
+    //更新用户
+    void updataUser(User user);
+
+    //删除用户
+    void deleteUser(int id);
+
+    //根据id找到用户
+    User findById(int id);
+
+    //模糊查询用户信息
+    List&lt;User&gt; findByName(String username);
+
+    ////获取用户的总记录条数
+    int findTotal();
+
+}
+
+</code></pre>
+<h2 id="完整mapper代码">完整mapper代码</h2>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        &lt;!DOCTYPE mapper
+                PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+                &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+        &lt;!--namespace指的是你的dao接口--&gt;
+&lt;mapper namespace=&quot;com.daniel.dao.IUserDao&quot;&gt;
+
+
+    
+&lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
+    &lt;select id=&quot;findAll&quot; resultType=&quot;com.daniel.domain.User&quot;&gt;
+        select * from user;
+    &lt;/select&gt;
+
+    &lt;!--保存用户    parameterType 说明带参--&gt;
+    &lt;!--  &lt;insert id=&quot;saveUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
+          insert into user(username,address,sex,birthday)
+           value(#{username},#{address},#{sex},#{birthday});
+      &lt;/insert&gt;--&gt;
+
+    &lt;!--保存用户    parameterType 说明带参  同时获取用户的id--&gt;
+    &lt;insert id=&quot;saveUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
+        &lt;!--  keyProperty id的属性名称 keyColumn id的列名 order 执行的顺序--&gt;
+        &lt;selectKey keyProperty=&quot;id&quot; keyColumn=&quot;id&quot; resultType=&quot;int&quot; order=&quot;AFTER&quot;&gt;
+            select last_insert_id();
+        &lt;/selectKey&gt;
+        insert into user(username,address,sex,birthday)
+         value(#{username},#{address},#{sex},#{birthday});
+    &lt;/insert&gt;
+
+
+    &lt;!--更新用户    parameterType 说明带参--&gt;
+    &lt;update id=&quot;updataUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
+
+        update user set
+        username=#{username},address=#{address},sex=#{sex},birthday=#{birthday}
+         where id = #{id};
+
+    &lt;/update&gt;
+
+
+    &lt;!--删除用户--&gt;
+    &lt;delete id=&quot;deleteUser&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
+          delete from user where id = #{uid};
+    &lt;/delete&gt;
+
+    &lt;!--模糊查询用户--&gt;
+    &lt;select id=&quot;findByName&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;String&quot;&gt;
+     &lt;!--   select * from user where username like #{username};--&gt;  &lt;!--由于是PreparStatemen类型!占位符安全!  推荐使用这种--&gt;
+
+        select * from user where username like '%${value}%'&lt;!--由于是statemen类型的不安全开发不用  字符串拼接--&gt;
+    &lt;/select&gt;
+
+    &lt;!--获取用户的总记录条数--&gt;
+    &lt;select id=&quot;findTotal&quot; resultType=&quot;int&quot; &gt;
+        select count(id) from user ;
+    &lt;/select&gt;
+
+    &lt;!--根据queryVo的条件查询用户  使用了OGNL表达式  object graphic navigation language  对象图导航语言--&gt;
+    &lt;select id=&quot;findUserByVo&quot; parameterType=&quot;com.daniel.domain.QueryVo&quot; resultType=&quot;com.daniel.domain.User&quot; &gt;
+         select * from user where username like #{user.username} ;
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+
+</code></pre>
+<h2 id="完整测试类代码">完整测试类代码</h2>
+<pre><code class="language-java">public class MybatisTest {
+
+    private  InputStream inputStream;
+    private SqlSession sqlSession;
+    private IUserDao userDao;
+
+    @Before
+    public void init() throws Exception{
+        //1.读取配置文件
+      inputStream = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+//2.创建SqlSessionFactory工厂
+        SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory factory = builder.build(inputStream);
+//3.使用工厂创建SqlSession（真正操作数据库的对象！）
+        sqlSession =factory.openSession();
+//4.使用SqlSession创建dao接口的代理对象
+        userDao =sqlSession.getMapper(IUserDao.class);
+
+
+    }
+    @After
+    public  void destory() throws Exception{
+        sqlSession.close();
+        inputStream.close();
+    }
+//查询所有
+    @Test
+    public  void findAll( ) throws Exception {
+
+        List&lt;User&gt; users = userDao.findAll();
+        for (User user:users
+             ) {
+            System.out.println(user);
+        }
+
+    }
+//添加+查询添加以后的id
+    @Test
+    public void testSave() {
+        User user = new User();
+        user.setUsername(&quot;yrq&quot;);
+        user.setAddress(&quot;长沙&quot;);
+        user.setSex(&quot;男&quot;);
+        user.setBirthday(new Date());
+
+       System.out.println(&quot;before :&quot;+user);
+
+        userDao.saveUser(user);
+        sqlSession.commit();
+        System.out.println(user);
+    }
+//更新
+    @Test
+    public void updataUser(){
+        User user = new User();
+        user.setId(49);
+        user.setUsername(&quot;yrqqqq&quot;);
+        user.setAddress(&quot;长沙&quot;);
+        user.setSex(&quot;男&quot;);
+        user.setBirthday(new Date());
+
+        userDao.updataUser(user);
+        sqlSession.commit();
+
+
+    }
+//根据id删除
+    @Test
+    public void deleteUser(){
+        userDao.deleteUser(49);
+        sqlSession.commit();
+    }
+//根据id查询
+    @Test
+    public void findById(){
+        User user = userDao.findById(48);
+        System.out.println(user);
+        sqlSession.commit();
+    }
+
+    //模糊查询用户信息
+    @Test
+    public void findByName(){
+       List&lt;User&gt; users = userDao.findByName(&quot;王&quot;);
+        for (User user:users
+             ) {
+            System.out.println(user);
+        }
+        sqlSession.commit();
+    }
+
+    //获取用户的总记录条数
+    @Test
+    public void findTotal(){
+        int count = userDao.findTotal();
+        System.out.println(count);
+    }
+
+    //pojo包装类的测试 （其中的mapper使用了ognl表达式）
+    @Test
+    public void findByVo(){
+
+        QueryVo vo = new QueryVo();
+        User user = new User();
+        user.setUsername(&quot;%王%&quot;);
+        vo.setUser(user);
+        List&lt;User&gt; users = userDao.findUserByVo(vo);
+        for (User u:users
+        ) {
+            System.out.println(u);
+        }
+        sqlSession.commit();
+    }
+
+}
+
+</code></pre>
+<h2 id="一些配置xml中的属性标签">一些配置xml中的属性标签</h2>
+<h3 id="1properties">1.properties</h3>
+<p>使用外部配置有两种</p>
+<pre><code class="language-xml">&lt;properties url=&quot;file:///G:/idea_workspace/Mybatis/yrq_02MybatisDao/src/main/resources/jdbcConfig.properties&quot;&gt;
+
+&lt;/properties&gt;
+</code></pre>
+<p><strong>第二种resource属性（常用）</strong></p>
+<pre><code class="language-xml">&lt;properties resource=&quot;jdbcConfig.properties&quot;&gt;
+
+&lt;/properties&gt;
+
+</code></pre>
+<p>详细配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;!--mybaits的主配置文件--&gt;
+&lt;configuration&gt;
+&lt;!--注意各个标签之间有顺序--&gt;
+ &lt;properties resource=&quot;jdbcConfig.properties&quot;&gt;&lt;/properties&gt;
+
+	 &lt;typeAliases&gt;
+        &lt;!--type只能指定实体类全类名 alias属性指定别名 区分大小写--&gt;
+         &lt;!--&lt;typeAlias type=&quot;com.daniel.domain.User&quot; alias=&quot;user&quot;&gt;&lt;/typeAlias&gt;--&gt;
+        &lt;!--现在就不区分大小写了--&gt;
+        &lt;package name=&quot;com.daniel.domain&quot;&gt;&lt;/package&gt;
+    &lt;/typeAliases&gt;
+    &lt;!--配置properties
+        可以在标签内部配置信息 也可以通过外部文件来配置信息
+        resource 属性：
+            用于指定配置文件的位置，是按照类路径来写的
+        URL属性 Uniform Resource Locator  统一资源定位符 可以唯一标志一个资源的位置
+        写法必须是
+            协议 主机 端口 URI
+
+            URL&gt;URI（精准性）
+         URI属性 Uniform Resource Identifier 统一资源标识符 是在应用中可以可以唯一标志一个资源的位置
+    --&gt;
+
+    &lt;!--配置环境--&gt;
+    &lt;environments default=&quot;mysql&quot;&gt;
+        &lt;!--配置mysql环境--&gt;
+        &lt;environment id=&quot;mysql&quot;&gt;
+            &lt;!--配置事务类型--&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;&gt;&lt;/transactionManager&gt;
+            &lt;!--配置数据源（连接池）--&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;!--配置数据源（连接池）的基本信息--&gt;
+               &lt;!-- &lt;property name=&quot;driver&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;--&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;!--指定映射配置文件的位置，映射配置文件指的是每个dao配置的文件--&gt;
+    &lt;mappers&gt;
+         &lt;package name=&quot;com.daniel.dao&quot;&gt;&lt;/package&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<h3 id="2package">2.package</h3>
+<p>目的 提高开发效率</p>
+<p>1.实体类</p>
+<pre><code class="language-xml"> &lt;!--配置别名 只能配置domain中的类 --&gt;
+    &lt;typeAliases&gt;
+        &lt;!--type只能指定实体类全类名 alias属性指定别名 区分大小写--&gt;
+         &lt;!--&lt;typeAlias type=&quot;com.daniel.domain.User&quot; alias=&quot;user&quot;&gt;&lt;/typeAlias&gt;--&gt;
+
+        &lt;!--现在就不区分大小写了--&gt;
+        &lt;package name=&quot;com.daniel.domain&quot;&gt;&lt;/package&gt;
+    &lt;/typeAliases&gt;
+
+</code></pre>
+<p>2.接口</p>
+<pre><code class="language-xml"> &lt;!--指定映射配置文件的位置，映射配置文件指的是每个dao配置的文件--&gt;
+    &lt;mappers&gt;
+
+        &lt;package name=&quot;com.daniel.dao&quot;&gt;&lt;/package&gt;
+        &lt;!--&lt;mapper resource=&quot;com/daniel/dao/IUserDao.xml&quot;/&gt;  --&gt;
+   &lt;/mappers&gt;
+</code></pre>
+<p><strong>当数据库中的列名与实体类中的属性名对应不上的时候</strong></p>
+<p>1.起别名<br>
+select id as userId<br>
+2.resultmap 结果集映射</p>
+<pre><code class="language-xml"> &lt;resultMap id=&quot;userMap&quot; type=&quot;com.daniel.domain.User&quot;&gt;
+        &lt;!--主键字段的对应 property实体属性的id(严格区分大小写)  column数据库列表中的id--&gt;
+        &lt;id property=&quot;userId&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+        &lt;!--非主键字段的对应--&gt;
+        &lt;result property=&quot;userName&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userAddress&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userSex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userBirthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+    &lt;/resultMap&gt;
+
+    &lt;!--配置查询所有  使用resultMap的时候   这样写开发效率快！！但是运行效率慢--&gt;
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;userMap&quot;&gt;
+        &lt;!--select id as userId   这样起别名的方法 运行效率快--&gt;
+        select * from user;
+    &lt;/select&gt;
+</code></pre>
+<p>测试类业务逻辑代码</p>
+<pre><code class="language-java">@Test
+    public  void findAll( ) throws Exception {
+
+        List&lt;User&gt; users = userDao.findAll();
+        for (User user:users
+             ) {
+            System.out.println(user);
+        }
+    }
+</code></pre>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[MyBatis_1	简介]]></title>
@@ -51,5 +1184,178 @@
         <link href="https://ArtZoick.github.io//post/MyBatis_1">
         </link>
         <updated>2019-07-03T14:06:19.000Z</updated>
+        <content type="html"><![CDATA[<p>学习笔记：自<a href="https://me.csdn.net/qq_41910103">Qing丶Jack</a>处搬运整理</p>
+<h2 id="1-什么是框架">1、什么是框架？</h2>
+<p>它是我们软件开发中的一套解决方案，不同的框架解决的是不同的问题<br>
+使用框架的好处：<br>
+框架封装了很多的细节，使开发者可以使用极简的方式实现功能。大大提高开发效率。</p>
+<h2 id="2-三层架构">2、三层架构</h2>
+<p><strong>表现层：</strong><br>
+是用于展示数据的<br>
+<strong>业务层：</strong><br>
+是处理业务需求<br>
+<strong>持久层：</strong><br>
+是和数据库交互的</p>
+<h2 id="3-持久层技术解决方案">3、持久层技术解决方案</h2>
+<p><strong>JDBC技术：</strong><br>
+Connection<br>
+PreparedStatement<br>
+ResultSet<br>
+<strong>Spring的JdbcTemplate：</strong><br>
+Spring中对jdbc的简单封装<br>
+<strong>Apache的DBUtils：</strong><br>
+它和Spring的JdbcTemplate很像，也是对Jdbc的简单封装<br>
+以上这些都不是框架<br>
+JDBC是规范</p>
+<p>Spring的JdbcTemplate和Apache的DBUtils都只是工具类</p>
+<h2 id="4-mybatis的概述">4、mybatis的概述</h2>
+<p>mybatis是一个持久层框架，用java编写的。<br>
+它封装了jdbc操作的很多细节，使开发者只需要关注sql语句本身，而无需关注注册驱动，创建连接等繁杂过程。<br>
+它使用了ORM思想实现了结果集的封装。</p>
+<p><strong>ORM：</strong><br>
+Object Relational Mappging 对象关系映射<br>
+简单的说：就是把数据库表和实体类及实体类的属性对应起来，让我们可以操作实体类就实现操作数据库表。<br>
+user					User<br>
+id						userId
+user_name	userName</p>
+<p>我们需要做到<br>
+<em>实体类中的属性和数据库表的字段名称保持一致。</em></p>
+<h2 id="5-mybatis的入门">5、mybatis的入门</h2>
+<h3 id="mybatis环境搭建demo的基本架构">mybatis环境搭建demo的基本架构</h3>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/1.png" alt=""></p>
+<p><strong>第一步：创建maven工程并导入坐标</strong></p>
+<p><strong>第二步：创建实体类和dao的接口</strong></p>
+<p><strong>第三步：创建Mybatis的主配置文件</strong></p>
+<p><em>SqlMapConifg.xml</em></p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;!--mybaits的主配置文件--&gt;
+&lt;configuration&gt;
+    &lt;!--配置环境--&gt;
+    &lt;environments default=&quot;mysql&quot;&gt;
+        &lt;!--配置mysql环境--&gt;
+        &lt;environment id=&quot;mysql&quot;&gt;
+            &lt;!--配置事务类型--&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;&gt;&lt;/transactionManager&gt;
+            &lt;!--配置数据源（连接池）--&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;!--配置数据源（连接池）的基本信息--&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;
+
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;!--指定映射配置文件的位置，映射配置文件指的是每个dao配置的文件--&gt;
+    &lt;mappers&gt;
+        &lt;!--&lt;mapper resource=&quot;com/daniel/dao/IUserDao.xml&quot;/&gt;  使用的是xml--&gt;
+        &lt;mapper class=&quot;com.daniel.dao.IUserDao&quot;/&gt;    &lt;!--使用的是注解 annotations--&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<p><strong>第四步：创建映射配置文件</strong></p>
+<p><em>IUserDao.xml</em></p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;!--namespace指的是你的dao接口--&gt;
+ &lt;mapper namespace=&quot;com.daniel.dao.IUserDao&quot;&gt;
+    &lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
+    &lt;select id=&quot;findAll&quot; resultType=&quot;com.daniel.domain.User&quot;&gt;
+        select * from user
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<h3 id="环境搭建的注意事项">环境搭建的注意事项：</h3>
+<p><strong>第一个</strong>：创建IUserDao.xml 和 IUserDao.java时名称是为了和我们之前的知识保持一致。<br>
+在Mybatis中它把持久层的操作接口名称和映射文件也叫做：Mapper<br>
+所以：IUserDao 和 IUserMapper是一样的<br>
+<strong>第二个</strong>：在idea中创建目录的时候，它和包是不一样的<br>
+包在创建时：com.itheima.dao它是三级结构<br>
+目录在创建时：com.itheima.dao是一级目录<br>
+<strong>第三个</strong>：mybatis的映射配置文件位置必须和dao接口的包结构相同<br>
+<strong>第四个</strong>：映射配置文件的mapper标签namespace属性的取值必须是dao接口的全限定类名<br>
+<strong>第五个</strong>：映射配置文件的操作配置（select），id属性的取值必须是dao接口的方法名</p>
+<p>当我们遵从了第三，四，五点之后，我们在开发中就无须再写dao的实现类。</p>
+<h3 id="mybatis的入门案例">mybatis的入门案例</h3>
+<p><strong>第一步</strong>：读取配置文件<br>
+<strong>第二步</strong>：创建SqlSessionFactory工厂<br>
+<strong>第三步</strong>：创建SqlSession<br>
+<strong>第四步</strong>：创建Dao接口的代理对象<br>
+<strong>第五步</strong>：执行dao中的方法<br>
+<strong>第六步</strong>：释放资源</p>
+<p><strong>注意事项：</strong><br>
+不要忘记在映射配置中告知mybatis要封装到哪个实体类中<br>
+配置的方式：指定实体类的全限定类名</p>
+<p><strong>mybatis基于注解的入门案例：</strong><br>
+把IUserDao.xml移除，在dao接口的方法上使用@Select注解，并且指定SQL语句<br>
+同时需要在SqlMapConfig.xml中的mapper配置时，使用class属性指定dao接口的全限定类名。<br>
+明确：<br>
+我们在实际开发中，都是越简便越好，所以都是采用不写dao实现类的方式。<br>
+不管使用XML还是注解配置。</p>
+<p>但是Mybatis它是支持写dao实现类的。</p>
+<h2 id="6-自定义mybatis的分析">6、自定义Mybatis的分析</h2>
+<p>mybatis在使用代理dao的方式实现增删改查时做什么事呢？<br>
+只有两件事：<br>
+第一：创建代理对象<br>
+第二：在代理对象中调用selectList</p>
+<p>自定义mybatis能通过入门案例看到类<br>
+class Resources<br>
+class SqlSessionFactoryBuilder<br>
+interface SqlSessionFactory<br>
+interface SqlSession</p>
+<p><img src="https://ArtZoick.github.io//post-images/mybatis/2.png" alt=""></p>
+<p>测试类</p>
+<pre><code class="language-java">package com.daniel.test;
+
+import com.daniel.dao.IUserDao;
+import com.daniel.domain.User;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import java.io.InputStream;
+import java.util.List;
+
+/**
+ * describe:
+ *
+ * @author Daniel
+ * @date 2019/04/20
+ */
+public class MybatisTest {
+
+    public static void main(String[] args) throws Exception {
+        //1.读取配置文件
+        InputStream inputStream = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+//2.创建SqlSessionFactory工厂
+        SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory factory = builder.build(inputStream);
+//3.使用工厂创建SqlSession
+        SqlSession session =factory.openSession();
+//4.使用SqlSession创建dao接口的代理对象
+        IUserDao userDao =session.getMapper(IUserDao.class);
+//5.使用代理对象的方法
+        List&lt;User&gt; users = userDao.findAll();
+        for (User user:users
+             ) {
+            System.out.println(user);
+        }
+//6.释放资源
+        session.close();
+        inputStream.close();
+    }
+}
+
+</code></pre>
+]]></content>
     </entry>
 </feed>
