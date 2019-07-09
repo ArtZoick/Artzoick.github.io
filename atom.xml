@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-09T23:31:49.114Z</updated>
+    <updated>2019-07-09T23:36:13.260Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -842,315 +842,104 @@ QueryVo类</p>
         <link href="https://ArtZoick.github.io//post/MyBatis_2">
         </link>
         <updated>2019-07-03T14:09:56.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="接口类代码">接口类代码</h2>
-<pre><code class="language-java">public interface IUserDao {
+        <content type="html"><![CDATA[<p>1、回顾MyBatis的自定义再分析和环境搭建+完善基于注解的MyBatis<br>
+2、MyBatis的CRUD（基于代理dao的方式）<br>
+3、MyBatis中的参数深入及结果集的深入<br>
+4、MyBatis中基于传统dao的方式（编写dao的实现类）---了解的内容
+5、MyBatis中的配置(主配置文件：SqlMapConfig.xml)
+　　　　　properties标签<br>
+　　　　　typeAliases标签<br>
+　　　　　mappers标签</p>
+<p><strong>OGNL表达式:</strong>
+Object Graphic Navigation Language<br>
+对象 　　图　　　导航 　　　语言<br>
+它是通过对象的取值方法来获取数据。·在写法上把get给省略了<br>
+比如:我们获取用户的名称<br>
+　　　　类中的写法:user.getUsername,<br>
+　　　　OGNL表达式写法:user.username<br>
+mybatis中为什么能直接写username,而不用user.呢:<br>
+因为在parameterType中已经提供了属性所属的类, 所以此时不需要写对象名|</p>
+<h2 id="接口类代码">接口类代码</h2>
+<pre><code class="language-java">package top.zoick.dao;
 
-    //  查询所有
+import top.zoick.domain.QueryVo;
+import top.zoick.domain.User;
+
+import java.util.List;
+
+/**
+ * @author zoick
+ * @date 2019/7/4 17:34
+ * 用户的持久层接口
+ */
+public interface IUserDao {
+
+    /**
+     * 查询所有操作
+     * @return
+     */
     List&lt;User&gt; findAll();
 
-    //保存用户
+    /**
+     * 保存用户
+     * @param user
+     */
     void saveUser(User user);
 
-    //更新用户
-    void updataUser(User user);
+    /**
+     * 更新用户
+     * @param user
+     */
+    void updateUser(User user);
 
-    //删除用户
-    void deleteUser(int id);
+    /**
+     * 根据删除用户
+     * @param userId
+     */
+    void deleteUser(Integer userId);
 
-    //根据id找到用户
-    User findById(int id);
+    /**
+     * 根据id查询用户信息
+     * @param userId
+     * @return
+     */
+    User findByID(Integer userId);
 
-    //模糊查询用户信息
+    /**
+     * 根据名称模糊查询用户信息
+     * @param username
+     * @return
+     */
     List&lt;User&gt; findByName(String username);
 
-    ////获取用户的总记录条数
-    int findTotal();
+
+    /**
+     * 查询总用户数
+     * @return
+     */
+    Integer findTotal();
+
+    /**
+     * 根据QueryVo中的条件查询用户
+     * @param vo
+     * @return
+     */
+    List&lt;User&gt; findUserByVo(QueryVo vo);
+
 
 }
-
 </code></pre>
 <h2 id="完整mapper代码">完整mapper代码</h2>
 <pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-        &lt;!DOCTYPE mapper
-                PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
-                &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
-        &lt;!--namespace指的是你的dao接口--&gt;
-&lt;mapper namespace=&quot;com.daniel.dao.IUserDao&quot;&gt;
-
-
-    
-&lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
-    &lt;select id=&quot;findAll&quot; resultType=&quot;com.daniel.domain.User&quot;&gt;
-        select * from user;
-    &lt;/select&gt;
-
-    &lt;!--保存用户    parameterType 说明带参--&gt;
-    &lt;!--  &lt;insert id=&quot;saveUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
-          insert into user(username,address,sex,birthday)
-           value(#{username},#{address},#{sex},#{birthday});
-      &lt;/insert&gt;--&gt;
-
-    &lt;!--保存用户    parameterType 说明带参  同时获取用户的id--&gt;
-    &lt;insert id=&quot;saveUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
-        &lt;!--  keyProperty id的属性名称 keyColumn id的列名 order 执行的顺序--&gt;
-        &lt;selectKey keyProperty=&quot;id&quot; keyColumn=&quot;id&quot; resultType=&quot;int&quot; order=&quot;AFTER&quot;&gt;
-            select last_insert_id();
-        &lt;/selectKey&gt;
-        insert into user(username,address,sex,birthday)
-         value(#{username},#{address},#{sex},#{birthday});
-    &lt;/insert&gt;
-
-
-    &lt;!--更新用户    parameterType 说明带参--&gt;
-    &lt;update id=&quot;updataUser&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
-
-        update user set
-        username=#{username},address=#{address},sex=#{sex},birthday=#{birthday}
-         where id = #{id};
-
-    &lt;/update&gt;
-
-
-    &lt;!--删除用户--&gt;
-    &lt;delete id=&quot;deleteUser&quot; parameterType=&quot;java.lang.Integer&quot;&gt;
-          delete from user where id = #{uid};
-    &lt;/delete&gt;
-
-    &lt;!--模糊查询用户--&gt;
-    &lt;select id=&quot;findByName&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;String&quot;&gt;
-     &lt;!--   select * from user where username like #{username};--&gt;  &lt;!--由于是PreparStatemen类型!占位符安全!  推荐使用这种--&gt;
-
-        select * from user where username like '%${value}%'&lt;!--由于是statemen类型的不安全开发不用  字符串拼接--&gt;
-    &lt;/select&gt;
-
-    &lt;!--获取用户的总记录条数--&gt;
-    &lt;select id=&quot;findTotal&quot; resultType=&quot;int&quot; &gt;
-        select count(id) from user ;
-    &lt;/select&gt;
-
-    &lt;!--根据queryVo的条件查询用户  使用了OGNL表达式  object graphic navigation language  对象图导航语言--&gt;
-    &lt;select id=&quot;findUserByVo&quot; parameterType=&quot;com.daniel.domain.QueryVo&quot; resultType=&quot;com.daniel.domain.User&quot; &gt;
-         select * from user where username like #{user.username} ;
-    &lt;/select&gt;
-
-&lt;/mapper&gt;
-
-</code></pre>
-<h2 id="完整测试类代码">完整测试类代码</h2>
-<pre><code class="language-java">public class MybatisTest {
-
-    private  InputStream inputStream;
-    private SqlSession sqlSession;
-    private IUserDao userDao;
-
-    @Before
-    public void init() throws Exception{
-        //1.读取配置文件
-      inputStream = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
-//2.创建SqlSessionFactory工厂
-        SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
-        SqlSessionFactory factory = builder.build(inputStream);
-//3.使用工厂创建SqlSession（真正操作数据库的对象！）
-        sqlSession =factory.openSession();
-//4.使用SqlSession创建dao接口的代理对象
-        userDao =sqlSession.getMapper(IUserDao.class);
-
-
-    }
-    @After
-    public  void destory() throws Exception{
-        sqlSession.close();
-        inputStream.close();
-    }
-//查询所有
-    @Test
-    public  void findAll( ) throws Exception {
-
-        List&lt;User&gt; users = userDao.findAll();
-        for (User user:users
-             ) {
-            System.out.println(user);
-        }
-
-    }
-//添加+查询添加以后的id
-    @Test
-    public void testSave() {
-        User user = new User();
-        user.setUsername(&quot;yrq&quot;);
-        user.setAddress(&quot;长沙&quot;);
-        user.setSex(&quot;男&quot;);
-        user.setBirthday(new Date());
-
-       System.out.println(&quot;before :&quot;+user);
-
-        userDao.saveUser(user);
-        sqlSession.commit();
-        System.out.println(user);
-    }
-//更新
-    @Test
-    public void updataUser(){
-        User user = new User();
-        user.setId(49);
-        user.setUsername(&quot;yrqqqq&quot;);
-        user.setAddress(&quot;长沙&quot;);
-        user.setSex(&quot;男&quot;);
-        user.setBirthday(new Date());
-
-        userDao.updataUser(user);
-        sqlSession.commit();
-
-
-    }
-//根据id删除
-    @Test
-    public void deleteUser(){
-        userDao.deleteUser(49);
-        sqlSession.commit();
-    }
-//根据id查询
-    @Test
-    public void findById(){
-        User user = userDao.findById(48);
-        System.out.println(user);
-        sqlSession.commit();
-    }
-
-    //模糊查询用户信息
-    @Test
-    public void findByName(){
-       List&lt;User&gt; users = userDao.findByName(&quot;王&quot;);
-        for (User user:users
-             ) {
-            System.out.println(user);
-        }
-        sqlSession.commit();
-    }
-
-    //获取用户的总记录条数
-    @Test
-    public void findTotal(){
-        int count = userDao.findTotal();
-        System.out.println(count);
-    }
-
-    //pojo包装类的测试 （其中的mapper使用了ognl表达式）
-    @Test
-    public void findByVo(){
-
-        QueryVo vo = new QueryVo();
-        User user = new User();
-        user.setUsername(&quot;%王%&quot;);
-        vo.setUser(user);
-        List&lt;User&gt; users = userDao.findUserByVo(vo);
-        for (User u:users
-        ) {
-            System.out.println(u);
-        }
-        sqlSession.commit();
-    }
-
-}
-
-</code></pre>
-<h2 id="一些配置xml中的属性标签">一些配置xml中的属性标签</h2>
-<h3 id="1properties">1.properties</h3>
-<p>使用外部配置有两种</p>
-<pre><code class="language-xml">&lt;properties url=&quot;file:///G:/idea_workspace/Mybatis/yrq_02MybatisDao/src/main/resources/jdbcConfig.properties&quot;&gt;
-
-&lt;/properties&gt;
-</code></pre>
-<p><strong>第二种resource属性（常用）</strong></p>
-<pre><code class="language-xml">&lt;properties resource=&quot;jdbcConfig.properties&quot;&gt;
-
-&lt;/properties&gt;
-
-</code></pre>
-<p>详细配置</p>
-<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE configuration
+&lt;!DOCTYPE mapper
         PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
-        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
-&lt;!--mybaits的主配置文件--&gt;
-&lt;configuration&gt;
-&lt;!--注意各个标签之间有顺序--&gt;
- &lt;properties resource=&quot;jdbcConfig.properties&quot;&gt;&lt;/properties&gt;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
 
-	 &lt;typeAliases&gt;
-        &lt;!--type只能指定实体类全类名 alias属性指定别名 区分大小写--&gt;
-         &lt;!--&lt;typeAlias type=&quot;com.daniel.domain.User&quot; alias=&quot;user&quot;&gt;&lt;/typeAlias&gt;--&gt;
-        &lt;!--现在就不区分大小写了--&gt;
-        &lt;package name=&quot;com.daniel.domain&quot;&gt;&lt;/package&gt;
-    &lt;/typeAliases&gt;
-    &lt;!--配置properties
-        可以在标签内部配置信息 也可以通过外部文件来配置信息
-        resource 属性：
-            用于指定配置文件的位置，是按照类路径来写的
-        URL属性 Uniform Resource Locator  统一资源定位符 可以唯一标志一个资源的位置
-        写法必须是
-            协议 主机 端口 URI
+&lt;mapper namespace=&quot;top.zoick.dao.IUserDao&quot;&gt;
 
-            URL&gt;URI（精准性）
-         URI属性 Uniform Resource Identifier 统一资源标识符 是在应用中可以可以唯一标志一个资源的位置
-    --&gt;
-
-    &lt;!--配置环境--&gt;
-    &lt;environments default=&quot;mysql&quot;&gt;
-        &lt;!--配置mysql环境--&gt;
-        &lt;environment id=&quot;mysql&quot;&gt;
-            &lt;!--配置事务类型--&gt;
-            &lt;transactionManager type=&quot;JDBC&quot;&gt;&lt;/transactionManager&gt;
-            &lt;!--配置数据源（连接池）--&gt;
-            &lt;dataSource type=&quot;POOLED&quot;&gt;
-                &lt;!--配置数据源（连接池）的基本信息--&gt;
-               &lt;!-- &lt;property name=&quot;driver&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
-                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis&quot;/&gt;
-                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
-                &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;--&gt;
-                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
-                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
-                &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
-                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
-
-            &lt;/dataSource&gt;
-        &lt;/environment&gt;
-    &lt;/environments&gt;
-
-    &lt;!--指定映射配置文件的位置，映射配置文件指的是每个dao配置的文件--&gt;
-    &lt;mappers&gt;
-         &lt;package name=&quot;com.daniel.dao&quot;&gt;&lt;/package&gt;
-    &lt;/mappers&gt;
-
-&lt;/configuration&gt;
-</code></pre>
-<h3 id="2package">2.package</h3>
-<p>目的 提高开发效率</p>
-<p>1.实体类</p>
-<pre><code class="language-xml"> &lt;!--配置别名 只能配置domain中的类 --&gt;
-    &lt;typeAliases&gt;
-        &lt;!--type只能指定实体类全类名 alias属性指定别名 区分大小写--&gt;
-         &lt;!--&lt;typeAlias type=&quot;com.daniel.domain.User&quot; alias=&quot;user&quot;&gt;&lt;/typeAlias&gt;--&gt;
-
-        &lt;!--现在就不区分大小写了--&gt;
-        &lt;package name=&quot;com.daniel.domain&quot;&gt;&lt;/package&gt;
-    &lt;/typeAliases&gt;
-
-</code></pre>
-<p>2.接口</p>
-<pre><code class="language-xml"> &lt;!--指定映射配置文件的位置，映射配置文件指的是每个dao配置的文件--&gt;
-    &lt;mappers&gt;
-
-        &lt;package name=&quot;com.daniel.dao&quot;&gt;&lt;/package&gt;
-        &lt;!--&lt;mapper resource=&quot;com/daniel/dao/IUserDao.xml&quot;/&gt;  --&gt;
-   &lt;/mappers&gt;
-</code></pre>
-<p><strong>当数据库中的列名与实体类中的属性名对应不上的时候</strong></p>
-<p>1.起别名<br>
-select id as userId<br>
-2.resultmap 结果集映射</p>
-<pre><code class="language-xml"> &lt;resultMap id=&quot;userMap&quot; type=&quot;com.daniel.domain.User&quot;&gt;
-        &lt;!--主键字段的对应 property实体属性的id(严格区分大小写)  column数据库列表中的id--&gt;
+    &lt;!--配置查询结果的列名和实体类的属性名的对应关系--&gt;
+    &lt;resultMap id=&quot;userMap&quot; type=&quot;top.zoick.domain.User&quot;&gt;
+        &lt;!--主键字段的对应--&gt;
         &lt;id property=&quot;userId&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
         &lt;!--非主键字段的对应--&gt;
         &lt;result property=&quot;userName&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
@@ -1159,23 +948,361 @@ select id as userId<br>
         &lt;result property=&quot;userBirthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
     &lt;/resultMap&gt;
 
-    &lt;!--配置查询所有  使用resultMap的时候   这样写开发效率快！！但是运行效率慢--&gt;
-    &lt;select id=&quot;findAll&quot; resultMap=&quot;userMap&quot;&gt;
-        &lt;!--select id as userId   这样起别名的方法 运行效率快--&gt;
-        select * from user;
-    &lt;/select&gt;
-</code></pre>
-<p>测试类业务逻辑代码</p>
-<pre><code class="language-java">@Test
-    public  void findAll( ) throws Exception {
 
+
+
+    &lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;userMap&quot;&gt;
+        &lt;!--实体类中的属性名和数据库表中元素名字匹配不上时，使用别名即可匹配。id为数据库中表的列名，userId为实体类中属性名--&gt;
+        &lt;!--select id as userId,username as userName,address as userAddress ,sex as userSex, birthday as userBirthday from user--&gt;
+        select * from user
+&lt;/select&gt;
+
+    &lt;!--保存用户--&gt;
+    &lt;insert id=&quot;saveUser&quot; parameterType=&quot;top.zoick.domain.User&quot;&gt;
+        &lt;!--配置插入操作后，获取插入数据的id--&gt;
+            &lt;!--keyProperty对应实体类属性名:id，keyColumn对应于数据库:id resultType为数据类型，order为在这条insert sql语句执行前还是执行后做--&gt;
+        &lt;selectKey keyProperty=&quot;userId&quot; keyColumn=&quot;id&quot; resultType=&quot;int&quot; order=&quot;AFTER&quot;&gt;
+            select last_insert_id();
+        &lt;/selectKey&gt;
+        insert into user (username,address,sex,birthday) values (#{userName},#{userAddress},#{userSex},#{userBirthday})
+    &lt;/insert&gt;
+
+    &lt;!--更新用户--&gt;
+    &lt;update id=&quot;updateUser&quot; parameterType=&quot;usER&quot;&gt;
+        update user set username=#{userName},address=#{userAddress},sex=#{userSex},birthday=#{userBirthday} where id=#{userId}
+    &lt;/update&gt;
+
+    &lt;!--删除用户--&gt;
+    &lt;!--当参数值为基本类型或者基本类型包装类时，SQL语句中的占位符可以随意写--&gt;
+    &lt;delete id=&quot;deleteUser&quot; parameterType=&quot;Integer&quot;&gt;
+        delete from user where id = #{anyzhanweifu}
+    &lt;/delete&gt;
+
+    &lt;!--根据id查询用户--&gt;
+    &lt;select id=&quot;findByID&quot; parameterType=&quot;INT&quot; resultMap=&quot;userMap&quot;&gt;
+        select * from user where id = #{uuuuuuid}
+    &lt;/select&gt;
+
+    &lt;!--根据名称模糊查询--&gt;
+    &lt;select id=&quot;findByName&quot; parameterType=&quot;String&quot; resultMap=&quot;userMap&quot;&gt;
+        select * from user where username like #{namenamenamename}
+        &lt;!--select * from user where username like '%${value}%'--&gt;
+    &lt;/select&gt;
+
+    &lt;!--查询记录的总用户条数--&gt;
+    &lt;select id=&quot;findTotal&quot; resultType=&quot;Integer&quot;&gt;
+        select count(id) from user
+    &lt;/select&gt;
+
+    &lt;!--根据QueryVo的条件查询用户--&gt;
+    &lt;select id=&quot;findUserByVo&quot; parameterType=&quot;top.zoick.domain.QueryVo&quot; resultMap=&quot;userMap&quot;&gt;
+        select * from user where username like #{user.username}
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h2 id="完整测试类代码">完整测试类代码</h2>
+<pre><code class="language-java">package top.zoick.test;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import top.zoick.dao.IUserDao;
+import top.zoick.domain.QueryVo;
+import top.zoick.domain.User;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author zoick
+ * @date 2019/7/4 21:27
+ * mybatis的入门案例
+ */
+public class MybatisTest {
+
+    private InputStream in;
+    private SqlSession sqlSession;
+    private IUserDao userDao;
+
+    @Before//用于在测试方法执行之前执行
+    public void init() throws Exception {
+        //1.读取配置文件
+        in = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+        //2.创建SqlSessionFactory工厂
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(in);
+        //3.使用工厂生产SqlSession对象
+        sqlSession = factory.openSession();
+        //4.使用SqlSession创建Dao接口的代理对象
+        userDao = sqlSession.getMapper(IUserDao.class);
+    }
+
+    @After//用于在测试方法执行之后执行
+    public void destory() throws IOException {
+
+        //提交事务
+        sqlSession.commit();
+
+        //6.释放资源
+        sqlSession.close();
+        in.close();
+
+    }
+
+    /**
+     * 测试查询所有
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testFindALl() throws Exception {
+        init();
+        //5.使用代理对象执行方法
         List&lt;User&gt; users = userDao.findAll();
-        for (User user:users
-             ) {
+        for (User user : users) {
             System.out.println(user);
         }
     }
+
+    /**
+     * 测试保存操作
+     */
+    @Test
+    public void testSave() throws Exception {
+        User user = new User();
+        user.setUserName(&quot;modify user&quot;);
+        user.setUserAddress(&quot;天津&quot;);
+        user.setUserBirthday(new Date());
+        user.setUserSex(&quot;男&quot;);
+
+        System.out.println(&quot;保存操作之前：&quot; + user);
+        init();
+        //5.使用代理对象执行方法
+        userDao.saveUser(user);
+
+        System.out.println(&quot;保存操作之后：&quot; + user);
+    }
+
+    /**
+     * 测试更新操作
+     */
+    @Test
+    public void testUpdate() throws Exception {
+        User user = new User();
+        user.setUserId(51);
+        user.setUserName(&quot;mybatis updateUser&quot;);
+        user.setUserAddress(&quot;天津1&quot;);
+        user.setUserBirthday(new Date());
+        user.setUserSex(&quot;男&quot;);
+
+        init();
+        //5.使用代理对象执行方法
+        userDao.updateUser(user);
+    }
+
+    /**
+     * 测试删除
+     */
+    @Test
+    public void testDelete() throws Exception {
+
+        init();
+        //5.执行删除方法
+        userDao.deleteUser(51);
+    }
+
+    /**
+     * 测试根据id查询用户
+     */
+    @Test
+    public void testFindById() throws Exception {
+        init();
+        //5.执行查询一个
+        User user = userDao.findByID(42);
+        System.out.println(user);
+    }
+
+    /**
+     * 测试名称模糊查询用户信息
+     */
+    @Test
+    public void testFindByName() throws Exception {
+        init();
+        //5.执行模糊查询
+        List&lt;User&gt; user = userDao.findByName(&quot;%彭%&quot;);
+//        List&lt;User&gt; user = userDao.findByName(&quot;彭&quot;);
+        System.out.println(user);
+    }
+
+    /**
+     * 测试查询用户条数
+     */
+    @Test
+    public void testFindTotal() throws Exception {
+        init();
+        //执行查询总记录条数
+        Integer number = userDao.findTotal();
+        System.out.println(&quot;总记录条数为：&quot; + number);
+    }
+
+    /**
+     * 测试使用QueryVo作为查询条件
+     */
+    @Test
+    public void testFindUserByVo() throws Exception {
+        QueryVo vo = new QueryVo();
+        User user = new User();
+        user.setUserName(&quot;%彭%&quot;);
+        vo.setUser(user);
+
+        List&lt;User&gt; users = userDao.findUserByVo(vo);
+        for (User u : users) {
+            System.out.println(u);
+        }
+    }
+}
 </code></pre>
+<h2 id="一些注意点">一些注意点：</h2>
+<h3 id="1-数据库表的元素名与实体类的属性名不对应的解决">1、数据库表的元素名与实体类的属性名不对应的解决：</h3>
+<p>1.起别名：</p>
+<pre><code class="language-xml"> &lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
+    &lt;select id=&quot;findAll&quot; resultType=&quot;top.zoick.domain.User&quot;&gt;
+        &lt;!--实体类中的属性名和数据库表中元素名字匹配不上时，使用别名即可匹配。id为数据库中表的列名，userId为实体类中属性名--&gt;
+        select id as userId,username as userName,address as userAddress ,sex as userSex, birthday as userBirthday from user
+    &lt;/select&gt;
+</code></pre>
+<p>2.配置查询结果的列名和实体类的属性名的对应关系：</p>
+<pre><code class="language-xml"> &lt;!--配置查询结果的列名和实体类的属性名的对应关系--&gt;
+    &lt;resultMap id=&quot;userMap&quot; type=&quot;top.zoick.domain.User&quot;&gt;
+        &lt;!--主键字段的对应--&gt;
+        &lt;id property=&quot;userId&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+        &lt;!--非主键字段的对应--&gt;
+        &lt;result property=&quot;userName&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userAddress&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userSex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;userBirthday&quot; column=&quot;bithday&quot;&gt;&lt;/result&gt;
+    &lt;/resultMap&gt;
+
+再在查询的sql语句的xml中加入配置
+  &lt;select id=&quot;findAll&quot; resultMap=&quot;userMap&quot;&gt;
+        select * from user
+  &lt;/select&gt;
+</code></pre>
+<h3 id="2-配置xml中的属性标签">2、配置xml中的属性标签</h3>
+<h3 id="1使用properties配置数据库连接欸信息">(1)使用properties配置数据库连接欸信息</h3>
+<p>可以在标签内部配置数据库连接信息，也可以通过外部文件来配置数据库连接信息。</p>
+<p><strong>第一种url属性(不常用)</strong></p>
+<p>URL属性：
+URL:Uniform Resource Locator     统一资源定位符 可以唯一标志一个资源的位置
+写法必须是<br>
+http://localhost:8080/mybatisserver/demo1Servlet<br>
+协议      主机        端口     URI<br>
+URI:Uniform Resource Identifier   统一资源标识符 是在应用中可以可以唯一标志一个资源的位置<br>
+URL&gt;URI（精准性）</p>
+<pre><code class="language-xml">&lt;properties url=&quot;file:///C:/Users/zoick/OneDrive/Tomorrow/%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0/MyBatis/day02/day02_eesy_02mybatisCRUD/src/main/resources/jdbcConfig.properties&quot;&gt;
+
+&lt;/properties&gt;
+</code></pre>
+<p><strong>第二种resource属性（常用）</strong>
+用于指定配置文件的位置，是按照类路径来写的，必须存在于类路径下</p>
+<pre><code class="language-xml">&lt;properties resource=&quot;jdbcConfig.properties&quot;&gt;
+
+&lt;/properties&gt;
+</code></pre>
+<h3 id="2使用typealiases配置别名">(2)使用typeAliases配置别名</h3>
+<pre><code class="language-xml">&lt;!--使用typeAliases配置别名，他只能配置domain中类的别名--&gt;
+    &lt;typeAliases&gt;
+        &lt;!--typeAlias用于配置别名，type属性指定的是实体类中的全限定类名。alias属性指定别名，当指定了别名后不在区分大小写--&gt;
+        &lt;typeAlias type=&quot;top.zoick.domain.User&quot; alias=&quot;user&quot;&gt;&lt;/typeAlias&gt;
+    &lt;/typeAliases&gt;
+</code></pre>
+<h3 id="3使用package配置别名">(3)使用package配置别名</h3>
+<pre><code class="language-xml"> &lt;typeAliases&gt;
+        &lt;!--用于指定要配置别名的包，当指定后，该包下的实体类都会注册别名，并且类名就是别名，不再区分大小写--&gt;
+        &lt;package name=&quot;top.zoick.domain&quot;/&gt;
+    &lt;/typeAliases&gt;
+</code></pre>
+<p>其中，配置映射文件位置的<mappers>中也有package这个标签</p>
+<pre><code class="language-xml">   &lt;mappers&gt;
+&lt;!--        &lt;mapper resource=&quot;top/zoick/dao/IUserDao.xml&quot;/&gt;--&gt;
+        &lt;!--package标签是用于指定dao接口所在的包，当指定了之后就不需要再写mapepr以及resource或者class了--&gt;
+        &lt;package name=&quot;top.zoick.dao&quot;/&gt;
+    &lt;/mappers&gt;
+
+</code></pre>
+<p>配置文件：</p>
+<p><em>SqlMapConfig.xml</em></p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;!-- mybatis主配置文件--&gt;
+&lt;configuration&gt;
+    &lt;!--配置properties
+        可以在标签内部配置数据库连接信息 也可以通过外部文件来配置数据库连接信息
+        resource 属性：（常用）
+                用于指定配置文件的位置，是按照类路径来写的，必须存在于类路径下
+        URL属性：
+            URL:Uniform Resource Locator    统一资源定位符 可以唯一标志一个资源的位置
+            写法必须是
+                http://localhost:8080/mybatisserver/demo1Servlet
+                协议      主机    端口     URI
+            URI:Uniform Resource Identifier 统一资源标识符 是在应用中可以可以唯一标志一个资源的位置
+            URL&gt;URI（精准性）
+    --&gt;
+    &lt;properties url=&quot;file:///C:/Users/zoick/OneDrive/Tomorrow/%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0/MyBatis/day02/day02_eesy_02mybatisCRUD/src/main/resources/jdbcConfig.properties&quot;&gt;
+&lt;!--        &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;--&gt;
+&lt;!--        &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/eesy_mybatis&quot;/&gt;--&gt;
+&lt;!--        &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;--&gt;
+&lt;!--        &lt;property name=&quot;password&quot; value=&quot;root&quot;/&gt;--&gt;
+    &lt;/properties&gt;
+    
+    &lt;!--使用typeAliases配置别名，他只能配置domain中类的别名--&gt;
+    &lt;typeAliases&gt;
+        &lt;!--typeAlias用于配置别名，type属性指定的是实体类中的全限定类名。alias属性指定别名，当指定了别名后不在区分大小写--&gt;
+&lt;!--    &lt;typeAlias type=&quot;top.zoick.domain.User&quot; alias=&quot;user&quot;&gt;&lt;/typeAlias&gt;--&gt;
+
+        &lt;!--用于指定要配置别名的包，当指定后，该包下的实体类都会注册别名，并且类名就是别名，不再区分大小写--&gt;
+        &lt;package name=&quot;top.zoick.domain&quot;/&gt;
+    &lt;/typeAliases&gt;
+    
+    
+
+    &lt;!-- 配置环境--&gt;
+    &lt;environments default=&quot;mysql&quot;&gt;
+        &lt;!-- 配置mysql的环境--&gt;
+        &lt;environment id=&quot;mysql&quot;&gt;
+            &lt;!-- 配置事务的类型--&gt;
+            &lt;transactionManager type=&quot;jdbc&quot;&gt;&lt;/transactionManager&gt;
+            &lt;!-- 配置数据源（连接池）--&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;!-- 配置链接数据库的四个基本信息--&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;!-- 指定映射配置文件的位置，映射配置文件指的是每个dao独立的配置文件--&gt;
+    &lt;mappers&gt;
+&lt;!--        &lt;mapper resource=&quot;top/zoick/dao/IUserDao.xml&quot;/&gt;--&gt;
+        &lt;!--package标签是用于指定dao接口所在的包，当指定了之后就不需要再写mapepr以及resource或者class了--&gt;
+        &lt;package name=&quot;top.zoick.dao&quot;/&gt;
+    &lt;/mappers&gt;
+
+
+&lt;/configuration&gt;
+</code></pre>
+<hr>
 ]]></content>
     </entry>
     <entry>
@@ -1184,8 +1311,7 @@ select id as userId<br>
         <link href="https://ArtZoick.github.io//post/MyBatis_1">
         </link>
         <updated>2019-07-03T14:06:19.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="mybatis_1简介">MyBatis_1	简介</h1>
-<h2 id="1-什么是框架">1、什么是框架？</h2>
+        <content type="html"><![CDATA[<h2 id="1-什么是框架">1、什么是框架？</h2>
 <p>它是我们软件开发中的一套解决方案，不同的框架解决的是不同的问题
 使用框架的好处：
 框架封装了很多的细节，使开发者可以使用极简的方式实现功能。大大提高开发效率。</p>
