@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MyBatis_2	基本的CRUD | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562715371403">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562716107230">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -29,7 +29,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562715371403" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562716107230" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -107,166 +107,31 @@
             </div>
             
             <div class="post-content">
-              <p>1、回顾MyBatis的自定义再分析和环境搭建+完善基于注解的MyBatis<br>
-2、MyBatis的CRUD（基于代理dao的方式）<br>
-3、MyBatis中的参数深入及结果集的深入<br>
-4、MyBatis中基于传统dao的方式（编写dao的实现类）---了解的内容
-5、MyBatis中的配置(主配置文件：SqlMapConfig.xml)
-　　　　　properties标签<br>
-　　　　　typeAliases标签<br>
-　　　　　mappers标签</p>
-<p><strong>OGNL表达式:</strong>
-Object Graphic Navigation Language<br>
-对象 　　图　　　导航 　　　语言<br>
-它是通过对象的取值方法来获取数据。·在写法上把get给省略了<br>
-比如:我们获取用户的名称<br>
-　　　　类中的写法:user.getUsername,<br>
-　　　　OGNL表达式写法:user.username<br>
-mybatis中为什么能直接写username,而不用user.呢:<br>
-因为在parameterType中已经提供了属性所属的类, 所以此时不需要写对象名|</p>
-<h2 id="接口类代码">接口类代码</h2>
-<pre><code class="language-java">package top.zoick.dao;
+              <pre><code>&lt;/delete&gt;
 
-import top.zoick.domain.QueryVo;
-import top.zoick.domain.User;
-
-import java.util.List;
-
-/**
- * @author zoick
- * @date 2019/7/4 17:34
- * 用户的持久层接口
- */
-public interface IUserDao {
-
-    /**
-     * 查询所有操作
-     * @return
-     */
-    List&lt;User&gt; findAll();
-
-    /**
-     * 保存用户
-     * @param user
-     */
-    void saveUser(User user);
-
-    /**
-     * 更新用户
-     * @param user
-     */
-    void updateUser(User user);
-
-    /**
-     * 根据删除用户
-     * @param userId
-     */
-    void deleteUser(Integer userId);
-
-    /**
-     * 根据id查询用户信息
-     * @param userId
-     * @return
-     */
-    User findByID(Integer userId);
-
-    /**
-     * 根据名称模糊查询用户信息
-     * @param username
-     * @return
-     */
-    List&lt;User&gt; findByName(String username);
-
-
-    /**
-     * 查询总用户数
-     * @return
-     */
-    Integer findTotal();
-
-    /**
-     * 根据QueryVo中的条件查询用户
-     * @param vo
-     * @return
-     */
-    List&lt;User&gt; findUserByVo(QueryVo vo);
-
-
-}
-</code></pre>
-<h2 id="完整mapper代码">完整mapper代码</h2>
-<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE mapper
-        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
-        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
-
-&lt;mapper namespace=&quot;top.zoick.dao.IUserDao&quot;&gt;
-
-    &lt;!--配置查询结果的列名和实体类的属性名的对应关系--&gt;
-    &lt;resultMap id=&quot;userMap&quot; type=&quot;top.zoick.domain.User&quot;&gt;
-        &lt;!--主键字段的对应--&gt;
-        &lt;id property=&quot;userId&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
-        &lt;!--非主键字段的对应--&gt;
-        &lt;result property=&quot;userName&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
-        &lt;result property=&quot;userAddress&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
-        &lt;result property=&quot;userSex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
-        &lt;result property=&quot;userBirthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
-    &lt;/resultMap&gt;
-
-
-
-
-    &lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
-    &lt;select id=&quot;findAll&quot; resultMap=&quot;userMap&quot;&gt;
-        &lt;!--实体类中的属性名和数据库表中元素名字匹配不上时，使用别名即可匹配。id为数据库中表的列名，userId为实体类中属性名--&gt;
-        &lt;!--select id as userId,username as userName,address as userAddress ,sex as userSex, birthday as userBirthday from user--&gt;
-        select * from user
+&lt;!--根据id查询用户--&gt;
+&lt;select id=&quot;findByID&quot; parameterType=&quot;INT&quot; resultMap=&quot;userMap&quot;&gt;
+    select * from user where id = #{uuuuuuid}
 &lt;/select&gt;
 
-    &lt;!--保存用户--&gt;
-    &lt;insert id=&quot;saveUser&quot; parameterType=&quot;top.zoick.domain.User&quot;&gt;
-        &lt;!--配置插入操作后，获取插入数据的id--&gt;
-            &lt;!--keyProperty对应实体类属性名:id，keyColumn对应于数据库:id resultType为数据类型，order为在这条insert sql语句执行前还是执行后做--&gt;
-        &lt;selectKey keyProperty=&quot;userId&quot; keyColumn=&quot;id&quot; resultType=&quot;int&quot; order=&quot;AFTER&quot;&gt;
-            select last_insert_id();
-        &lt;/selectKey&gt;
-        insert into user (username,address,sex,birthday) values (#{userName},#{userAddress},#{userSex},#{userBirthday})
-    &lt;/insert&gt;
+&lt;!--根据名称模糊查询--&gt;
+&lt;select id=&quot;findByName&quot; parameterType=&quot;String&quot; resultMap=&quot;userMap&quot;&gt;
+    select * from user where username like #{namenamenamename}
+    &lt;!--select * from user where username like '%${value}%'--&gt;
+&lt;/select&gt;
 
-    &lt;!--更新用户--&gt;
-    &lt;update id=&quot;updateUser&quot; parameterType=&quot;usER&quot;&gt;
-        update user set username=#{userName},address=#{userAddress},sex=#{userSex},birthday=#{userBirthday} where id=#{userId}
-    &lt;/update&gt;
+&lt;!--查询记录的总用户条数--&gt;
+&lt;select id=&quot;findTotal&quot; resultType=&quot;Integer&quot;&gt;
+    select count(id) from user
+&lt;/select&gt;
 
-    &lt;!--删除用户--&gt;
-    &lt;!--当参数值为基本类型或者基本类型包装类时，SQL语句中的占位符可以随意写--&gt;
-    &lt;delete id=&quot;deleteUser&quot; parameterType=&quot;Integer&quot;&gt;
-        delete from user where id = #{anyzhanweifu}
-    &lt;/delete&gt;
-
-    &lt;!--根据id查询用户--&gt;
-    &lt;select id=&quot;findByID&quot; parameterType=&quot;INT&quot; resultMap=&quot;userMap&quot;&gt;
-        select * from user where id = #{uuuuuuid}
-    &lt;/select&gt;
-
-    &lt;!--根据名称模糊查询--&gt;
-    &lt;select id=&quot;findByName&quot; parameterType=&quot;String&quot; resultMap=&quot;userMap&quot;&gt;
-        select * from user where username like #{namenamenamename}
-        &lt;!--select * from user where username like '%${value}%'--&gt;
-    &lt;/select&gt;
-
-    &lt;!--查询记录的总用户条数--&gt;
-    &lt;select id=&quot;findTotal&quot; resultType=&quot;Integer&quot;&gt;
-        select count(id) from user
-    &lt;/select&gt;
-
-    &lt;!--根据QueryVo的条件查询用户--&gt;
-    &lt;select id=&quot;findUserByVo&quot; parameterType=&quot;top.zoick.domain.QueryVo&quot; resultMap=&quot;userMap&quot;&gt;
-        select * from user where username like #{user.username}
-    &lt;/select&gt;
-
-&lt;/mapper&gt;
+&lt;!--根据QueryVo的条件查询用户--&gt;
+&lt;select id=&quot;findUserByVo&quot; parameterType=&quot;top.zoick.domain.QueryVo&quot; resultMap=&quot;userMap&quot;&gt;
+    select * from user where username like #{user.username}
+&lt;/select&gt;
 </code></pre>
+</mapper>
+```
 <h2 id="完整测试类代码">完整测试类代码</h2>
 <pre><code class="language-java">package top.zoick.test;
 
@@ -465,17 +330,17 @@ public class MybatisTest {
 <p>可以在标签内部配置数据库连接信息，也可以通过外部文件来配置数据库连接信息。</p>
 <p><strong>第一种url属性(不常用)</strong></p>
 <p>URL属性：
-URL:Uniform Resource Locator     统一资源定位符 可以唯一标志一个资源的位置
-写法必须是<br>
-http://localhost:8080/mybatisserver/demo1Servlet<br>
-协议      主机        端口     URI<br>
-URI:Uniform Resource Identifier   统一资源标识符 是在应用中可以可以唯一标志一个资源的位置<br>
-URL&gt;URI（精准性）</p>
+　　URL:Uniform Resource Locator　统一资源定位符 可以唯一标志一个资源的位置<br>
+　　写法必须是<br>
+　　　　http://localhost:8080/mybatisserver/demo1Servlet<br>
+　　　　协议　　主机　　端口　URI<br>
+　　URI:Uniform Resource Identifier   统一资源标识符 是在应用中可以可以唯一标志一个资源的位置<br>
+　　URL&gt;URI（精准性）</p>
 <pre><code class="language-xml">&lt;properties url=&quot;file:///C:/Users/zoick/OneDrive/Tomorrow/%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0/MyBatis/day02/day02_eesy_02mybatisCRUD/src/main/resources/jdbcConfig.properties&quot;&gt;
 
 &lt;/properties&gt;
 </code></pre>
-<p><strong>第二种resource属性（常用）</strong>
+<p><strong>第二种resource属性（常用）</strong><br>
 用于指定配置文件的位置，是按照类路径来写的，必须存在于类路径下</p>
 <pre><code class="language-xml">&lt;properties resource=&quot;jdbcConfig.properties&quot;&gt;
 
@@ -567,7 +432,7 @@ URL&gt;URI（精准性）</p>
 
 &lt;/configuration&gt;
 </code></pre>
-<hr>
+<p>项目源码：<a href="https://github.com/ArtZoick/MyBatis">点鸡这里</a></p>
 
             </div>
           </article>
