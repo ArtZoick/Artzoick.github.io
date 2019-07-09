@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-09T23:49:58.263Z</updated>
+    <updated>2019-07-09T23:52:35.388Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -1197,7 +1197,7 @@ public class MybatisTest {
 <h3 id="1使用properties配置数据库连接欸信息">(1)使用properties配置数据库连接欸信息</h3>
 <p>可以在标签内部配置数据库连接信息，也可以通过外部文件来配置数据库连接信息。</p>
 <p><strong>第一种url属性(不常用)</strong></p>
-<p>URL属性：
+<p>URL属性：<br>
 　　URL:Uniform Resource Locator　统一资源定位符 可以唯一标志一个资源的位置<br>
 　　写法必须是<br>
 　　　　http://localhost:8080/mybatisserver/demo1Servlet<br>
