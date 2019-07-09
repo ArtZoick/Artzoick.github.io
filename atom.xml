@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-09T23:29:29.814Z</updated>
+    <updated>2019-07-09T23:31:49.114Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -1278,8 +1278,8 @@ user_name	userName</p>
 在Mybatis中它把持久层的操作接口名称和映射文件也叫做：Mapper<br>
 所以：IUserDao 和 IUserMapper是一样的<br>
 <strong>第二个：</strong> 在idea中创建目录的时候，它和包是不一样的<br>
-包*（Package）<em>在创建时：com.itheima.dao它是三级结构<br>
-目录</em>（Directory）*在创建时：com.itheima.dao是一级目录<br>
+包 <em>（Package）</em> 在创建时：com.itheima.dao它是三级结构<br>
+目录 <em>（Directory）</em> 在创建时：com.itheima.dao是一级目录<br>
 <strong>第三个：</strong> mybatis的映射配置文件位置必须和dao接口的包结构相同<br>
 <strong>第四个：</strong> 映射配置文件的mapper标签namespace属性的取值必须是dao接口的全限定类名<br>
 <strong>第五个：</strong> 映射配置文件的操作配置（select），id属性的取值必须是dao接口的方法名</p>
