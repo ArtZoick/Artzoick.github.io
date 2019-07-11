@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title> MyBatis_3	连接池、事务控制、动态SQL | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562809034867">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562809646836">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -29,7 +29,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562809034867" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562809646836" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -127,11 +127,12 @@
 　　不考虑隔离性会产生的3个问题<br>
 　　解决办法：四种隔离级别</p>
 <p>它是通过sqlsession对象的commit方法和rollback方法实现事务的提交和回滚</p>
-<h2 id="if标签的使用">if标签的使用</h2>
-<h3 id="1接口中定义">1.接口中定义</h3>
+<h2 id="动态sql">动态SQL</h2>
+<h3 id="if标签的使用">if标签的使用</h3>
+<h4 id="1接口中定义">1.接口中定义</h4>
 <pre><code class="language-java"> List&lt;User&gt; findByCondition(User user);
 </code></pre>
-<h3 id="2mapper中定义">2.mapper中定义</h3>
+<h4 id="2mapper中定义">2.mapper中定义</h4>
 <pre><code class="language-xml">&lt;select id=&quot;findByCondition&quot; resultMap=&quot;userMap&quot; parameterType=&quot;user&quot;&gt;
         select * from user where 1=1
         &lt;if test=&quot;userName != null&quot;&gt;
@@ -220,14 +221,14 @@ public class QueryVo {
         }
     }
 </code></pre>
-<h2 id="抽取重复的sql">抽取重复的sql</h2>
-<h3 id="1定义">1.定义</h3>
+<h3 id="抽取重复的sql">抽取重复的sql</h3>
+<h4 id="1定义">1.定义</h4>
 <pre><code class="language-xml">&lt;!--抽取重复的sql语句--&gt;
     &lt;sql id=&quot;defaultUser&quot;&gt;
         select * from user
     &lt;/sql&gt;
 </code></pre>
-<h3 id="2使用">2.使用</h3>
+<h4 id="2使用">2.使用</h4>
 <pre><code class="language-xml">&lt;include refid=&quot;defaultUser&quot;&gt;&lt;/include&gt;
 </code></pre>
 <pre><code class="language-xml"> &lt;!--抽取重复的sql语句--&gt;
@@ -240,7 +241,7 @@ public class QueryVo {
         &lt;include refid=&quot;defaultUser&quot;/&gt;
     &lt;/select&gt;
 </code></pre>
-<p>**注意：**尽量不要使用分号，sql语句可能会拼接</p>
+<p><strong>注意：</strong> 尽量不要使用分号，sql语句可能会拼接</p>
 <hr>
 
             </div>
