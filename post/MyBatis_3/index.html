@@ -3,8 +3,8 @@
     <meta charset="utf-8" />
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MyBatis_3	动态SQL | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562721426122">
+<title> MyBatis_3	连接池、事务控制、动态SQL | 清汤牛肉锅</title>
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1562809034867">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -29,7 +29,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562721426122" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1562809034867" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -89,7 +89,7 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              MyBatis_3	动态SQL
+               MyBatis_3	连接池、事务控制、动态SQL
             </h2>
             <div class="post-info">
               <time class="post-time">
@@ -107,89 +107,119 @@
             </div>
             
             <div class="post-content">
-              <h2 id="if标签的使用">if标签的使用</h2>
+              <h2 id="连接池">连接池</h2>
+<p><strong>１、连接池：</strong><br>
+　　　　在实际开发中都会使用连接池<br>
+　　　　因为它可以减少我们获取连接所消耗的时间</p>
+<p><strong>２、mybatis中的连接池：</strong><br>
+　　　　mybatis连接池提供了3种配置方式：<br>
+　　　　配置的位置：<br>
+　　　　　　主配置文件SqlMapConfig.xml中的dataSource标签，type属性就是表示采用何种连接池方式。<br>
+　　　　type属性的值：<br>
+　　　　　　<em><strong>POOLED</strong></em>　　采用传统的javax.sql.DataSource规范中的连接池，mybatis中有针对规范的实现<br>
+　　　　　　<em><strong>UNPOOLED</strong></em>　采用传统的获取连接的方式，虽然也实现javax.sql.DataSource接口，但是并没有使用池的思想<br>
+　　　　　　<em><strong>JNDI</strong></em>　　　采用服务器提供的JNDI技术实现，来获取DataSource对象，不同的服务器所能拿到DataSource是不一样的
+　　　　注意：如果不是web或者maven的war工程，是不能使用的<br>
+　　　　　　学习时使用的时tomcat服务器，采用的连接池就是dbcp连接池</p>
+<h2 id="mybatis中的事务">MyBatis中的事务</h2>
+<p>什么是事务<br>
+　　事务的四大特性ACID<br>
+　　不考虑隔离性会产生的3个问题<br>
+　　解决办法：四种隔离级别</p>
+<p>它是通过sqlsession对象的commit方法和rollback方法实现事务的提交和回滚</p>
+<h2 id="if标签的使用">if标签的使用</h2>
 <h3 id="1接口中定义">1.接口中定义</h3>
 <pre><code class="language-java"> List&lt;User&gt; findByCondition(User user);
 </code></pre>
 <h3 id="2mapper中定义">2.mapper中定义</h3>
-<pre><code class="language-xml">&lt;select id=&quot;findByCondition&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;com.daniel.domain.User&quot;&gt;
+<pre><code class="language-xml">&lt;select id=&quot;findByCondition&quot; resultMap=&quot;userMap&quot; parameterType=&quot;user&quot;&gt;
         select * from user where 1=1
-        &lt;if test=&quot;username!=null&quot;&gt;
-            and username=#{username}
+        &lt;if test=&quot;userName != null&quot;&gt;
+            and username = #{userName}
         &lt;/if&gt;
+        &lt;if test=&quot;userSex != null&quot;&gt;
+            and sex = #{userSex}
+        &lt;/if&gt;    
 &lt;/select&gt;
 </code></pre>
-<h3 id="3测试代码">3.测试代码</h3>
-<pre><code class="language-java">@Test
-    public void findByCondition(){
-        User u =new User();
-        u.setUsername(&quot;老王&quot;);
+<p>其中： <if test="userName != null">这条语句中，userName值得是实体类中的属性名， and username = #{userName}这里是将实体类的userName传给数据库的username</p>
+<h3 id="3测试类中测试">3.测试类中测试</h3>
+<pre><code class="language-java">/**
+     * 测试findByCondition
+     * @throws IOException
+     */
+    @Test
+    public void testFindByCondiion() throws Exception {
+        User u = new User();
+        u.setUserName(&quot;zoick&quot;);
+//        u.setUserSex(&quot;女&quot;);
+        init();
+        //5.使用代理对象执行方法
         List&lt;User&gt; users = userDao.findByCondition(u);
-        for (User user:users
-        ) {
+        for (User user : users) {
             System.out.println(user);
         }
-        sqlSession.commit();
     }
+
 </code></pre>
-<h3 id="4测试结果">4.测试结果</h3>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/3.png" alt=""></p>
 <h2 id="where和foreach标签的使用">where和foreach标签的使用</h2>
 <p>用于多个查询的sql<br>
-select * from user where id in(41,42,46)<br>
+select * from user where id in(41,42,45)<br>
 通过一个类中传入集合的方法<br>
 QueryVo类</p>
-<pre><code class="language-java">public class QueryVo {
-  
+<pre><code class="language-java">@Getter
+@Setter
+public class QueryVo {
+
+    private User user;
     private List&lt;Integer&gt; ids;
-
-    public List&lt;Integer&gt; getIds() {
-        return ids;
-    }
-
-    public void setIds(List&lt;Integer&gt; ids) {
-        this.ids = ids;
-    }
 }
+
 </code></pre>
 <h3 id="1接口中定义-2">1.接口中定义</h3>
-<pre><code class="language-java"> //根据QueryVo 中提供的id集合，查询用户信息
-    List&lt;User&gt; findByIds(QueryVo vo);
+<pre><code class="language-java">    /**
+     * 根据Queryvo中提供的id集合，查询用户信息
+     * @param vo
+     * @return
+     */
+    List&lt;User&gt; findUserInIds(QueryVo vo);
 </code></pre>
 <h3 id="2mapper中定义-2">2.mapper中定义</h3>
-<pre><code class="language-xml">&lt;select id=&quot;findByIds&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;com.daniel.domain.QueryVo&quot;&gt;
+<pre><code class="language-xml">&lt;!--根据queryvo中Id集合实现查询用户列表--&gt;
+    &lt;select id=&quot;findUserInIds&quot; resultMap=&quot;userMap&quot; parameterType=&quot;queryvo&quot;&gt;
         select * from user
         &lt;where&gt;
-              &lt;if test=&quot;ids != null and ids.size()&gt;0&quot;&gt;
-                  &lt;foreach collection=&quot;ids&quot; open=&quot;and id in (&quot; close=&quot;)&quot; item=&quot;uid&quot; separator=&quot;,&quot;&gt;
-                      #{uid}
-                  &lt;/foreach&gt;
-              &lt;/if&gt;
+            &lt;if test=&quot;ids != null and ids.size()&gt;0&quot;&gt;
+                &lt;foreach collection=&quot;ids&quot; open=&quot;and id in (&quot; close=&quot;)&quot; item=&quot;uuuuid&quot; separator=&quot;,&quot;&gt;
+                    #{uuuuid}
+                &lt;/foreach&gt;
+            &lt;/if&gt;
         &lt;/where&gt;
-
     &lt;/select&gt;
 </code></pre>
-<p>第一次测试了很久都报错<br>
-注意if标签中的内容都是来源于parameterType! 参数</p>
-<h3 id="3测试代码-2">3.测试代码</h3>
-<pre><code class="language-java"> @Test
-    public void findByIds(){
-        QueryVo queryVo = new QueryVo();
+<p>注意if标签中的内容都是来源于parameterType参数</p>
+<h3 id="3测试代码">3.测试代码</h3>
+<pre><code class="language-java">/**
+     * 测试foreach标签的使用
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testFindInIds () throws Exception {
+        QueryVo vo = new QueryVo();
         List&lt;Integer&gt; list = new ArrayList&lt;Integer&gt;();
         list.add(41);
         list.add(42);
-        list.add(46);
-        queryVo.setIds(list);
-
-        List&lt;User&gt; users = userDao.findByIds(queryVo);
-        for (User user:users) {
+        list.add(45);
+        vo.setIds(list);
+        init();
+        //5.使用代理对象执行方法
+        List&lt;User&gt; users = userDao.findUserInIds(vo);
+        for (User user : users) {
             System.out.println(user);
         }
-        sqlSession.commit();
     }
 </code></pre>
-<h3 id="4测试结果-2">4.测试结果</h3>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/4.png" alt=""></p>
 <h2 id="抽取重复的sql">抽取重复的sql</h2>
 <h3 id="1定义">1.定义</h3>
 <pre><code class="language-xml">&lt;!--抽取重复的sql语句--&gt;
@@ -200,26 +230,18 @@ QueryVo类</p>
 <h3 id="2使用">2.使用</h3>
 <pre><code class="language-xml">&lt;include refid=&quot;defaultUser&quot;&gt;&lt;/include&gt;
 </code></pre>
-<pre><code class="language-xml">!--抽取重复的sql语句--&gt;
+<pre><code class="language-xml"> &lt;!--抽取重复的sql语句--&gt;
     &lt;sql id=&quot;defaultUser&quot;&gt;
         select * from user
     &lt;/sql&gt;
 
-    &lt;select id=&quot;findByIds&quot; resultType=&quot;com.daniel.domain.User&quot; parameterType=&quot;com.daniel.domain.QueryVo&quot;&gt;
-
-        &lt;include refid=&quot;defaultUser&quot;&gt;&lt;/include&gt;
-        &lt;where&gt;
-              &lt;if test=&quot;ids != null and ids.size()&gt;0&quot;&gt;
-                  &lt;foreach collection=&quot;ids&quot; open=&quot;and id in (&quot; close=&quot;)&quot; item=&quot;uid&quot; separator=&quot;,&quot;&gt;
-                      #{uid}
-                  &lt;/foreach&gt;
-              &lt;/if&gt;
-        &lt;/where&gt;
-
+    &lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;userMap&quot;&gt;
+        &lt;include refid=&quot;defaultUser&quot;/&gt;
     &lt;/select&gt;
 </code></pre>
-<h2 id="个人总结">个人总结</h2>
-<p>建议在mapper中写的sql语句不要带 分号； 以便于拼接</p>
+<p>**注意：**尽量不要使用分号，sql语句可能会拼接</p>
+<hr>
 
             </div>
           </article>
