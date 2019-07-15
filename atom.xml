@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-15T07:07:41.599Z</updated>
+    <updated>2019-07-15T14:43:57.379Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -209,65 +209,39 @@
         <link href="https://ArtZoick.github.io//post/MyBatis_6">
         </link>
         <updated>2019-07-03T14:53:40.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="注解开发的crud">注解开发的crud</h1>
-<h2 id="1iuserdao接口中使用注解">1.IUserDao接口中使用注解</h2>
-<pre><code class="language-java">public interface IUserDao {
+        <content type="html"><![CDATA[<pre><code>@Delete(&quot;delete from user where id=#{id} &quot;)
+void deleteUser(Integer userId);
 
-    /**
-     * 查询所有用户
-     * @return
-     */
-    @Select(&quot;select * from user&quot;)
-    List&lt;User&gt; findAll();
+/**
+ * 根据id查询用户
+ * @param userId
+ * @return
+ */
+@Select(&quot;select * from user  where id=#{id} &quot;)
+User findById(Integer userId);
 
-    /**
-     * 保存用户
-     * @param user
-     */
-    @Insert(&quot;insert into user(username,address,sex,birthday)values(#{username},#{address},#{sex},#{birthday})&quot;)
-    void saveUser(User user);
-
-    /**
-     * 更新用户
-     * @param user
-     */
-    @Update(&quot;update user set username=#{username},sex=#{sex},birthday=#{birthday},address=#{address} where id=#{id}&quot;)
-    void updateUser(User user);
-
-    /**
-     * 删除用户
-     * @param userId
-     */
-    @Delete(&quot;delete from user where id=#{id} &quot;)
-    void deleteUser(Integer userId);
-
-    /**
-     * 根据id查询用户
-     * @param userId
-     * @return
-     */
-    @Select(&quot;select * from user  where id=#{id} &quot;)
-    User findById(Integer userId);
-
-    /**
-     * 根据用户名称模糊查询
-     * @param username
-     * @return
-     */
-//    @Select(&quot;select * from user where username like #{username} &quot;)
-    @Select(&quot;select * from user where username like '%${value}%' &quot;)
-    List&lt;User&gt; findUserByName(String username);
-
-    /**
-     * 查询总用户数量
-     * @return
-     */
-    @Select(&quot;select count(*) from user &quot;)
-    int findTotalUser();
-}
+/**
+ * 根据用户名称模糊查询
+ * @param username
+ * @return
+ */
 </code></pre>
-<h2 id="2测试类">2.测试类</h2>
-<pre><code class="language-java">public class AnnotationCRUDTest {
+<p>//    @Select(&quot;select * from user where username like #{username} &quot;)
+@Select(&quot;select * from user where username like '%${value}%' &quot;)
+List<User> findUserByName(String username);</p>
+<pre><code>/**
+ * 查询总用户数量
+ * @return
+ */
+@Select(&quot;select count(*) from user &quot;)
+int findTotalUser();
+</code></pre>
+<p>}</p>
+<pre><code>
+## 2.测试类
+
+```java
+public class AnnotationCRUDTest {
     private InputStream in;
     private SqlSessionFactory factory;
     private SqlSession session;
@@ -425,7 +399,7 @@
 查询用户信息的时候 返回用户的账户信息<br>
 因为一个用户对应多个用户的账户信息</p>
 <p>使用的是延迟加载</p>
-<h3 id="1iuserdao接口中使用注解-2">1.IUserDao接口中使用注解</h3>
+<h3 id="1iuserdao接口中使用注解">1.IUserDao接口中使用注解</h3>
 <pre><code class="language-java">public interface IUserDao {
 
     /**
@@ -491,58 +465,21 @@
         <link href="https://ArtZoick.github.io//post/MyBatis_5">
         </link>
         <updated>2019-07-03T14:52:49.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="一对一延迟加载">一对一延迟加载</h2>
-<h3 id="1在sqlmapconfigxml中配置setting标签">1.在SqlMapConfig.xml中配置setting标签</h3>
-<p>详情看中文官网（http://www.mybatis.org/mybatis-3/zh/configuration.html#settings）</p>
-<pre><code class="language-xml">&lt;settings&gt;
-        &lt;!-- 配置全局缓存--&gt;
-        &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;true&quot;/&gt;
-
-        &lt;setting name=&quot;aggressiveLazyLoading&quot; value=&quot;true&quot;/&gt;
-    &lt;/settings&gt;
-</code></pre>
-<h3 id="2在iaccoutdaoxml中配置association标签">2.在IAccoutDao.xml中配置association标签</h3>
-<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
-    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
-        &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
-
-        &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
-        &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
-
-        &lt;!--一对一的关系映射，配置封装user的内容
-        select属性的内容，查询用户的唯一标识符
-        column属性的内容:用户根据id查询时，所需要参数的值--&gt;
-        &lt;association property=&quot;user&quot; column=&quot;uid&quot; javaType=&quot;User&quot; select=&quot;com.daniel.dao.IUserDao.findById&quot;&gt;
-            &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
-            &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
-        &lt;/association&gt;
-    &lt;/resultMap&gt;
-
-    &lt;select id=&quot;findAll&quot; resultMap=&quot;accountUserMap&quot;&gt;
-        select * from  account
-    &lt;/select&gt;
-</code></pre>
-<h3 id="3测试类">3.测试类</h3>
-<pre><code class="language-java"> @Test
-    public void findAll(){
-        List&lt;Account&gt; accounts = accoutDao.findAll();
-        for (Account account:
-             accounts) {
-            System.out.println(&quot;每一个account的信息&quot;);
-            System.out.println(account);
-            System.out.println(account.getUser());
-        }
+        <content type="html"><![CDATA[<pre><code>        System.out.println(&quot;每一个account的信息&quot;);
+        System.out.println(account);
+        System.out.println(account.getUser());
     }
+}
 </code></pre>
-<h3 id="4成功运行">4.成功运行</h3>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/12.png" alt=""></p>
-<h2 id="一对多延迟加载">一对多延迟加载</h2>
-<p>和一对一没有太多区别</p>
-<h3 id="2在iuserdaoxml中配置collection标签">2.在IUserDao.xml中配置collection标签</h3>
-<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+<pre><code>
+## 一对多延迟加载
+
+和一对一没有太多区别
+
+### 2.在IUserDao.xml中配置collection标签
+
+```xml
+&lt;!--定义封装account和user的resultMap--&gt;
     &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
          &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
         &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
@@ -561,9 +498,33 @@
     &lt;/resultMap&gt;
 </code></pre>
 <h1 id="缓存">缓存</h1>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/13.png" alt=""></p>
+<p>2、mybatis中的缓存<br>
+　　　　什么是缓存<br>
+　　　　　　存在于内存中的临时数据
+　　　　为什么使用缓存<br>
+　　　　　　减少与数据库的交互次数，提高执行效率。
+　　　　什么样的数据能使用缓存，什么样的数据不能使用<br>
+　　　　　　适用于缓存：<br>
+　　　　　　　　经常查询并且不经常改变的。<br>
+　　　　　　　　数据的正确与否对最终结果影响不大的<br>
+　　　　　　不适用于缓存：<br>
+　　　　　　　　经常改变的数据。<br>
+　　　　　　　　数据的正确与否对最终结果影响很大的。如，商品库存，银行汇率，股市牌价。<br>
+mybatis中的一级缓存和二级缓存<br>
+一级缓存：<br>
+　　　　它指的是mybatis中SqlSession对象的缓存。<br>
+　　　　当我们执行查询的时候，查询的结果会同时存入到SqlSession为我们提供的一块区域中。<br>
+　　　　该区域的结构是一个Map。当我们再次查询同样的数据，mybatis会先去查询SqlSession中是否有，有的话直接拿来用。<br>
+　　　　当SqlSession对象消失时，mybatis的一级缓存也就消失了。</p>
+<p>二级缓存：<br>
+　　　　它指的是mybatis中SqlSessionFactory对象的缓存。由同一个SqlSessionFactory对象创建的SqlSession共享其缓存。</p>
+<p>二级缓存的使用步骤：<br>
+　　　　　　　　第一步：让mybatis框架支持二级缓存（在SqlMapConfig.xml中配置）<br>
+　　　　　　　　第二步：让当前的映射文件支持二级缓存（在IUserDao.xml中配置）
+　　　　　　　　第三步：让当前的操作支持二级缓存（在select标签中配置）　 x</p>
 <h2 id="一级缓存">一级缓存</h2>
 <p>其实mybatis中默认就是一级缓存了（平时的测试类就是一级缓存存在SqlSession中）</p>
+<p><strong>一级缓存是SqlSession范围的缓存，当调用SqlSession的修改，添加，删除，commit()，close()等方法时，就会清空一级缓存。</strong></p>
 <h2 id="二级缓存">二级缓存</h2>
 <h3 id="1sqlmaoconfigxml中">1.SqlMaoConfig.xml中</h3>
 <pre><code class="language-xml">&lt;settings&gt;
@@ -579,7 +540,7 @@
         select * from user where id = #{uid}
     &lt;/select&gt;
 </code></pre>
-<h3 id="3测试类-2">3.测试类</h3>
+<h3 id="3测试类">3.测试类</h3>
 <pre><code class="language-java">public class SecondLevelCacheTest {
 
     private InputStream in;
@@ -621,7 +582,6 @@
 
 }
 </code></pre>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/14.png" alt=""></p>
 <p>注意：<br>
 从图中可以看出来第二次findbyId根本没有走数据库（数据都是从SqlSessionFactory的二级缓存中拿的 不是对象！）</p>
 <hr>

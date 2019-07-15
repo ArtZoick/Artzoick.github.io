@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MyBatis_5	延迟加载 缓存  | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563174432210">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563201835120">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -29,7 +29,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563174432210" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563201835120" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -107,58 +107,21 @@
             </div>
             
             <div class="post-content">
-              <h2 id="一对一延迟加载">一对一延迟加载</h2>
-<h3 id="1在sqlmapconfigxml中配置setting标签">1.在SqlMapConfig.xml中配置setting标签</h3>
-<p>详情看中文官网（http://www.mybatis.org/mybatis-3/zh/configuration.html#settings）</p>
-<pre><code class="language-xml">&lt;settings&gt;
-        &lt;!-- 配置全局缓存--&gt;
-        &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;true&quot;/&gt;
-
-        &lt;setting name=&quot;aggressiveLazyLoading&quot; value=&quot;true&quot;/&gt;
-    &lt;/settings&gt;
-</code></pre>
-<h3 id="2在iaccoutdaoxml中配置association标签">2.在IAccoutDao.xml中配置association标签</h3>
-<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
-    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
-        &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
-
-        &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
-        &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
-
-        &lt;!--一对一的关系映射，配置封装user的内容
-        select属性的内容，查询用户的唯一标识符
-        column属性的内容:用户根据id查询时，所需要参数的值--&gt;
-        &lt;association property=&quot;user&quot; column=&quot;uid&quot; javaType=&quot;User&quot; select=&quot;com.daniel.dao.IUserDao.findById&quot;&gt;
-            &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
-            &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
-        &lt;/association&gt;
-    &lt;/resultMap&gt;
-
-    &lt;select id=&quot;findAll&quot; resultMap=&quot;accountUserMap&quot;&gt;
-        select * from  account
-    &lt;/select&gt;
-</code></pre>
-<h3 id="3测试类">3.测试类</h3>
-<pre><code class="language-java"> @Test
-    public void findAll(){
-        List&lt;Account&gt; accounts = accoutDao.findAll();
-        for (Account account:
-             accounts) {
-            System.out.println(&quot;每一个account的信息&quot;);
-            System.out.println(account);
-            System.out.println(account.getUser());
-        }
+              <pre><code>        System.out.println(&quot;每一个account的信息&quot;);
+        System.out.println(account);
+        System.out.println(account.getUser());
     }
+}
 </code></pre>
-<h3 id="4成功运行">4.成功运行</h3>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/12.png" alt=""></p>
-<h2 id="一对多延迟加载">一对多延迟加载</h2>
-<p>和一对一没有太多区别</p>
-<h3 id="2在iuserdaoxml中配置collection标签">2.在IUserDao.xml中配置collection标签</h3>
-<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+<pre><code>
+## 一对多延迟加载
+
+和一对一没有太多区别
+
+### 2.在IUserDao.xml中配置collection标签
+
+```xml
+&lt;!--定义封装account和user的resultMap--&gt;
     &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
          &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
         &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
@@ -177,9 +140,33 @@
     &lt;/resultMap&gt;
 </code></pre>
 <h1 id="缓存">缓存</h1>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/13.png" alt=""></p>
+<p>2、mybatis中的缓存<br>
+　　　　什么是缓存<br>
+　　　　　　存在于内存中的临时数据
+　　　　为什么使用缓存<br>
+　　　　　　减少与数据库的交互次数，提高执行效率。
+　　　　什么样的数据能使用缓存，什么样的数据不能使用<br>
+　　　　　　适用于缓存：<br>
+　　　　　　　　经常查询并且不经常改变的。<br>
+　　　　　　　　数据的正确与否对最终结果影响不大的<br>
+　　　　　　不适用于缓存：<br>
+　　　　　　　　经常改变的数据。<br>
+　　　　　　　　数据的正确与否对最终结果影响很大的。如，商品库存，银行汇率，股市牌价。<br>
+mybatis中的一级缓存和二级缓存<br>
+一级缓存：<br>
+　　　　它指的是mybatis中SqlSession对象的缓存。<br>
+　　　　当我们执行查询的时候，查询的结果会同时存入到SqlSession为我们提供的一块区域中。<br>
+　　　　该区域的结构是一个Map。当我们再次查询同样的数据，mybatis会先去查询SqlSession中是否有，有的话直接拿来用。<br>
+　　　　当SqlSession对象消失时，mybatis的一级缓存也就消失了。</p>
+<p>二级缓存：<br>
+　　　　它指的是mybatis中SqlSessionFactory对象的缓存。由同一个SqlSessionFactory对象创建的SqlSession共享其缓存。</p>
+<p>二级缓存的使用步骤：<br>
+　　　　　　　　第一步：让mybatis框架支持二级缓存（在SqlMapConfig.xml中配置）<br>
+　　　　　　　　第二步：让当前的映射文件支持二级缓存（在IUserDao.xml中配置）
+　　　　　　　　第三步：让当前的操作支持二级缓存（在select标签中配置）　 x</p>
 <h2 id="一级缓存">一级缓存</h2>
 <p>其实mybatis中默认就是一级缓存了（平时的测试类就是一级缓存存在SqlSession中）</p>
+<p><strong>一级缓存是SqlSession范围的缓存，当调用SqlSession的修改，添加，删除，commit()，close()等方法时，就会清空一级缓存。</strong></p>
 <h2 id="二级缓存">二级缓存</h2>
 <h3 id="1sqlmaoconfigxml中">1.SqlMaoConfig.xml中</h3>
 <pre><code class="language-xml">&lt;settings&gt;
@@ -195,7 +182,7 @@
         select * from user where id = #{uid}
     &lt;/select&gt;
 </code></pre>
-<h3 id="3测试类-2">3.测试类</h3>
+<h3 id="3测试类">3.测试类</h3>
 <pre><code class="language-java">public class SecondLevelCacheTest {
 
     private InputStream in;
@@ -237,7 +224,6 @@
 
 }
 </code></pre>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/14.png" alt=""></p>
 <p>注意：<br>
 从图中可以看出来第二次findbyId根本没有走数据库（数据都是从SqlSessionFactory的二级缓存中拿的 不是对象！）</p>
 <hr>

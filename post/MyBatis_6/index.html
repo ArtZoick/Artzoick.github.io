@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MyBatis_6	注解开发 | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563174432210">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563201835120">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -29,7 +29,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563174432210" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563201835120" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -107,65 +107,39 @@
             </div>
             
             <div class="post-content">
-              <h1 id="注解开发的crud">注解开发的crud</h1>
-<h2 id="1iuserdao接口中使用注解">1.IUserDao接口中使用注解</h2>
-<pre><code class="language-java">public interface IUserDao {
+              <pre><code>@Delete(&quot;delete from user where id=#{id} &quot;)
+void deleteUser(Integer userId);
 
-    /**
-     * 查询所有用户
-     * @return
-     */
-    @Select(&quot;select * from user&quot;)
-    List&lt;User&gt; findAll();
+/**
+ * 根据id查询用户
+ * @param userId
+ * @return
+ */
+@Select(&quot;select * from user  where id=#{id} &quot;)
+User findById(Integer userId);
 
-    /**
-     * 保存用户
-     * @param user
-     */
-    @Insert(&quot;insert into user(username,address,sex,birthday)values(#{username},#{address},#{sex},#{birthday})&quot;)
-    void saveUser(User user);
-
-    /**
-     * 更新用户
-     * @param user
-     */
-    @Update(&quot;update user set username=#{username},sex=#{sex},birthday=#{birthday},address=#{address} where id=#{id}&quot;)
-    void updateUser(User user);
-
-    /**
-     * 删除用户
-     * @param userId
-     */
-    @Delete(&quot;delete from user where id=#{id} &quot;)
-    void deleteUser(Integer userId);
-
-    /**
-     * 根据id查询用户
-     * @param userId
-     * @return
-     */
-    @Select(&quot;select * from user  where id=#{id} &quot;)
-    User findById(Integer userId);
-
-    /**
-     * 根据用户名称模糊查询
-     * @param username
-     * @return
-     */
-//    @Select(&quot;select * from user where username like #{username} &quot;)
-    @Select(&quot;select * from user where username like '%${value}%' &quot;)
-    List&lt;User&gt; findUserByName(String username);
-
-    /**
-     * 查询总用户数量
-     * @return
-     */
-    @Select(&quot;select count(*) from user &quot;)
-    int findTotalUser();
-}
+/**
+ * 根据用户名称模糊查询
+ * @param username
+ * @return
+ */
 </code></pre>
-<h2 id="2测试类">2.测试类</h2>
-<pre><code class="language-java">public class AnnotationCRUDTest {
+<p>//    @Select(&quot;select * from user where username like #{username} &quot;)
+@Select(&quot;select * from user where username like '%${value}%' &quot;)
+List<User> findUserByName(String username);</p>
+<pre><code>/**
+ * 查询总用户数量
+ * @return
+ */
+@Select(&quot;select count(*) from user &quot;)
+int findTotalUser();
+</code></pre>
+<p>}</p>
+<pre><code>
+## 2.测试类
+
+```java
+public class AnnotationCRUDTest {
     private InputStream in;
     private SqlSessionFactory factory;
     private SqlSession session;
@@ -323,7 +297,7 @@
 查询用户信息的时候 返回用户的账户信息<br>
 因为一个用户对应多个用户的账户信息</p>
 <p>使用的是延迟加载</p>
-<h3 id="1iuserdao接口中使用注解-2">1.IUserDao接口中使用注解</h3>
+<h3 id="1iuserdao接口中使用注解">1.IUserDao接口中使用注解</h3>
 <pre><code class="language-java">public interface IUserDao {
 
     /**
