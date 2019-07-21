@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-18T09:08:44.413Z</updated>
+    <updated>2019-07-21T10:45:49.211Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -28,9 +28,9 @@
 <p>使用Java语言基本上都是开发B/S架构的程序，B/S架构又分成了三层架构</p>
 </li>
 <li>
-<p>三层架构
-表现层：WEB层，用来和客户端进行数据交互的。表现层一般会采用MVC的设计模型
-业务层：处理具体的业务逻辑的
+<p>三层架构<br>
+表现层：WEB层，用来和客户端进行数据交互的。表现层一般会采用MVC的设计模型<br>
+业务层：处理具体的业务逻辑的<br>
 持久层：用来操作数据库的</p>
 </li>
 </ol>
@@ -530,7 +530,7 @@
         </link>
         <updated>2019-07-03T14:52:49.000Z</updated>
         <content type="html"><![CDATA[<h1 id="mybatis_5延迟加载-缓存">MyBatis_5	延迟加载 缓存</h1>
-<p>1、mybatis中的延迟加载
+<p>1、mybatis中的延迟加载<br>
 　　　　问题：在一对多中，当我们有一个用户，它有100个账户。<br>
 　　　　　　　在查询用户的时候，要不要把关联的账户查出来？<br>
 　　　　　　　在查询账户的时候，要不要把关联的用户查出来？<br>
@@ -613,9 +613,9 @@
 <h1 id="缓存">缓存</h1>
 <p>2、mybatis中的缓存<br>
 　　　　什么是缓存<br>
-　　　　　　存在于内存中的临时数据
+　　　　　　存在于内存中的临时数据<br>
 　　　　为什么使用缓存<br>
-　　　　　　减少与数据库的交互次数，提高执行效率。
+　　　　　　减少与数据库的交互次数，提高执行效率。<br>
 　　　　什么样的数据能使用缓存，什么样的数据不能使用<br>
 　　　　　　适用于缓存：<br>
 　　　　　　　　经常查询并且不经常改变的。<br>
@@ -633,7 +633,7 @@ mybatis中的一级缓存和二级缓存<br>
 　　　　它指的是mybatis中SqlSessionFactory对象的缓存。由同一个SqlSessionFactory对象创建的SqlSession共享其缓存。</p>
 <p>二级缓存的使用步骤：<br>
 　　　　　　　　第一步：让mybatis框架支持二级缓存（在SqlMapConfig.xml中配置）<br>
-　　　　　　　　第二步：让当前的映射文件支持二级缓存（在IUserDao.xml中配置）
+　　　　　　　　第二步：让当前的映射文件支持二级缓存（在IUserDao.xml中配置）<br>
 　　　　　　　　第三步：让当前的操作支持二级缓存（在select标签中配置）　 x</p>
 <h2 id="一级缓存">一级缓存</h2>
 <p>其实mybatis中默认就是一级缓存了（平时的测试类就是一级缓存存在SqlSession中）</p>
@@ -974,7 +974,7 @@ public class Role implements Serializable {
 </code></pre>
 <h3 id="5成功运行实现上述功能-2">5.成功运行（实现上述功能）</h3>
 <h3 id=""><img src="https://ArtZoick.github.io//post-images/mybatis/10_1.png" alt=""></h3>
-<h3 id="同理可得用户的全部信息与用户的角色">===同理可得用户的全部信息与用户的角色===</h3>
+<h3 id="同理可得用户的全部信息与用户的角色">=<mark>同理可得用户的全部信息与用户的角色</mark>=</h3>
 <h4 id="sql语句">sql语句</h4>
 <pre><code class="language-sql">select u.*, r.id as rid,r.role_name,r.role_desc from user u
 left outer join user_role ur on u.id = ur.uid
@@ -1067,7 +1067,7 @@ public class User implements Serializable {
 　　　　type属性的值：<br>
 　　　　　　<em><strong>POOLED</strong></em>　　采用传统的javax.sql.DataSource规范中的连接池，mybatis中有针对规范的实现<br>
 　　　　　　<em><strong>UNPOOLED</strong></em>　采用传统的获取连接的方式，虽然也实现javax.sql.DataSource接口，但是并没有使用池的思想<br>
-　　　　　　<em><strong>JNDI</strong></em>　　　采用服务器提供的JNDI技术实现，来获取DataSource对象，不同的服务器所能拿到DataSource是不一样的
+　　　　　　<em><strong>JNDI</strong></em>　　　采用服务器提供的JNDI技术实现，来获取DataSource对象，不同的服务器所能拿到DataSource是不一样的<br>
 　　　　注意：如果不是web或者maven的war工程，是不能使用的<br>
 　　　　　　学习时使用的时tomcat服务器，采用的连接池就是dbcp连接池</p>
 <h2 id="mybatis中的事务">MyBatis中的事务</h2>
@@ -1669,8 +1669,8 @@ public class MybatisTest {
         </link>
         <updated>2019-07-03T14:06:19.000Z</updated>
         <content type="html"><![CDATA[<h2 id="1-什么是框架">1、什么是框架？</h2>
-<p>它是我们软件开发中的一套解决方案，不同的框架解决的是不同的问题
-使用框架的好处：
+<p>它是我们软件开发中的一套解决方案，不同的框架解决的是不同的问题<br>
+使用框架的好处：<br>
 框架封装了很多的细节，使开发者可以使用极简的方式实现功能。大大提高开发效率。</p>
 <h2 id="2-三层架构">2、三层架构</h2>
 <p><strong>表现层：</strong><br>
@@ -1699,7 +1699,7 @@ JDBC是规范</p>
 Object Relational Mappging 对象关系映射<br>
 简单的说：就是把数据库表和实体类及实体类的属性对应起来，让我们可以操作实体类就实现操作数据库表。<br>
 user					User<br>
-id						userId
+id						userId<br>
 user_name	userName</p>
 <p>我们需要做到<br>
 <em>实体类中的属性和数据库表的字段名称保持一致。</em></p>
@@ -1799,10 +1799,10 @@ interface　　SqlSession　　自定义MYbatis中和数据库交互的核心类
 <p><img src="https://ArtZoick.github.io//post-images/mybatis/2_2.png" alt=""></p>
 <p>Project结构：</p>
 <p><img src="https://ArtZoick.github.io//post-images/mybatis/2_1.png" alt=""></p>
-<p>1.读取配置文件用io包里的Resources
-2.读出所需要的信息交给SqlSessionFactoryBuilder构建者
-3.构建者使用工具类XMLConfigBuilder构建出DefaultSqlsessionFactory工厂对象，xml读取的信息保存在Configuration里
-4.工厂里的openSession提供了Sqlsession方法
+<p>1.读取配置文件用io包里的Resources<br>
+2.读出所需要的信息交给SqlSessionFactoryBuilder构建者<br>
+3.构建者使用工具类XMLConfigBuilder构建出DefaultSqlsessionFactory工厂对象，xml读取的信息保存在Configuration里<br>
+4.工厂里的openSession提供了Sqlsession方法<br>
 5.再在SqlSession里实现创建代理对象和查询所有的功能</p>
 <p>测试类</p>
 <pre><code class="language-java">package top.zoick.test;

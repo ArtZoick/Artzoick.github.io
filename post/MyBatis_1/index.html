@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MyBatis_1	简介 | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563440922301">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563705942594">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -29,7 +29,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563440922301" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563705942594" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -109,8 +109,8 @@
             
             <div class="post-content">
               <h2 id="1-什么是框架">1、什么是框架？</h2>
-<p>它是我们软件开发中的一套解决方案，不同的框架解决的是不同的问题
-使用框架的好处：
+<p>它是我们软件开发中的一套解决方案，不同的框架解决的是不同的问题<br>
+使用框架的好处：<br>
 框架封装了很多的细节，使开发者可以使用极简的方式实现功能。大大提高开发效率。</p>
 <h2 id="2-三层架构">2、三层架构</h2>
 <p><strong>表现层：</strong><br>
@@ -139,7 +139,7 @@ JDBC是规范</p>
 Object Relational Mappging 对象关系映射<br>
 简单的说：就是把数据库表和实体类及实体类的属性对应起来，让我们可以操作实体类就实现操作数据库表。<br>
 user					User<br>
-id						userId
+id						userId<br>
 user_name	userName</p>
 <p>我们需要做到<br>
 <em>实体类中的属性和数据库表的字段名称保持一致。</em></p>
@@ -239,10 +239,10 @@ interface　　SqlSession　　自定义MYbatis中和数据库交互的核心类
 <p><img src="https://ArtZoick.github.io//post-images/mybatis/2_2.png" alt=""></p>
 <p>Project结构：</p>
 <p><img src="https://ArtZoick.github.io//post-images/mybatis/2_1.png" alt=""></p>
-<p>1.读取配置文件用io包里的Resources
-2.读出所需要的信息交给SqlSessionFactoryBuilder构建者
-3.构建者使用工具类XMLConfigBuilder构建出DefaultSqlsessionFactory工厂对象，xml读取的信息保存在Configuration里
-4.工厂里的openSession提供了Sqlsession方法
+<p>1.读取配置文件用io包里的Resources<br>
+2.读出所需要的信息交给SqlSessionFactoryBuilder构建者<br>
+3.构建者使用工具类XMLConfigBuilder构建出DefaultSqlsessionFactory工厂对象，xml读取的信息保存在Configuration里<br>
+4.工厂里的openSession提供了Sqlsession方法<br>
 5.再在SqlSession里实现创建代理对象和查询所有的功能</p>
 <p>测试类</p>
 <pre><code class="language-java">package top.zoick.test;
