@@ -1,0 +1,523 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyBatis_6	注解开发 | 清汤牛肉锅</title>
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563709906014">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143265163-1');
+</script>
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://ArtZoick.github.io/">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563709906014" alt="">
+  </a>
+  <h1 class="site-title">
+    清汤牛肉锅
+  </h1>
+  <p class="site-description">
+    温故而知新
+
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/beef" class="menu">
+          牛肉锅
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              MyBatis_6	注解开发
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-03
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
+                  # 框架
+                </a>
+              
+                <a href="https://ArtZoick.github.io//tag/MyBatis" class="post-tag">
+                  # MyBatis
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>3、mybatis中的注解开发<br>
+　　　　环境搭建<br>
+　　　　单表CRUD操作（代理Dao方式）<br>
+　　　　多表查询操作<br>
+　　　　缓存的配置</p>
+<h1 id="注解开发的crud不建议使用">注解开发的crud（不建议使用）</h1>
+<h2 id="1iuserdao接口中使用注解">1.IUserDao接口中使用注解</h2>
+<pre><code class="language-java">public interface IUserDao {
+
+    /**
+     * 查询所有用户
+     * @return
+     */
+    @Select(&quot;select * from user&quot;)
+    List&lt;User&gt; findAll();
+
+    /**
+     * 保存用户
+     * @param user
+     */
+    @Insert(&quot;insert into user(username,address,sex,birthday)values(#{username},#{address},#{sex},#{birthday})&quot;)
+    void saveUser(User user);
+
+    /**
+     * 更新用户
+     * @param user
+     */
+    @Update(&quot;update user set username=#{username},sex=#{sex},birthday=#{birthday},address=#{address} where id=#{id}&quot;)
+    void updateUser(User user);
+
+    /**
+     * 删除用户
+     * @param userId
+     */
+    @Delete(&quot;delete from user where id=#{id} &quot;)
+    void deleteUser(Integer userId);
+
+    /**
+     * 根据id查询用户
+     * @param userId
+     * @return
+     */
+    @Select(&quot;select * from user  where id=#{id} &quot;)
+    User findById(Integer userId);
+
+    /**
+     * 根据用户名称模糊查询
+     * @param username
+     * @return
+     */
+//    @Select(&quot;select * from user where username like #{username} &quot;)
+    @Select(&quot;select * from user where username like '%${value}%' &quot;)
+    List&lt;User&gt; findUserByName(String username);
+
+    /**
+     * 查询总用户数量
+     * @return
+     */
+    @Select(&quot;select count(*) from user &quot;)
+    int findTotalUser();
+}
+</code></pre>
+<h2 id="2测试类">2.测试类</h2>
+<pre><code class="language-java">public class AnnotationCRUDTest {
+    private InputStream in;
+    private SqlSessionFactory factory;
+    private SqlSession session;
+    private IUserDao userDao;
+
+    @Before
+    public  void init()throws Exception{
+        in = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+        factory = new SqlSessionFactoryBuilder().build(in);
+        session = factory.openSession();
+        userDao = session.getMapper(IUserDao.class);
+    }
+
+    @After
+    public  void destroy()throws  Exception{
+        session.commit();
+        session.close();
+        in.close();
+    }
+
+
+    @Test
+    public void testSave(){
+        User user = new User();
+        user.setUsername(&quot;mybatis annotation&quot;);
+        user.setAddress(&quot;北京市昌平区&quot;);
+
+        userDao.saveUser(user);
+    }
+
+    @Test
+    public void testUpdate(){
+        User user = new User();
+        user.setId(57);
+        user.setUsername(&quot;mybatis annotation update&quot;);
+        user.setAddress(&quot;北京市海淀区&quot;);
+        user.setSex(&quot;男&quot;);
+        user.setBirthday(new Date());
+
+        userDao.updateUser(user);
+    }
+
+
+    @Test
+    public void testDelete(){
+        userDao.deleteUser(51);
+    }
+
+    @Test
+    public void testFindOne(){
+        User user = userDao.findById(57);
+        System.out.println(user);
+    }
+
+
+    @Test
+    public  void testFindByName(){
+//        List&lt;User&gt; users = userDao.findUserByName(&quot;%mybatis%&quot;);
+        List&lt;User&gt; users = userDao.findUserByName(&quot;mybatis&quot;);
+        for(User user : users){
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public  void testFindTotal(){
+        int total = userDao.findTotalUser();
+        System.out.println(total);
+    }
+}
+</code></pre>
+<h1 id="注解开发的多表查询">注解开发的多表查询</h1>
+<p>可以这么记忆：<br>
+你所需要对应的表是很多个注解用many<br>
+对应一个的话就用one</p>
+<p>demo功能阐述:<br>
+查询用户账户的时候 返回用户的信息<br>
+因为多个账户或者一个账户才对应一个用户</p>
+<h2 id="多对一一对一">多对一（一对一）</h2>
+<h3 id="1iaccountdao接口中使用注解">1.IAccountDao接口中使用注解</h3>
+<pre><code class="language-java">public interface IAccountDao {
+
+    /**
+     * 查询所有账户，并且获取每个账户所属的用户信息
+     * @return
+     */
+    @Select(&quot;select * from account&quot;)
+    @Results(id=&quot;accountMap&quot;,value = {
+            @Result(id=true,column = &quot;id&quot;,property = &quot;id&quot;),
+            @Result(column = &quot;uid&quot;,property = &quot;uid&quot;),
+            @Result(column = &quot;money&quot;,property = &quot;money&quot;),
+            //这个注解是引入主表        FetchType(加载时机)  EAGER(立即加载)
+            @Result(property = &quot;user&quot;,column = &quot;uid&quot;,one=@One(select=&quot;com.itheima.dao.IUserDao.findById&quot;,fetchType= FetchType.EAGER))
+    })
+    List&lt;Account&gt; findAll();
+
+    /**
+     * 根据用户id查询账户信息
+     * @param userId
+     * @return
+     */
+    @Select(&quot;select * from account where uid = #{userId}&quot;)
+    List&lt;Account&gt; findAccountByUid(Integer userId);
+}
+</code></pre>
+<h3 id="2account类中从表类">2.Account类中（从表类）</h3>
+<pre><code class="language-java"> //多对一（mybatis中称之为一对一）的映射：一个账户只能属于一个用户
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+</code></pre>
+<h3 id="3测试类">3.测试类</h3>
+<pre><code class="language-java">public class AccountTest {
+    private InputStream in;
+    private SqlSessionFactory factory;
+    private SqlSession session;
+    private IAccountDao accountDao;
+
+    @Before
+    public  void init()throws Exception{
+        in = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+        factory = new SqlSessionFactoryBuilder().build(in);
+        session = factory.openSession();
+        accountDao = session.getMapper(IAccountDao.class);
+    }
+
+    @After
+    public  void destroy()throws  Exception{
+        session.commit();
+        session.close();
+        in.close();
+    }
+
+    @Test
+    public  void  testFindAll(){
+        List&lt;Account&gt; accounts = accountDao.findAll();
+        for(Account account : accounts){
+            System.out.println(&quot;----每个账户的信息-----&quot;);
+            System.out.println(account);
+            System.out.println(account.getUser());
+        }
+    }
+
+}
+
+</code></pre>
+<h2 id="一对多多对多">一对多（多对多）</h2>
+<p>demo功能阐述<br>
+查询用户信息的时候 返回用户的账户信息<br>
+因为一个用户对应多个用户的账户信息</p>
+<p>使用的是延迟加载</p>
+<h3 id="1iuserdao接口中使用注解-2">1.IUserDao接口中使用注解</h3>
+<pre><code class="language-java">public interface IUserDao {
+
+    /**
+     * 查询所有用户
+     * @return
+     */
+    @Select(&quot;select * from user&quot;)
+    @Results(id=&quot;userMap&quot;,value={
+            @Result(id=true,column = &quot;id&quot;,property = &quot;userId&quot;),
+            @Result(column = &quot;username&quot;,property = &quot;userName&quot;),
+            @Result(column = &quot;address&quot;,property = &quot;userAddress&quot;),
+            @Result(column = &quot;sex&quot;,property = &quot;userSex&quot;),
+            @Result(column = &quot;birthday&quot;,property = &quot;userBirthday&quot;),
+            @Result(property = &quot;accounts&quot;,column = &quot;id&quot;,
+                    many = @Many(select = &quot;com.itheima.dao.IAccountDao.findAccountByUid&quot;,
+                                fetchType = FetchType.LAZY))
+    })
+    List&lt;User&gt; findAll();
+
+    /**
+     * 根据id查询用户
+     * @param userId
+     * @return
+     */
+    @Select(&quot;select * from user  where id=#{id} &quot;)
+    @ResultMap(&quot;userMap&quot;)
+    User findById(Integer userId);
+
+    /**
+     * 根据用户名称模糊查询
+     * @param username
+     * @return
+     */
+    @Select(&quot;select * from user where username like #{username} &quot;)
+    @ResultMap(&quot;userMap&quot;)
+    List&lt;User&gt; findUserByName(String username);
+
+}
+</code></pre>
+<h3 id="2user类中从表类">2.User类中（从表类）</h3>
+<pre><code class="language-java"> //一对多关系映射：一个用户对应多个账户
+    private List&lt;Account&gt; accounts;
+
+    public List&lt;Account&gt; getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List&lt;Account&gt; accounts) {
+        this.accounts = accounts;
+    }
+</code></pre>
+<h1 id="注解开启二级缓存">注解开启二级缓存</h1>
+<p>哪个Dao接口需要就写在哪儿</p>
+<pre><code class="language-java">@CacheNamespace(blocking = true)
+</code></pre>
+<hr>
+<h2 id="项目源码点鸡这里">项目源码：<a href="https://github.com/ArtZoick/MyBatis">点鸡这里</a></h2>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%B3%A8%E8%A7%A3%E5%BC%80%E5%8F%91%E7%9A%84crud%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%BF%E7%94%A8">注解开发的crud（不建议使用）</a>
+<ul>
+<li><a href="#1iuserdao%E6%8E%A5%E5%8F%A3%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3">1.IUserDao接口中使用注解</a></li>
+<li><a href="#2%E6%B5%8B%E8%AF%95%E7%B1%BB">2.测试类</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E8%A7%A3%E5%BC%80%E5%8F%91%E7%9A%84%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2">注解开发的多表查询</a>
+<ul>
+<li><a href="#%E5%A4%9A%E5%AF%B9%E4%B8%80%E4%B8%80%E5%AF%B9%E4%B8%80">多对一（一对一）</a>
+<ul>
+<li><a href="#1iaccountdao%E6%8E%A5%E5%8F%A3%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3">1.IAccountDao接口中使用注解</a></li>
+<li><a href="#2account%E7%B1%BB%E4%B8%AD%E4%BB%8E%E8%A1%A8%E7%B1%BB">2.Account类中（从表类）</a></li>
+<li><a href="#3%E6%B5%8B%E8%AF%95%E7%B1%BB">3.测试类</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E5%A4%9A%E5%AF%B9%E5%A4%9A">一对多（多对多）</a>
+<ul>
+<li><a href="#1iuserdao%E6%8E%A5%E5%8F%A3%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3-2">1.IUserDao接口中使用注解</a></li>
+<li><a href="#2user%E7%B1%BB%E4%B8%AD%E4%BB%8E%E8%A1%A8%E7%B1%BB">2.User类中（从表类）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E8%A7%A3%E5%BC%80%E5%90%AF%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98">注解开启二级缓存</a>
+<ul>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E6%BA%90%E7%A0%81%E7%82%B9%E9%B8%A1%E8%BF%99%E9%87%8C">项目源码：点鸡这里</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://ArtZoick.github.io//post/MyBatis_5">
+              <h3 class="post-title">
+                MyBatis_5	延迟加载 缓存 
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a2471d09bddb5be481ee',
+    clientSecret: '05d427fb27f873cfabace27b9f042f2c7f23000f',
+    repo: 'ArtZoick.github.io',
+    owner: 'ArtZoick',
+    admin: ['ArtZoick'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank" onclick="alert('盲生，你发现了华点！');">学习强国</a>
+<script src="//code.tidio.co/5fh6jaqvluqj8jjuf5zlqrf5tlzpktnx.js"></script> | 
+  <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

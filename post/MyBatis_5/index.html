@@ -1,0 +1,414 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyBatis_5	延迟加载 缓存  | 清汤牛肉锅</title>
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563709906014">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143265163-1');
+</script>
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://ArtZoick.github.io/">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563709906014" alt="">
+  </a>
+  <h1 class="site-title">
+    清汤牛肉锅
+  </h1>
+  <p class="site-description">
+    温故而知新
+
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/beef" class="menu">
+          牛肉锅
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              MyBatis_5	延迟加载 缓存 
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-03
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
+                  # 框架
+                </a>
+              
+                <a href="https://ArtZoick.github.io//tag/MyBatis" class="post-tag">
+                  # MyBatis
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="mybatis_5延迟加载-缓存">MyBatis_5	延迟加载 缓存</h1>
+<p>1、mybatis中的延迟加载<br>
+　　　　问题：在一对多中，当我们有一个用户，它有100个账户。<br>
+　　　　　　　在查询用户的时候，要不要把关联的账户查出来？<br>
+　　　　　　　在查询账户的时候，要不要把关联的用户查出来？<br>
+　　　　答案：在查询用户时，用户下的账户信息是，什么时候使用，什么时候查询的。<br>
+　　　　　　　在查询账户时，账户的所属用户信息应该是随着账户查询时一起查询出来的。</p>
+<p>什么是延迟加载<br>
+　　　　　　　在真正使用数据时才发起查询，不用的时候不查询。按需加载（懒加载）<br>
+　　　　什么是立即加载<br>
+　　　　　　　不管用不用，只要一调用方法，马上发起查询<br>
+　　　　在对应的四种表关系中：一对一，一对多，多对一，多对多。<br>
+　　　　　　　一对多，多对多：通常情况下我们都是采用延迟加载。<br>
+　　　　　　　多对一，一对一：通常情况下我们都是采用立即加载。</p>
+<h2 id="一对一延迟加载">一对一延迟加载</h2>
+<h3 id="1在sqlmapconfigxml中配置setting标签">1.在SqlMapConfig.xml中配置setting标签</h3>
+<p>详情看中文官网（http://www.mybatis.org/mybatis-3/zh/configuration.html#settings）</p>
+<pre><code class="language-xml">&lt;settings&gt;
+        &lt;!-- 配置全局缓存--&gt;
+        &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;true&quot;/&gt;
+
+        &lt;setting name=&quot;aggressiveLazyLoading&quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+</code></pre>
+<h3 id="2在iaccoutdaoxml中配置association标签">2.在IAccoutDao.xml中配置association标签</h3>
+<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
+        &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+
+        &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
+
+        &lt;!--一对一的关系映射，配置封装user的内容
+        select属性的内容，查询用户的唯一标识符
+        column属性的内容:用户根据id查询时，所需要参数的值--&gt;
+        &lt;association property=&quot;user&quot; column=&quot;uid&quot; javaType=&quot;User&quot; select=&quot;com.daniel.dao.IUserDao.findById&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+        &lt;/association&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;findAll&quot; resultMap=&quot;accountUserMap&quot;&gt;
+        select * from  account
+    &lt;/select&gt;
+</code></pre>
+<h3 id="3测试类">3.测试类</h3>
+<pre><code class="language-java"> @Test
+    public void findAll(){
+        List&lt;Account&gt; accounts = accoutDao.findAll();
+        for (Account account:
+             accounts) {
+            System.out.println(&quot;每一个account的信息&quot;);
+            System.out.println(account);
+            System.out.println(account.getUser());
+        }
+    }
+</code></pre>
+<h2 id="一对多延迟加载">一对多延迟加载</h2>
+<p>和一对一没有太多区别</p>
+<h3 id="2在iuserdaoxml中配置collection标签">2.在IUserDao.xml中配置collection标签</h3>
+<pre><code class="language-xml">&lt;!--定义封装account和user的resultMap--&gt;
+    &lt;resultMap id=&quot;accountUserMap&quot; type=&quot;Account&quot;&gt;
+         &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
+        &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
+        &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+
+        &lt;!--一对一的关系映射，配置封装user的内容
+        select属性的内容，查询用户的唯一标识符
+        column属性的内容:用户根据id查询时，所需要参数的值--&gt;
+    	&lt;collection property=&quot;accounts&quot; ofType=&quot;Account&quot; select=&quot;com.daniel.dao.IAccoutDao.findAccountByUid&quot; column=&quot;id&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;aid&quot;&gt;&lt;/id&gt;
+            &lt;result property=&quot;uid&quot; column=&quot;uid&quot;&gt;&lt;/result&gt;
+            &lt;result property=&quot;money&quot; column=&quot;money&quot;&gt;&lt;/result&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+</code></pre>
+<h1 id="缓存">缓存</h1>
+<p>2、mybatis中的缓存<br>
+　　　　什么是缓存<br>
+　　　　　　存在于内存中的临时数据<br>
+　　　　为什么使用缓存<br>
+　　　　　　减少与数据库的交互次数，提高执行效率。<br>
+　　　　什么样的数据能使用缓存，什么样的数据不能使用<br>
+　　　　　　适用于缓存：<br>
+　　　　　　　　经常查询并且不经常改变的。<br>
+　　　　　　　　数据的正确与否对最终结果影响不大的<br>
+　　　　　　不适用于缓存：<br>
+　　　　　　　　经常改变的数据。<br>
+　　　　　　　　数据的正确与否对最终结果影响很大的。如，商品库存，银行汇率，股市牌价。<br>
+mybatis中的一级缓存和二级缓存<br>
+一级缓存：<br>
+　　　　它指的是mybatis中SqlSession对象的缓存。<br>
+　　　　当我们执行查询的时候，查询的结果会同时存入到SqlSession为我们提供的一块区域中。<br>
+　　　　该区域的结构是一个Map。当我们再次查询同样的数据，mybatis会先去查询SqlSession中是否有，有的话直接拿来用。<br>
+　　　　当SqlSession对象消失时，mybatis的一级缓存也就消失了。</p>
+<p>二级缓存：<br>
+　　　　它指的是mybatis中SqlSessionFactory对象的缓存。由同一个SqlSessionFactory对象创建的SqlSession共享其缓存。</p>
+<p>二级缓存的使用步骤：<br>
+　　　　　　　　第一步：让mybatis框架支持二级缓存（在SqlMapConfig.xml中配置）<br>
+　　　　　　　　第二步：让当前的映射文件支持二级缓存（在IUserDao.xml中配置）<br>
+　　　　　　　　第三步：让当前的操作支持二级缓存（在select标签中配置）　 x</p>
+<h2 id="一级缓存">一级缓存</h2>
+<p>其实mybatis中默认就是一级缓存了（平时的测试类就是一级缓存存在SqlSession中）</p>
+<p><strong>一级缓存是SqlSession范围的缓存，当调用SqlSession的修改，添加，删除，commit()，close()等方法时，就会清空一级缓存。</strong></p>
+<h2 id="二级缓存">二级缓存</h2>
+<h3 id="1sqlmaoconfigxml中">1.SqlMaoConfig.xml中</h3>
+<pre><code class="language-xml">&lt;settings&gt;
+        &lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<h3 id="2在需要使用二级缓存的实体类的mapper中">2.在需要使用二级缓存的实体类的mapper中</h3>
+<pre><code class="language-xml"> &lt;!--开启user支持二级缓存--&gt;
+    &lt;cache/&gt;
+
+ &lt;!-- 根据id查询用户   注意属性useCache --&gt;
+    &lt;select id=&quot;findById&quot; parameterType=&quot;INT&quot; resultType=&quot;user&quot; useCache=&quot;true&quot;&gt;
+        select * from user where id = #{uid}
+    &lt;/select&gt;
+</code></pre>
+<h3 id="3测试类-2">3.测试类</h3>
+<pre><code class="language-java">public class SecondLevelCacheTest {
+
+    private InputStream in;
+    private  SqlSessionFactory factory;
+
+    @Before//用于在测试方法执行之前执行
+    public void init()throws Exception{
+        //1.读取配置文件，生成字节输入流
+        in = Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);
+        //2.获取SqlSessionFactory
+        factory = new SqlSessionFactoryBuilder().build(in);
+
+    }
+
+    @After//用于在测试方法执行之后执行
+    public void destroy()throws Exception{
+        in.close();
+    }
+
+    /**
+     * 测试二级缓存
+     */
+    @Test
+    public void testFirstLevelCache(){
+        SqlSession sqlSession1 = factory.openSession();
+        IUserDao dao1 = sqlSession1.getMapper(IUserDao.class);
+        User user1 = dao1.findById(41);
+        System.out.println(user1);
+        sqlSession1.close();//一级缓存消失
+
+        SqlSession sqlSession2 = factory.openSession();
+        IUserDao dao2 = sqlSession2.getMapper(IUserDao.class);
+        User user2 = dao2.findById(41);
+        System.out.println(user2);
+        sqlSession2.close();
+
+        System.out.println(user1 == user2);
+    }
+
+}
+</code></pre>
+<p>注意：<br>
+从图中可以看出来第二次findbyId根本没有走数据库（数据都是从SqlSessionFactory的二级缓存中拿的 不是对象！）</p>
+<h2 id="项目源码点鸡这里">项目源码：<a href="https://github.com/ArtZoick/MyBatis">点鸡这里</a></h2>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#mybatis_5%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD-%E7%BC%93%E5%AD%98">MyBatis_5	延迟加载 缓存</a>
+<ul>
+<li><a href="#%E4%B8%80%E5%AF%B9%E4%B8%80%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD">一对一延迟加载</a>
+<ul>
+<li><a href="#1%E5%9C%A8sqlmapconfigxml%E4%B8%AD%E9%85%8D%E7%BD%AEsetting%E6%A0%87%E7%AD%BE">1.在SqlMapConfig.xml中配置setting标签</a></li>
+<li><a href="#2%E5%9C%A8iaccoutdaoxml%E4%B8%AD%E9%85%8D%E7%BD%AEassociation%E6%A0%87%E7%AD%BE">2.在IAccoutDao.xml中配置association标签</a></li>
+<li><a href="#3%E6%B5%8B%E8%AF%95%E7%B1%BB">3.测试类</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD">一对多延迟加载</a>
+<ul>
+<li><a href="#2%E5%9C%A8iuserdaoxml%E4%B8%AD%E9%85%8D%E7%BD%AEcollection%E6%A0%87%E7%AD%BE">2.在IUserDao.xml中配置collection标签</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E7%BC%93%E5%AD%98">缓存</a>
+<ul>
+<li><a href="#%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98">一级缓存</a></li>
+<li><a href="#%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98">二级缓存</a>
+<ul>
+<li><a href="#1sqlmaoconfigxml%E4%B8%AD">1.SqlMaoConfig.xml中</a></li>
+<li><a href="#2%E5%9C%A8%E9%9C%80%E8%A6%81%E4%BD%BF%E7%94%A8%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%E7%9A%84%E5%AE%9E%E4%BD%93%E7%B1%BB%E7%9A%84mapper%E4%B8%AD">2.在需要使用二级缓存的实体类的mapper中</a></li>
+<li><a href="#3%E6%B5%8B%E8%AF%95%E7%B1%BB-2">3.测试类</a></li>
+</ul>
+</li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E6%BA%90%E7%A0%81%E7%82%B9%E9%B8%A1%E8%BF%99%E9%87%8C">项目源码：点鸡这里</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://ArtZoick.github.io//post/MyBatis_4">
+              <h3 class="post-title">
+                MyBatis_4	多表查询 
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a2471d09bddb5be481ee',
+    clientSecret: '05d427fb27f873cfabace27b9f042f2c7f23000f',
+    repo: 'ArtZoick.github.io',
+    owner: 'ArtZoick',
+    admin: ['ArtZoick'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank" onclick="alert('盲生，你发现了华点！');">学习强国</a>
+<script src="//code.tidio.co/5fh6jaqvluqj8jjuf5zlqrf5tlzpktnx.js"></script> | 
+  <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
