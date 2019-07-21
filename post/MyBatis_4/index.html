@@ -1,16 +1,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-<meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MyBatis_4	多表查询  | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563705942594">
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563706607382">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
 
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
@@ -29,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563705942594" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563706607382" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -86,16 +87,18 @@
   </div>
 </div>
 
-
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
               MyBatis_4	多表查询 
             </h2>
             <div class="post-info">
-              <time class="post-time">
-                · 2019-07-03 ·
-              </time>
+              <span>
+                2019-07-03
+              </span>
+              <span>
+                5 min read
+              </span>
               
                 <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
                   # 框架
@@ -107,8 +110,9 @@
               
             </div>
             
-            <div class="post-content">
-              <h2 id="一对一的关系映射">一对一的关系映射</h2>
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="一对一的关系映射">一对一的关系映射</h2>
 <h3 id="示例">示例</h3>
 <p>查询所有账户的时候同时获得当前账户的所有信息（多表查询常用方法）</p>
 <h3 id="sql-语句">sql 语句</h3>
@@ -451,6 +455,78 @@ public class User implements Serializable {
 <hr>
 <h2 id="项目源码点鸡这里">项目源码：<a href="https://github.com/ArtZoick/MyBatis">点鸡这里</a></h2>
 
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%80%E5%AF%B9%E4%B8%80%E7%9A%84%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84">一对一的关系映射</a>
+<ul>
+<li><a href="#%E7%A4%BA%E4%BE%8B">示例</a></li>
+<li><a href="#sql-%E8%AF%AD%E5%8F%A5">sql 语句</a></li>
+<li><a href="#1%E4%BB%8E%E8%A1%A8%E5%AE%9E%E4%BD%93%E5%BA%94%E8%AF%A5%E5%8C%85%E5%90%AB%E4%B8%80%E4%B8%AA%E4%B8%BB%E8%A1%A8%E5%AE%9E%E4%BD%93%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8">1.	从表实体应该包含一个主表实体的对象引用</a></li>
+<li><a href="#2accountdao%E7%9A%84%E6%8E%A5%E5%8F%A3%E4%B8%AD">2.AccountDao的接口中</a></li>
+<li><a href="#3accountdao%E7%9A%84mapper%E4%B8%AD">3.AccountDao的mapper中</a></li>
+<li><a href="#4accountdao%E7%9A%84%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%B8%AD">4.AccountDao的测试类中</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%96%B9%E6%B3%95%E6%98%AF%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAaccountuser%E7%B1%BB">第二种方法是创建一个AccountUser类</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E7%9A%84%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84">一对多的关系映射</a>
+<ul>
+<li><a href="#%E7%A4%BA%E4%BE%8B%E7%94%A8%E6%88%B7%E5%92%8C%E8%B4%A6%E6%88%B7">示例：用户和账户</a></li>
+<li><a href="#%E6%AD%A5%E9%AA%A4">步骤：</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E8%A1%A8%E4%B8%8E%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE">创建表与相关数据</a>
+<ul>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E7%9A%84sql%E8%AF%AD%E5%8F%A5">查询的sql语句</a></li>
+</ul>
+</li>
+<li><a href="#1%E4%B8%BB%E8%A1%A8%E5%AE%9E%E4%BD%93%E4%B8%AD%E5%BA%94%E8%AF%A5%E5%8C%85%E5%90%AB%E4%BB%8E%E8%A1%A8%E5%AE%9E%E4%BD%93%E7%9A%84%E9%9B%86%E5%90%88%E5%BC%95%E7%94%A8">1.主表实体中应该包含从表实体的集合引用</a></li>
+<li><a href="#2userdao%E7%9A%84%E6%8E%A5%E5%8F%A3%E4%B8%AD">2.UserDao的接口中</a></li>
+<li><a href="#3userdao%E7%9A%84mapper%E4%B8%AD">3.UserDao的mapper中</a></li>
+<li><a href="#4userdao%E7%9A%84%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%B8%AD">4.UserDao的测试类中</a></li>
+<li><a href="#5%E6%88%90%E5%8A%9F%E8%BF%90%E8%A1%8C%E5%AE%9E%E7%8E%B0%E4%B8%8A%E8%BF%B0%E5%8A%9F%E8%83%BD">5.成功运行（实现上述功能）</a></li>
+</ul>
+</li>
+<li><a href="#%E5%A4%9A%E5%AF%B9%E5%A4%9A%E7%9A%84%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84">多对多的关系映射</a>
+<ul>
+<li><a href="#%E7%A4%BA%E4%BE%8B%E7%94%A8%E6%88%B7%E4%B8%8E%E8%A7%92%E8%89%B2">示例：用户与角色</a></li>
+<li><a href="#%E6%AD%A5%E9%AA%A4-2">步骤：</a></li>
+<li><a href="#%E8%A1%A8%E8%AE%BE%E8%AE%A1">表设计</a>
+<ul>
+<li><a href="#%E8%A1%A8%E8%AE%BE%E7%BD%AE%E5%A6%82%E4%B8%8B">表设置如下：</a></li>
+<li><a href="#%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%A6%82%E4%B8%8B">表数据如下：</a></li>
+<li><a href="#sql%E8%AF%AD%E5%8F%A5%E5%A4%9A%E8%A1%A8%E5%A4%96%E9%93%BE%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5">sql语句(多表外链接查询语句)</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C">查询结果</a></li>
+</ul>
+</li>
+<li><a href="#1%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BD%93%E8%A1%A8%E4%B8%AD%E5%8C%85%E5%90%AB%E5%8F%A6%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BD%93%E8%A1%A8%E7%9A%84%E9%9B%86%E5%90%88%E5%BC%95%E7%94%A8">1.一个实体表中包含另一个实体表的集合引用</a></li>
+<li><a href="#2roledao%E7%9A%84%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%AE%9A%E4%B9%89%E8%AF%A5%E6%96%B9%E6%B3%95">2.RoleDao的接口中定义该方法</a></li>
+<li><a href="#3roledao%E7%9A%84mapper%E4%B8%AD">3.RoleDao的mapper中</a></li>
+<li><a href="#4roledao%E7%9A%84%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%B8%AD">4.RoleDao的测试类中</a></li>
+<li><a href="#5%E6%88%90%E5%8A%9F%E8%BF%90%E8%A1%8C%E5%AE%9E%E7%8E%B0%E4%B8%8A%E8%BF%B0%E5%8A%9F%E8%83%BD-2">5.成功运行（实现上述功能）</a></li>
+<li><a href="#">!</a></li>
+<li><a href="#%E5%90%8C%E7%90%86%E5%8F%AF%E5%BE%97%E7%94%A8%E6%88%B7%E7%9A%84%E5%85%A8%E9%83%A8%E4%BF%A1%E6%81%AF%E4%B8%8E%E7%94%A8%E6%88%B7%E7%9A%84%E8%A7%92%E8%89%B2">===同理可得用户的全部信息与用户的角色===</a>
+<ul>
+<li><a href="#sql%E8%AF%AD%E5%8F%A5">sql语句</a></li>
+</ul>
+</li>
+<li><a href="#6%E5%AE%9E%E4%BD%93%E7%B1%BBuser%E5%8C%85%E5%90%AB%E5%AF%B9accounts%E7%9A%84%E5%BC%95%E7%94%A8">6.实体类User包含对Accounts的引用</a></li>
+<li><a href="#7userdao%E7%9A%84%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%AE%9A%E4%B9%89%E8%AF%A5%E6%96%B9%E6%B3%95">7.UserDao的接口中定义该方法</a></li>
+<li><a href="#8userdao%E7%9A%84mapper%E4%B8%AD">8.UserDao的mapper中</a></li>
+<li><a href="#9userdao%E7%9A%84%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%B8%AD">9.UserDao的测试类中</a></li>
+<li><a href="#10%E6%88%90%E5%8A%9F%E8%BF%90%E8%A1%8C%E5%AE%9E%E7%8E%B0%E4%B8%8A%E8%BF%B0%E5%8A%9F%E8%83%BD">10.成功运行（实现上述功能）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#jndi">JNDI</a>
+<ul>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E6%BA%90%E7%A0%81%E7%82%B9%E9%B8%A1%E8%BF%99%E9%87%8C">项目源码：点鸡这里</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
             </div>
           </article>
         </div>
@@ -502,6 +578,44 @@ public class User implements Serializable {
 
 <script>
   hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
 </script>
 
       </div>

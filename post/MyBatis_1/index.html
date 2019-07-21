@@ -1,16 +1,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-<meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MyBatis_1	简介 | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563705942594">
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563706607382">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
 
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
@@ -29,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563705942594" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563706607382" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -86,16 +87,18 @@
   </div>
 </div>
 
-
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
               MyBatis_1	简介
             </h2>
             <div class="post-info">
-              <time class="post-time">
-                · 2019-07-03 ·
-              </time>
+              <span>
+                2019-07-03
+              </span>
+              <span>
+                2 min read
+              </span>
               
                 <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
                   # 框架
@@ -107,8 +110,9 @@
               
             </div>
             
-            <div class="post-content">
-              <h2 id="1-什么是框架">1、什么是框架？</h2>
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="1-什么是框架">1、什么是框架？</h2>
 <p>它是我们软件开发中的一套解决方案，不同的框架解决的是不同的问题<br>
 使用框架的好处：<br>
 框架封装了很多的细节，使开发者可以使用极简的方式实现功能。大大提高开发效率。</p>
@@ -289,6 +293,30 @@ public class MybatisTest {
 <hr>
 <h2 id="项目源码点鸡这里">项目源码：<a href="https://github.com/ArtZoick/MyBatis">点鸡这里</a></h2>
 
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%A1%86%E6%9E%B6">1、什么是框架？</a></li>
+<li><a href="#2-%E4%B8%89%E5%B1%82%E6%9E%B6%E6%9E%84">2、三层架构</a></li>
+<li><a href="#3-%E6%8C%81%E4%B9%85%E5%B1%82%E6%8A%80%E6%9C%AF%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">3、持久层技术解决方案</a></li>
+<li><a href="#4-mybatis%E7%9A%84%E6%A6%82%E8%BF%B0">4、mybatis的概述</a></li>
+<li><a href="#5-mybatis%E7%9A%84%E5%85%A5%E9%97%A8">5、mybatis的入门</a>
+<ul>
+<li><a href="#%E8%A1%A8%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8F%92%E5%85%A5">表的创建与数据的插入</a></li>
+<li><a href="#mybatis%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BAdemo%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84">mybatis环境搭建demo的基本架构</a></li>
+<li><a href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">环境搭建的注意事项：</a></li>
+<li><a href="#mybatis%E7%9A%84%E5%85%A5%E9%97%A8%E6%A1%88%E4%BE%8B">mybatis的入门案例</a></li>
+</ul>
+</li>
+<li><a href="#6-%E8%87%AA%E5%AE%9A%E4%B9%89mybatis%E7%9A%84%E5%88%86%E6%9E%90__%E6%89%A7%E8%A1%8C%E6%9F%A5%E8%AF%A2%E6%89%80%E6%9C%89%E7%9A%84%E5%88%86%E6%9E%90">6、自定义Mybatis的分析__执行查询所有的分析</a></li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E6%BA%90%E7%A0%81%E7%82%B9%E9%B8%A1%E8%BF%99%E9%87%8C">项目源码：点鸡这里</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
             </div>
           </article>
         </div>
@@ -331,6 +359,44 @@ public class MybatisTest {
 
 <script>
   hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
 </script>
 
       </div>

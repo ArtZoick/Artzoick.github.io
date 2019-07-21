@@ -1,16 +1,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-<meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563705942594">
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563706607382">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
 
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
@@ -29,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563705942594" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563706607382" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -94,9 +95,12 @@
         <h2 class="post-title">test</h2>
       </a>
       <div class="post-info">
-        <time class="post-time">
-          · 2019-07-18 ·
-        </time>
+        <span>
+          2019-07-18
+        </span>
+        <span>
+          1 min read
+        </span>
         
       </div>
       
@@ -110,9 +114,12 @@
         <h2 class="post-title">IntelliJ IDEA 快捷键</h2>
       </a>
       <div class="post-info">
-        <time class="post-time">
-          · 2019-07-15 ·
-        </time>
+        <span>
+          2019-07-15
+        </span>
+        <span>
+          3 min read
+        </span>
         
       </div>
       
@@ -126,9 +133,12 @@
         <h2 class="post-title">MyBatis_6	注解开发</h2>
       </a>
       <div class="post-info">
-        <time class="post-time">
-          · 2019-07-03 ·
-        </time>
+        <span>
+          2019-07-03
+        </span>
+        <span>
+          3 min read
+        </span>
         
           <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
             # 框架
@@ -150,9 +160,12 @@
         <h2 class="post-title">MyBatis_5	延迟加载 缓存 </h2>
       </a>
       <div class="post-info">
-        <time class="post-time">
-          · 2019-07-03 ·
-        </time>
+        <span>
+          2019-07-03
+        </span>
+        <span>
+          2 min read
+        </span>
         
           <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
             # 框架
@@ -174,9 +187,12 @@
         <h2 class="post-title">MyBatis_4	多表查询 </h2>
       </a>
       <div class="post-info">
-        <time class="post-time">
-          · 2019-07-03 ·
-        </time>
+        <span>
+          2019-07-03
+        </span>
+        <span>
+          5 min read
+        </span>
         
           <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
             # 框架
@@ -198,9 +214,12 @@
         <h2 class="post-title"> MyBatis_3	连接池、事务控制、动态SQL</h2>
       </a>
       <div class="post-info">
-        <time class="post-time">
-          · 2019-07-03 ·
-        </time>
+        <span>
+          2019-07-03
+        </span>
+        <span>
+          2 min read
+        </span>
         
           <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
             # 框架
@@ -222,9 +241,12 @@
         <h2 class="post-title">MyBatis_2	基本的CRUD</h2>
       </a>
       <div class="post-info">
-        <time class="post-time">
-          · 2019-07-03 ·
-        </time>
+        <span>
+          2019-07-03
+        </span>
+        <span>
+          5 min read
+        </span>
         
           <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
             # 框架
@@ -246,9 +268,12 @@
         <h2 class="post-title">MyBatis_1	简介</h2>
       </a>
       <div class="post-info">
-        <time class="post-time">
-          · 2019-07-03 ·
-        </time>
+        <span>
+          2019-07-03
+        </span>
+        <span>
+          2 min read
+        </span>
         
           <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
             # 框架
@@ -282,6 +307,44 @@
 
 <script>
   hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
 </script>
 
       </div>

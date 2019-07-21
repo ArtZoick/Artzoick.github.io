@@ -1,16 +1,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-<meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title> MyBatis_3	连接池、事务控制、动态SQL | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563705942594">
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563706607382">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
 
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
@@ -29,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563705942594" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563706607382" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -86,16 +87,18 @@
   </div>
 </div>
 
-
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
                MyBatis_3	连接池、事务控制、动态SQL
             </h2>
             <div class="post-info">
-              <time class="post-time">
-                · 2019-07-03 ·
-              </time>
+              <span>
+                2019-07-03
+              </span>
+              <span>
+                2 min read
+              </span>
               
                 <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
                   # 框架
@@ -107,8 +110,9 @@
               
             </div>
             
-            <div class="post-content">
-              <h2 id="连接池">连接池</h2>
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="连接池">连接池</h2>
 <p><strong>１、连接池：</strong><br>
 　　　　在实际开发中都会使用连接池<br>
 　　　　因为它可以减少我们获取连接所消耗的时间</p>
@@ -245,6 +249,42 @@ public class QueryVo {
 <p><strong>注意：</strong> 尽量不要使用分号，sql语句可能会拼接</p>
 <hr>
 
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E6%B1%A0">连接池</a></li>
+<li><a href="#mybatis%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1">MyBatis中的事务</a></li>
+<li><a href="#%E5%8A%A8%E6%80%81sql">动态SQL</a>
+<ul>
+<li><a href="#if%E6%A0%87%E7%AD%BE%E7%9A%84%E4%BD%BF%E7%94%A8">if标签的使用</a>
+<ul>
+<li><a href="#1%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%AE%9A%E4%B9%89">1.接口中定义</a></li>
+<li><a href="#2mapper%E4%B8%AD%E5%AE%9A%E4%B9%89">2.mapper中定义</a></li>
+</ul>
+</li>
+<li><a href="#3%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%B8%AD%E6%B5%8B%E8%AF%95">3.测试类中测试</a></li>
+</ul>
+</li>
+<li><a href="#where%E5%92%8Cforeach%E6%A0%87%E7%AD%BE%E7%9A%84%E4%BD%BF%E7%94%A8">where和foreach标签的使用</a>
+<ul>
+<li><a href="#1%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%AE%9A%E4%B9%89-2">1.接口中定义</a></li>
+<li><a href="#2mapper%E4%B8%AD%E5%AE%9A%E4%B9%89-2">2.mapper中定义</a></li>
+<li><a href="#3%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81">3.测试代码</a></li>
+<li><a href="#%E6%8A%BD%E5%8F%96%E9%87%8D%E5%A4%8D%E7%9A%84sql">抽取重复的sql</a>
+<ul>
+<li><a href="#1%E5%AE%9A%E4%B9%89">1.定义</a></li>
+<li><a href="#2%E4%BD%BF%E7%94%A8">2.使用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
             </div>
           </article>
         </div>
@@ -296,6 +336,44 @@ public class QueryVo {
 
 <script>
   hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
 </script>
 
       </div>

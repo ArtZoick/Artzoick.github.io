@@ -1,16 +1,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-<meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MyBatis_2	基本的CRUD | 清汤牛肉锅</title>
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563705942594">
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563706607382">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
 
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
@@ -29,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563705942594" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563706607382" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -86,16 +87,18 @@
   </div>
 </div>
 
-
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
               MyBatis_2	基本的CRUD
             </h2>
             <div class="post-info">
-              <time class="post-time">
-                · 2019-07-03 ·
-              </time>
+              <span>
+                2019-07-03
+              </span>
+              <span>
+                5 min read
+              </span>
               
                 <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
                   # 框架
@@ -107,8 +110,9 @@
               
             </div>
             
-            <div class="post-content">
-              <p>1、回顾MyBatis的自定义再分析和环境搭建+完善基于注解的MyBatis<br>
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>1、回顾MyBatis的自定义再分析和环境搭建+完善基于注解的MyBatis<br>
 2、MyBatis的CRUD（基于代理dao的方式）<br>
 3、MyBatis中的参数深入及结果集的深入<br>
 4、MyBatis中基于传统dao的方式（编写dao的实现类）---了解的内容<br>
@@ -569,6 +573,29 @@ public class MybatisTest {
 <hr>
 <h2 id="项目源码点鸡这里">项目源码：<a href="https://github.com/ArtZoick/MyBatis">点鸡这里</a></h2>
 
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%8C%E6%95%B4%E6%8E%A5%E5%8F%A3%E7%B1%BB%E4%BB%A3%E7%A0%81">完整接口类代码</a></li>
+<li><a href="#%E5%AE%8C%E6%95%B4mapper%E4%BB%A3%E7%A0%81">完整mapper代码</a></li>
+<li><a href="#%E5%AE%8C%E6%95%B4%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%BB%A3%E7%A0%81">完整测试类代码</a></li>
+<li><a href="#%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9">一些注意点：</a>
+<ul>
+<li><a href="#1-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E7%9A%84%E5%85%83%E7%B4%A0%E5%90%8D%E4%B8%8E%E5%AE%9E%E4%BD%93%E7%B1%BB%E7%9A%84%E5%B1%9E%E6%80%A7%E5%90%8D%E4%B8%8D%E5%AF%B9%E5%BA%94%E7%9A%84%E8%A7%A3%E5%86%B3">1、数据库表的元素名与实体类的属性名不对应的解决：</a></li>
+<li><a href="#2-%E9%85%8D%E7%BD%AExml%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E6%A0%87%E7%AD%BE">2、配置xml中的属性标签</a></li>
+<li><a href="#1%E4%BD%BF%E7%94%A8properties%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%AC%B8%E4%BF%A1%E6%81%AF">(1)使用properties配置数据库连接欸信息</a></li>
+<li><a href="#2%E4%BD%BF%E7%94%A8typealiases%E9%85%8D%E7%BD%AE%E5%88%AB%E5%90%8D">(2)使用typeAliases配置别名</a></li>
+<li><a href="#3%E4%BD%BF%E7%94%A8package%E9%85%8D%E7%BD%AE%E5%88%AB%E5%90%8D">(3)使用package配置别名</a></li>
+</ul>
+</li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E6%BA%90%E7%A0%81%E7%82%B9%E9%B8%A1%E8%BF%99%E9%87%8C">项目源码：点鸡这里</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
             </div>
           </article>
         </div>
@@ -620,6 +647,44 @@ public class MybatisTest {
 
 <script>
   hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
 </script>
 
       </div>
