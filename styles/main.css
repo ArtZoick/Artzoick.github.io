@@ -949,8 +949,8 @@ td {
   font-weight: bold;
 }
 
-      .post-detail .post .post-content p {
-        font-size: 25px;
+      .main {
+        max-width: 900px;
       }
     
       .post-container .post .post-title {
