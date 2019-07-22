@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ArtZoick.github.io/</id>
     <title>清汤牛肉锅</title>
-    <updated>2019-07-21T12:14:45.124Z</updated>
+    <updated>2019-07-22T10:27:47.117Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ArtZoick.github.io/"/>
     <link rel="self" href="https://ArtZoick.github.io//atom.xml"/>
@@ -12,35 +12,607 @@
     <icon>https://ArtZoick.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, 清汤牛肉锅</rights>
     <entry>
-        <title type="html"><![CDATA[test]]></title>
-        <id>https://ArtZoick.github.io//post/test</id>
-        <link href="https://ArtZoick.github.io//post/test">
+        <title type="html"><![CDATA[SpringMVC_1 入门、参数绑定、常用注解]]></title>
+        <id>https://ArtZoick.github.io//post/springmvc_1</id>
+        <link href="https://ArtZoick.github.io//post/springmvc_1">
         </link>
-        <updated>2019-07-18T09:08:18.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="springmvc框架第一天">SpringMVC框架第一天</h1>
-<h2 id="第一章三层架构和mvc">第一章：三层架构和MVC</h2>
+        <updated>2019-07-22T10:23:49.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="一-三层架构和mvc">一、三层架构和MVC</h2>
 <h3 id="三层架构">三层架构</h3>
-<ol>
-<li>
-<p>开发服务器端程序，一般都基于两种形式，一种C/S架构（客户端/服务器）程序，一种B/S架构（浏览器/服务器）程序</p>
-</li>
-<li>
-<p>使用Java语言基本上都是开发B/S架构的程序，B/S架构又分成了三层架构</p>
-</li>
-<li>
-<p>三层架构<br>
-表现层：WEB层，用来和客户端进行数据交互的。表现层一般会采用MVC的设计模型<br>
-业务层：处理具体的业务逻辑的<br>
-持久层：用来操作数据库的</p>
-</li>
-</ol>
+<p>1、开发服务器端程序，一般都基于两种形式，一种C/S架构（客户端/服务器）程序，一种B/S架构（浏览器/服务器）程序</p>
+<p>2、使用Java语言基本上都是开发B/S架构的程序，B/S架构又分成了三层架构</p>
+<p>3、三层架构<br>
+　　表现层：WEB层，用来和客户端进行数据交互的。表现层一般会采用MVC的设计模型<br>
+　　业务层：处理具体的业务逻辑的<br>
+　　持久层：用来操作数据库的</p>
 <h3 id="mvc模型">MVC模型</h3>
+<p>1、MVC全名是Model View Controller 模型视图控制器，每个部分各司其职。<br>
+2、Model：数据模型，JavaBean的类，用来进行数据封装。<br>
+3、View：指JSP、HTML用来展示数据给用户<br>
+4、Controller：用来接收用户的请求，整个流程的控制器。用来进行数据校验等。</p>
+<h2 id="二-springmvc的入门案例">二、SpringMVC的入门案例</h2>
+<h3 id="基本框架如下">基本框架如下：</h3>
+<p><img src="https://ArtZoick.github.io//post-images/springmvc/1.png" alt=""></p>
+<h3 id="1-web工程pom导入坐标">1、WEB工程，pom导入坐标</h3>
+<pre><code class="language-xml">&lt;!-- 版本锁定 --&gt;
+&lt;properties&gt;
+&lt;spring.version&gt;5.0.2.RELEASE&lt;/spring.version&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+      &lt;version&gt;${spring.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-web&lt;/artifactId&gt;
+      &lt;version&gt;${spring.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+      &lt;version&gt;${spring.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+      &lt;artifactId&gt;servlet-api&lt;/artifactId&gt;
+      &lt;version&gt;2.5&lt;/version&gt;
+      &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;javax.servlet.jsp&lt;/groupId&gt;
+      &lt;artifactId&gt;jsp-api&lt;/artifactId&gt;
+      &lt;version&gt;2.0&lt;/version&gt;
+      &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+</code></pre>
+<h3 id="2-webxml中的配置">2、web.xml中的配置</h3>
+<pre><code class="language-xml">&lt;servlet&gt;
+    &lt;!--配置前端控制器--&gt;
+    &lt;servlet-name&gt;dispatcherServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+    
+    &lt;!--加载springmvc.xml配置文件--&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+      &lt;param-value&gt;classpath:springmvc.xml&lt;/param-value&gt;
+    &lt;/init-param&gt;
+    
+    &lt;!--启动服务器即可创建--&gt;
+    &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+  &lt;/servlet&gt;
+  
+&lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;dispatcherServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+</code></pre>
+<p><strong>其中相关配置说明：</strong><br>
+<servlet>中<br>
+1、配置前端控制器DispatcherServlet 。<br>
+2、servlet加载全局初始化参数springmvc.xml，继而springmvc.xml中的配置能生效。<br>
+3、启动服务器即可使<servlet>中的配置生效：创建DispatcherServlet对象，加载springmvc.xml配置文件。</p>
+<p><servlet-mapping> 中<br>
+1、使<servlet>被请求到。<br>
+2、url-pattern中/是，让所有请求都被serlvet拦截到，继而走前端控制器。</p>
+<h3 id="3-springmvcxml配置">3、springmvc.xml配置</h3>
+<pre><code class="language-xml">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+
+    &lt;!--开启注解扫描--&gt;
+    &lt;context:component-scan base-package=&quot;top.zoick&quot;/&gt;
+    &lt;!--配置视图解析器对象--&gt;
+    &lt;bean id=&quot;internalResourceViewResolver&quot; class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+        &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot;&gt;&lt;/property&gt;
+        &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;&gt;&lt;/property&gt;
+    &lt;/bean&gt;
+
+    &lt;!--开启SpringMVC框架注解支持--&gt;
+    &lt;mvc:annotation-driven/&gt;
+&lt;/beans&gt;
+</code></pre>
+<p>**其中相关配置说明： **<br>
+1、component-scan开启注解扫描，使spring能识别类中的@Controller等注解，将类交给IOC容器来管理。<br>
+2、配置视图解析器InternalResourceViewResolver，Controller中有return的值，如&quot;success&quot;。即为返回success.jsp这个页面。也需要使用配置来使springmvc框架知道在哪儿。这里需要使用<property>标签配置前缀和后缀。<br>
+3、开启springmvc框架注解支持，使springmvc相关注解能被支持。</p>
+<p><strong>&lt;mvc: annotation-driven/&gt;说明：</strong><br>
+在 SpringMVC 的各个组件中，处理器映射器、处理器适配器、视图解析器称为 SpringMVC 的三大组件。<br>
+使 用 &lt;mvc: annotation-driven&gt; 自 动加载 RequestMappingHandlerMapping （处理映射器） 和<br>
+RequestMappingHandlerAdapter （ 处 理 适 配 器 ） ， 可 用 在 SpringMVC.xml 配 置 文 件 中 使 用<br>
+&lt;mvc: annotation-driven&gt;替代注解处理器和适配器的配置。</p>
+<h3 id="4-编写indexjsp和hellocontroller控制器类-启动tomcat">4、编写index.jsp和HelloController控制器类、启动Tomcat</h3>
+<p><strong>index.jsp</strong></p>
+<pre><code class="language-jsp">&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h3&gt;入门程序&lt;/h3&gt;
+
+&lt;a href=&quot;hello&quot;&gt;入门程序&lt;/a&gt;
+&lt;a href=&quot;hello&quot;&gt;测试RequsetMapping&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<p><strong>HelloController</strong></p>
+<pre><code class="language-java">package top.zoick.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping(path = &quot;user&quot;)
+public class HelloController {
+
+    /**
+     * 入门案例
+     *
+     * @return
+     */
+    @RequestMapping(path = &quot;/hello&quot;)
+    public String sayHello() {
+        System.out.println(&quot;Hello StringMVC&quot;);
+        return &quot;success&quot;;
+    }
+
+    /**
+     * RequestMapping注解
+     *
+     * @return
+     */
+    @RequestMapping(path = &quot;testRequestMapping&quot;)
+    public String testRequestMapping() {
+        System.out.println(&quot;测试RequsetMapping&quot;);
+        return &quot;success&quot;;
+    }
+}
+
+</code></pre>
+<p><strong>在WEB-INF目录下创建pages文件夹，编写success.jsp的成功页面</strong></p>
+<pre><code class="language-jsp">&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h3&gt;入门成功&lt;/h3&gt;
+    
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p><strong>部署到Tomcat服务器上，进行测试即可。</strong></p>
+<hr>
+<h3 id="入门案例的执行过程分析">入门案例的执行过程分析</h3>
+<p><img src="https://ArtZoick.github.io//post-images/springmvc/2.png" alt=""></p>
+<p><strong>1、入门案例的执行流程</strong></p>
+<p>1、当启动Tomcat服务器的时候，因为配置了load-on-startup标签，所以会创建DispatcherServlet对象，<br>
+就会加载springmvc.xml配置文件<br>
+2、开启了注解扫描，那么HelloController对象就会被创建。<br>
+3、从index.jsp发送请求，请求会先到达DispatcherServlet核心控制器，根据配置@RequestMapping注解<br>
+找到执行的具体方法。<br>
+4、根据执行方法的返回值，再根据配置的视图解析器，去指定的目录下查找指定名称的JSP文件。<br>
+5、Tomcat服务器渲染页面，做出响应。</p>
+<p><strong>2、SpringMVC官方提供图形</strong></p>
+<p><img src="https://ArtZoick.github.io//post-images/springmvc/3.png" alt=""></p>
+<p><strong>3、入门案例中的组件分析</strong></p>
 <ol>
-<li>MVC全名是Model View Controller 模型视图控制器，每个部分各司其职。</li>
-<li>Model：数据模型，JavaBean的类，用来进行数据封装。</li>
-<li>View：指JSP、HTML用来展示数据给用户</li>
-<li>Controller：用来接收用户的请求，整个流程的控制器。用来进行数据校验等。</li>
+<li>前端控制器（DispatcherServlet）：用户请求到达前端控制器，它就相当于 mvc 模式中的 c，dispatcherServlet 是整个流程控制的中心，由它调用其它组件处理用户的请求，dispatcherServlet 的存在降低了组件之间的耦合性。</li>
+<li>处理器映射器（HandlerMapping）：HandlerMapping 负责根据用户请求找到 Handler 即处理器，SpringMVC 提供了不同的映射器实现不同的映射方式，例如：配置文件方式，实现接口方式，注解方式等。</li>
+<li>处理器（Handler）：它就是我们开发中要编写的具体业务控制器。由 DispatcherServlet 把用户请求转发到 Handler。由Handler 对具体的用户请求进行处理。</li>
+<li>处理器适配器（HandlAdapter）：通过 HandlerAdapter 对处理器进行执行，这是适配器模式的应用，通过扩展适配器可以对更多类型的处理器进行执行。</li>
+<li>视图解析器（View Resolver）：View Resolver 负责将处理结果生成 View 视图，View Resolver 首先根据逻辑视图名解析成物理视图名即具体的页面地址，再生成 View 视图对象，最后对 View 进行渲染将处理结果通过页面展示给用户。</li>
+<li>视图（View）：一般情况下需要通过页面标签或页面模版技术将模型数据通过页面展示给用户</li>
 </ol>
+<h3 id="requestmapping注解">RequestMapping注解</h3>
+<p><strong>1、RequestMapping注解的作用是建立请求URL和处理方法之间的对应关系</strong></p>
+<p>**2、RequestMapping注解可以作用在方法和类上 **<br>
+　　作用在类上：第一级的访问目录<br>
+　　作用在方法上：第二级的访问目录<br>
+　　细节：路径可以不编写 / 表示应用的根目录开始<br>
+　　细节：${ pageContext.request.contextPath }也可以省略不写，但是路径上不能写 /</p>
+<p>**3、RequestMapping的属性 **<br>
+　　path 指定请求路径的url<br>
+　　value value属性和path属性是一样的<br>
+　　method 指定该方法的请求方式<br>
+　　params 指定限制请求参数的条件<br>
+　　headers 发送的请求中必须包含的请求头</p>
+<h2 id="三-请求参数的绑定">三、请求参数的绑定</h2>
+<h3 id="1-请求参数的绑定说明">1、请求参数的绑定说明</h3>
+<p>1、绑定机制<br>
+　　　　1、表单提交的数据都是k=v格式的 username=haha&amp;password=123<br>
+　　　　2、SpringMVC的参数绑定过程是把表单提交的请求参数，作为控制器中方法的参数进行绑定的<br>
+　　　　3、要求：提交表单的name和参数的名称是相同的</p>
+<p>2、支持的数据类型<br>
+　　　　基本数据类型和字符串类型<br>
+　　　　实体类型（JavaBean）<br>
+　　　　集合数据类型（List、map集合等）</p>
+<h3 id="2-绑定的注意事项">2、绑定的注意事项</h3>
+<p>1、基本数据类型和字符串类型<br>
+　　　　提交表单的name和参数的名称是相同的<br>
+　　　　区分大小写<br>
+　　2、实体类型（JavaBean）<br>
+　　　　提交表单的name和JavaBean中的属性名称需要一致<br>
+　　　　如果一个JavaBean类中包含其他的引用类型，那么表单的name属性需要编写成：对象.属性 例如：<br>
+address.name</p>
+<p>3、给集合属性数据封装<br>
+　　　　JSP页面编写方式：list[0].属性</p>
+<h3 id="3-请求参数中文乱码的解决">3、请求参数中文乱码的解决</h3>
+<p>在web.xml中配置Spring提供的过滤器类</p>
+<pre><code class="language-xml"> &lt;!--配置解决中文乱码的过滤器--&gt;
+  &lt;filter&gt;
+    &lt;filter-name&gt;characterEncodingFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+    &lt;!--指定UTF-8字符集--&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;encoding&lt;/param-name&gt;
+      &lt;param-value&gt;UTF-8&lt;/param-value&gt;
+    &lt;/init-param&gt;
+  &lt;/filter&gt;
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;characterEncodingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;
+</code></pre>
+<h3 id="4-自定义类型转换器">4、自定义类型转换器</h3>
+<p>1、表单提交的任何数据类型全部都是字符串类型，但是后台定义Integer类型，数据也可以封装上，说明<br>
+Spring框架内部会默认进行数据类型转换。</p>
+<p>2、如果想自定义数据类型转换，可以实现<strong>Converter</strong>的接口<br>
+　　1、自定义类型转换器</p>
+<pre><code class="language-java">public class StringToDateConverter implements Converter&lt;String, Date&gt; {
+    /**
+     * String source 传进来的字符串
+     * @param source
+     * @return
+     */
+    @Override
+    public Date convert(String source) {
+        //判断
+        if(source==null){
+            throw new RuntimeException(&quot;请传入数据&quot;);
+        }
+        DateFormat df = new SimpleDateFormat(&quot;yyyy-MM-dd&quot;);
+
+        try {
+            return df.parse(source);
+        } catch (ParseException e) {
+            throw new RuntimeException(&quot;数据类型转换出现错误&quot;);
+        }
+    }
+}
+
+</code></pre>
+<p>2、注册自定义类型转换器，在springmvc.xml配置文件中编写配置</p>
+<pre><code class="language-xml"> &lt;!--配置自定义类型转换器--&gt;
+    &lt;bean id=&quot;ConversionService&quot; class=&quot;org.springframework.context.support.ConversionServiceFactoryBean&quot;&gt;
+        &lt;!--将自己写的类型转换器配置进去--&gt;
+        &lt;property name=&quot;converters&quot;&gt;
+            &lt;set&gt;
+                &lt;bean class=&quot;top.zoick.utils.StringToDateConverter&quot;/&gt;
+            &lt;/set&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+
+    &lt;!--开启SpringMVC框架注解支持--&gt;
+    &lt;!--conversion-service  将类型转换器配置生效 --&gt;
+    &lt;mvc:annotation-driven conversion-service=&quot;ConversionService&quot;/&gt;
+</code></pre>
+<h3 id="5-在控制器中使用原生的servletapi对象">5、在控制器中使用原生的ServletAPI对象</h3>
+<p>只需要在控制器的方法参数定义HttpServletRequest和HttpServletResponse对象</p>
+<h3 id="6-controller中和jsp中的代码">6、controller中和jsp中的代码</h3>
+<pre><code class="language-java">@Controller
+@RequestMapping(&quot;/param&quot;)
+public class ParamController {
+
+    /**
+     * 请求参数绑定入门
+     * @param username
+     * @return
+     */
+    @RequestMapping(&quot;testParam&quot;)
+    public String testparam(String username){
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(&quot;用户名：&quot;+username);
+        return &quot;success&quot;;
+    }
+
+    /**
+     * 请求参数绑定，把数据封装到javaBean的类当中
+     * @return
+     */
+    @RequestMapping(&quot;saveAccount&quot;)
+    public String saveAccount(Account account){
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(account);
+        return &quot;success&quot;;
+    }
+
+    /**
+     * 自定义类型转换器
+     * @param user
+     * @return
+     */
+    @RequestMapping(&quot;/saveUser&quot;)
+    public String saveUser(User user){
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(user);
+        return &quot;success&quot;;
+    }
+
+    /**
+     * 原生的api获取
+     * @return
+     */
+    @RequestMapping(&quot;testServlet&quot;)
+    public String testServlet(HttpServletRequest request, HttpServletResponse response){
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(request);
+        HttpSession session = request.getSession();
+        System.out.println(session);
+        ServletContext servletContext = session.getServletContext();
+        System.out.println(servletContext);
+        System.out.println(response);
+        return &quot;success&quot;;
+    }
+}
+</code></pre>
+<pre><code class="language-jsp">&lt;%--请求参数绑定--%&gt;
+&lt;a href=&quot;param/testParam?username=hehe&amp;password=123&quot;&gt;请求参数绑定&lt;/a&gt;
+
+&lt;%--把数据封装Account类中
+  每个input里的name和javabean的属性名相同--%&gt;
+&lt;form action=&quot;param/saveAccount&quot; method=&quot;post&quot;&gt;
+    姓名：&lt;input type=&quot;text&quot; name=&quot;username&quot;/&gt;&lt;br/&gt;
+    密码：&lt;input type=&quot;text&quot; name=&quot;password&quot;/&gt;&lt;br/&gt;
+    金额：&lt;input type=&quot;text&quot; name=&quot;money&quot;/&gt;&lt;br/&gt;
+    &lt;!--Account类中引用类型的封装，name标签中，user表示是account中的User user，后面.uname表示是user中的属性--&gt;
+    用户姓名：&lt;input type=&quot;text&quot; name=&quot;user.uname&quot;/&gt;&lt;br/&gt;
+    用户年龄：&lt;input type=&quot;text&quot; name=&quot;user.age&quot;/&gt;&lt;br/&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;提交&quot;/&gt;
+&lt;/form&gt;
+
+&lt;%--把数据封装Account类中，类中存在list和map的集合 --%&gt;
+&lt;form action=&quot;param/saveAccount&quot; method=&quot;post&quot;&gt;
+    姓名：&lt;input type=&quot;text&quot; name=&quot;username&quot;/&gt;&lt;br/&gt;
+    密码：&lt;input type=&quot;text&quot; name=&quot;password&quot;/&gt;&lt;br/&gt;
+    金额：&lt;input type=&quot;text&quot; name=&quot;money&quot;/&gt;&lt;br/&gt;
+
+    &lt;%--把uname和age都封装到User对象中去，然后再存到list中去--%&gt;
+    用户姓名：&lt;input type=&quot;text&quot; name=&quot;list[0].uname&quot;/&gt;&lt;br/&gt;
+    用户年龄：&lt;input type=&quot;text&quot; name=&quot;list[0].age&quot;/&gt;&lt;br/&gt;
+
+    &lt;%--map['one']里的one为key值，随便写的，但要符合定义时的key值 String。
+    同样，这里将uname和age都封装到User对对象中，再存入map集合。map的key值为one--%&gt;
+    用户姓名：&lt;input type=&quot;text&quot; name=&quot;map['one'].uname&quot;/&gt;&lt;br/&gt;
+    用户年龄：&lt;input type=&quot;text&quot; name=&quot;map['one'].age&quot;/&gt;&lt;br/&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;提交&quot;/&gt;
+&lt;/form&gt;
+
+&lt;%--自定义类型转换器--%&gt;
+&lt;form action=&quot;param/saveUser&quot; method=&quot;post&quot;&gt;
+    用户姓名：&lt;input type=&quot;text&quot; name=&quot;uname&quot;/&gt;&lt;br/&gt;
+    用户年龄：&lt;input type=&quot;text&quot; name=&quot;age&quot;/&gt;&lt;br/&gt;
+    用户生日：&lt;input type=&quot;text&quot; name=&quot;date&quot;/&gt;&lt;br/&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;提交&quot;/&gt;
+&lt;/form&gt;
+
+&lt;a href=&quot;param/testServlet&quot;&gt;Servlet原生的API&lt;/a&gt;&lt;br/&gt;
+</code></pre>
+<h2 id="四-常用的注解">四、常用的注解</h2>
+<h3 id="1-requestparam注解">1、RequestParam注解</h3>
+<p>**作用：**把请求中的指定名称的参数传递给控制器中的形参赋值</p>
+<p><strong>属性：</strong><br>
+value：请求参数中的名称<br>
+required：请求参数中是否必须提供此参数，默认值是true，必须提供</p>
+<p><strong>代码：</strong></p>
+<pre><code class="language-java">@RequestMapping(&quot;/testRequestParam&quot;)
+    public String testRequestParam(@RequestParam(value = &quot;username&quot;) String name) {
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(name);
+        return &quot;success&quot;;
+    }
+</code></pre>
+<pre><code class="language-jsp">&lt;a href=&quot;anno/testRequestParam?username=hehe&quot;&gt;testRequestParam&lt;/a&gt;
+</code></pre>
+<h3 id="2-requestbody注解">2、RequestBody注解</h3>
+<p>**作用：**用于获取请求体的内容（注意：get方法不可以）</p>
+<p>**属性： **<br>
+required：是否必须有请求体，默认值是true</p>
+<p><strong>代码:</strong></p>
+<pre><code class="language-java">/**
+     * 获取请求体的内容
+     * @param body
+     * @return
+     */
+    @RequestMapping(&quot;/testRequestBody&quot;)
+    public String testRequestBody(@RequestBody String body) {
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(body);
+        return &quot;success&quot;;
+    }
+</code></pre>
+<pre><code class="language-jsp">&lt;form action=&quot;anno/testRequestBody&quot; method=&quot;post&quot;&gt;
+    用户姓名：&lt;input type=&quot;text&quot; name=&quot;uname&quot;/&gt;&lt;br/&gt;
+    用户年龄：&lt;input type=&quot;text&quot; name=&quot;age&quot;/&gt;&lt;br/&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;提交&quot;/&gt;
+&lt;/form&gt;
+</code></pre>
+<h3 id="3-pathvariable注解">3、PathVariable注解</h3>
+<p>**作用：**拥有绑定url中的占位符的。例如：url中有/delete/{id}，{id}就是占位符</p>
+<p><strong>属性：</strong><br>
+value：指定url中的占位符名称</p>
+<p><strong>Restful风格的URL</strong></p>
+<p>1、请求路径一样，可以根据不同的请求方式去执行后台的不同方法</p>
+<p>2、restful风格的URL优点<br>
+　　　　结构清晰<br>
+　　　　符合标准<br>
+　　　　易于理解<br>
+　　　　扩展方便</p>
+<p><strong>代码：</strong></p>
+<pre><code class="language-java">/**
+     * PathVariable注解
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(&quot;/testPathVariable/{sssssid}&quot;)
+    public String testPathVariable(@PathVariable(name = &quot;sssssid&quot;) String id) {
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(id);
+        return &quot;success&quot;;
+    }
+</code></pre>
+<pre><code class="language-jsp">&lt;a href=&quot;anno/testPathVariable/10&quot;&gt;testPathVariable&lt;/a&gt;
+</code></pre>
+<h3 id="4-requestheader注解">4、RequestHeader注解</h3>
+<p>**作用：**获取指定请求头的值</p>
+<p><strong>属性：</strong><br>
+value：请求头的名称</p>
+<p><strong>代码：</strong></p>
+<pre><code class="language-java"> /**
+     * 获取请求头的值
+     *
+     * @param header
+     * @return
+     */
+    @RequestMapping(&quot;/testRequestHeader&quot;)
+    public String testRequestHeader(@RequestHeader(value = &quot;Accept&quot;) String header) {
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(header);
+        return &quot;success&quot;;
+    }
+</code></pre>
+<pre><code class="language-jsp">&lt;a href=&quot;anno/testRequestHeader&quot;&gt;RequestHeader&lt;/a&gt;&lt;br/&gt;
+</code></pre>
+<h3 id="5-cookievalue注解">5、CookieValue注解</h3>
+<p>**作用：**用于获取指定cookie的名称的值</p>
+<p><strong>属性：</strong><br>
+value：cookie的名称</p>
+<p><strong>代码:</strong></p>
+<pre><code class="language-java">@RequestMapping(path=&quot;/hello&quot;)
+public String sayHello(@CookieValue(value=&quot;JSESSIONID&quot;) String cookieValue) {
+	System.out.println(cookieValue);
+	return &quot;success&quot;;
+}
+</code></pre>
+<h3 id="6-modelattribute注解">6、ModelAttribute注解</h3>
+<p>**作用： **<br>
+出现在方法上：表示当前方法会在控制器方法执行前线执行。<br>
+出现在参数上：获取指定的数据给参数赋值。</p>
+<p><strong>应用场景：</strong><br>
+当提交表单数据不是完整的实体数据时，保证没有提交的字段使用数据库原来的数据。</p>
+<p><strong>代码：</strong></p>
+<p>1、修饰的方法有返回值</p>
+<pre><code class="language-java"> /**
+     * ModelAttribute注解
+     *
+     * @return
+     */
+    @RequestMapping(&quot;/testModelAttribute&quot;)
+    public String testModelAttribute(User user) {
+        System.out.println(&quot;执行了...&quot;);
+        System.out.println(user);
+        return &quot;success&quot;;
+    }
+
+    @ModelAttribute
+    public User showUser(String uname) {
+        System.out.println(&quot;showUser方法执行了...&quot;);
+        //通过用户查询数据库(模拟）
+        User user = new User();
+        user.setUname(uname);
+        user.setAge(12);
+        user.setDate(new Date());
+        return user;
+    }
+</code></pre>
+<pre><code class="language-jsp">&lt;form action=&quot;anno/testModelAttribute&quot; method=&quot;post&quot;&gt;
+    用户姓名：&lt;input type=&quot;text&quot; name=&quot;uname&quot;/&gt;&lt;br/&gt;
+    用户年龄：&lt;input type=&quot;text&quot; name=&quot;age&quot;/&gt;&lt;br/&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;提交&quot;/&gt;
+&lt;/form&gt;
+</code></pre>
+<ol start="2">
+<li>修饰的方法没有返回值</li>
+</ol>
+<pre><code class="language-java">/**
+* 作用在方法，先执行
+* @param name
+* @return
+*/
+@ModelAttribute
+public void showUser(String name,Map&lt;String, User&gt; map) {
+System.out.println(&quot;showUser执行了...&quot;);
+// 模拟从数据库中查询对象
+User user = new User();
+user.setName(&quot;哈哈&quot;);
+user.setPassword(&quot;123&quot;);
+user.setMoney(100d);
+map.put(&quot;abc&quot;, user);
+}
+/**
+* 修改用户的方法
+* @param cookieValue
+* @return
+*/
+@RequestMapping(path=&quot;/updateUser&quot;)
+public String updateUser(@ModelAttribute(value=&quot;abc&quot;) User user) {
+	System.out.println(user);
+	return &quot;success&quot;;
+}
+</code></pre>
+<h3 id="7-sessionattributes注解">7、SessionAttributes注解</h3>
+<p>**作用：**用于多次执行控制器方法间的参数共享</p>
+<p><strong>属性：</strong><br>
+value：指定存入属性的名称</p>
+<p><strong>代码：</strong></p>
+<pre><code class="language-java">/**
+     * SessionAttrubutes注解
+     *
+     * @return
+     */
+    @RequestMapping(&quot;/testSessionAttrubutes&quot;)
+    public String testSessionAttrubutes(Model model) {
+        System.out.println(&quot;执行了...&quot;);
+        //底层会存储到request域对象中
+        model.addAttribute(&quot;msg&quot;, &quot;zoick&quot;);
+        return &quot;success&quot;;
+    }
+
+    /**
+     * 获取值
+     * @param modelmap
+     * @return
+     */
+    @RequestMapping(&quot;/getSessionAttrubutes&quot;)
+    public String getSessionAttrubutes(ModelMap modelmap) {
+        System.out.println(&quot;getSessionAttrubutes...&quot;);
+        String msg = (String) modelmap.get(&quot;msg&quot;);
+        System.out.println(msg);
+        return &quot;success&quot;;
+    }
+
+    @RequestMapping(&quot;/delSessionAttrubutes&quot;)
+    public String delSessionAttrubutes(SessionStatus status) {
+        System.out.println(&quot;delSessionAttrubutes...&quot;);
+        status.setComplete();
+        return &quot;success&quot;;
+    }
+
+</code></pre>
 ]]></content>
     </entry>
     <entry>
