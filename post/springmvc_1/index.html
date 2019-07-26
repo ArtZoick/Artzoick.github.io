@@ -5,7 +5,7 @@
 <title>SpringMVC_1 入门、参数绑定、常用注解 | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1563804179211">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1564106841904">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1563804179211" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1564106841904" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -166,13 +166,15 @@
     &lt;servlet-name&gt;dispatcherServlet&lt;/servlet-name&gt;
     &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
     
-    &lt;!--加载springmvc.xml配置文件--&gt;
+    &lt;!--配置初始化参数，用于读取 SpringMVC 的配置文件--&gt;
     &lt;init-param&gt;
       &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
       &lt;param-value&gt;classpath:springmvc.xml&lt;/param-value&gt;
     &lt;/init-param&gt;
     
-    &lt;!--启动服务器即可创建--&gt;
+    &lt;!--配置 servlet 的对象的创建时间点：应用加载时创建。
+        取值只能是非 0 正整数，表示启动顺序
+	    1表示启动服务器即可创建--&gt;
     &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
   &lt;/servlet&gt;
   
@@ -181,13 +183,13 @@
     &lt;url-pattern&gt;/&lt;/url-pattern&gt;
   &lt;/servlet-mapping&gt;
 </code></pre>
-<p><strong>其中相关配置说明：</strong><br>
-servlet标签中<br>
+<p><strong>其中相关配置说明:</strong><br>
+<strong>&lt;servlet&gt;</strong> 中<br>
 1、配置前端控制器DispatcherServlet 。<br>
 2、servlet加载全局初始化参数springmvc.xml，继而springmvc.xml中的配置能生效。<br>
-3、启动服务器即可使servlet标签中的配置生效：创建DispatcherServlet对象，加载springmvc.xml配置文件。</p>
-<p>servlet-mapping标签中<br>
-1、使servlet标签中内容被请求到。<br>
+3、启动服务器即可使&lt;servlet&gt;中的配置生效：创建DispatcherServlet对象，加载springmvc.xml配置文件。</p>
+<p><strong>&lt;servlet-mapping&gt;</strong> 中<br>
+1、使&lt;servlet&gt;被请求到。<br>
 2、url-pattern中/是，让所有请求都被serlvet拦截到，继而走前端控制器。</p>
 <h3 id="3-springmvcxml配置">3、springmvc.xml配置</h3>
 <pre><code class="language-xml">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
@@ -215,17 +217,17 @@ http://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
     &lt;mvc:annotation-driven/&gt;
 &lt;/beans&gt;
 </code></pre>
-<p><strong>其中相关配置说明：</strong><br>
+<p><strong>其中相关配置说明:</strong><br>
 1、component-scan开启注解扫描，使spring能识别类中的@Controller等注解，将类交给IOC容器来管理。<br>
-2、配置视图解析器InternalResourceViewResolver，Controller中有return的值，如&quot;success&quot;。即为返回success.jsp这个页面。也需要使用配置来使springmvc框架知道在哪儿。这里需要使用<property>标签配置前缀和后缀。<br>
+2、配置视图解析器InternalResourceViewResolver，Controller中有return的值，如&quot;success&quot;。即为返回success.jsp这个页面。也需要使用配置来使springmvc框架知道在哪儿。这里需要使用&lt;property&gt;标签配置前缀和后缀。<br>
 3、开启springmvc框架注解支持，使springmvc相关注解能被支持。</p>
 <p><strong>&lt;mvc: annotation-driven/&gt;说明：</strong><br>
 在 SpringMVC 的各个组件中，处理器映射器、处理器适配器、视图解析器称为 SpringMVC 的三大组件。<br>
 使 用 &lt;mvc: annotation-driven&gt; 自 动加载 RequestMappingHandlerMapping （处理映射器） 和<br>
-RequestMappingHandlerAdapter （ 处 理 适 配 器 ） ， 可 用 在 SpringMVC.xml 配 置 文 件 中 使 用<br>
+RequestMappingHandlerAdapter （ 处理适配器 ） ， 可 用 在 SpringMVC.xml 配 置 文 件 中 使 用<br>
 &lt;mvc: annotation-driven&gt;替代注解处理器和适配器的配置。</p>
 <h3 id="4-编写indexjsp和hellocontroller控制器类-启动tomcat">4、编写index.jsp和HelloController控制器类、启动Tomcat</h3>
-<p><em>index.jsp</em></p>
+<p><strong>index.jsp</strong></p>
 <pre><code class="language-jsp">&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -240,7 +242,7 @@ RequestMappingHandlerAdapter （ 处 理 适 配 器 ） ， 可 用 在 SpringM
 &lt;/html&gt;
 
 </code></pre>
-<p><em>HelloController</em></p>
+<p><strong>HelloController</strong></p>
 <pre><code class="language-java">package top.zoick.controller;
 
 import org.springframework.stereotype.Controller;
@@ -286,6 +288,7 @@ public class HelloController {
 &lt;/html&gt;
 </code></pre>
 <p><strong>部署到Tomcat服务器上，进行测试即可。</strong></p>
+<hr>
 <h3 id="入门案例的执行过程分析">入门案例的执行过程分析</h3>
 <p><img src="https://ArtZoick.github.io//post-images/springmvc/2.bmp" alt=""></p>
 <p><strong>1、入门案例的执行流程</strong></p>
@@ -317,7 +320,7 @@ public class HelloController {
 <p><strong>3、RequestMapping的属性</strong><br>
 　　path 指定请求路径的url<br>
 　　value value属性和path属性是一样的<br>
-　　method 指定该方法的请求方式<br>
+　　method 指定该方法的请求方式  示例：@RequestMapping(value=&quot;/saveAccount&quot;,method=RequestMethod.POST)<br>
 　　params 指定限制请求参数的条件<br>
 　　headers 发送的请求中必须包含的请求头</p>
 <h2 id="三-请求参数的绑定">三、请求参数的绑定</h2>
@@ -325,7 +328,21 @@ public class HelloController {
 <p>1、绑定机制<br>
 　　　　1、表单提交的数据都是k=v格式的 username=haha&amp;password=123<br>
 　　　　2、SpringMVC的参数绑定过程是把表单提交的请求参数，作为控制器中方法的参数进行绑定的<br>
-　　　　3、要求：提交表单的name和参数的名称是相同的</p>
+　　　　3、要求：提交表单的name和参数的名称是相同的<br>
+例如</p>
+<pre><code class="language-java">&lt;a href=&quot;account/findAccount?accountId=10&quot;&gt;查询账户&lt;/a&gt;
+中请求参数是：
+	accountId=10
+/**
+* 查询账户
+* @return
+*/
+@RequestMapping(&quot;/findAccount&quot;)
+public String findAccount(Integer accountId) {
+	System.out.println(&quot;查询了账户。。。。&quot;+accountId);
+	return &quot;success&quot;;
+}
+</code></pre>
 <p>2、支持的数据类型<br>
 　　　　基本数据类型和字符串类型<br>
 　　　　实体类型（JavaBean）<br>
@@ -503,10 +520,10 @@ public class ParamController {
 <h2 id="四-常用的注解">四、常用的注解</h2>
 <h3 id="1-requestparam注解">1、RequestParam注解</h3>
 <p><strong>作用:</strong> 把请求中的指定名称的参数传递给控制器中的形参赋值</p>
-<p><strong>属性:</strong><br>
+<p><strong>属性：</strong><br>
 value：请求参数中的名称<br>
 required：请求参数中是否必须提供此参数，默认值是true，必须提供</p>
-<p><strong>代码：</strong></p>
+<p><strong>代码:</strong></p>
 <pre><code class="language-java">@RequestMapping(&quot;/testRequestParam&quot;)
     public String testRequestParam(@RequestParam(value = &quot;username&quot;) String name) {
         System.out.println(&quot;执行了...&quot;);
@@ -518,7 +535,7 @@ required：请求参数中是否必须提供此参数，默认值是true，必�
 </code></pre>
 <h3 id="2-requestbody注解">2、RequestBody注解</h3>
 <p><strong>作用:</strong> 用于获取请求体的内容（注意：get方法不可以）</p>
-<p>**属性: **<br>
+<p><strong>属性：</strong><br>
 required：是否必须有请求体，默认值是true</p>
 <p><strong>代码:</strong></p>
 <pre><code class="language-java">/**
@@ -542,7 +559,8 @@ required：是否必须有请求体，默认值是true</p>
 <h3 id="3-pathvariable注解">3、PathVariable注解</h3>
 <p><strong>作用:</strong> 拥有绑定url中的占位符的。例如：url中有/delete/{id}，{id}就是占位符</p>
 <p><strong>属性：</strong><br>
-value：指定url中的占位符名称</p>
+value：指定url中的占位符名称<br>
+required：是否必须提供占位符。</p>
 <p><strong>Restful风格的URL</strong></p>
 <p>1、请求路径一样，可以根据不同的请求方式去执行后台的不同方法</p>
 <p>2、restful风格的URL优点<br>
@@ -569,7 +587,8 @@ value：指定url中的占位符名称</p>
 <h3 id="4-requestheader注解">4、RequestHeader注解</h3>
 <p><strong>作用:</strong> 获取指定请求头的值</p>
 <p><strong>属性：</strong><br>
-value：请求头的名称</p>
+value：请求头的名称<br>
+required：是否必须有此消息头</p>
 <p><strong>代码：</strong></p>
 <pre><code class="language-java"> /**
      * 获取请求头的值
@@ -664,11 +683,15 @@ public String updateUser(@ModelAttribute(value=&quot;abc&quot;) User user) {
 }
 </code></pre>
 <h3 id="7-sessionattributes注解">7、SessionAttributes注解</h3>
-<p><strong>作用:</strong> 用于多次执行控制器方法间的参数共享</p>
+<p>**作用：**用于多次执行控制器方法间的参数共享</p>
 <p><strong>属性：</strong><br>
-value：指定存入属性的名称</p>
+value：指定存入属性的名称<br>
+type：用于指定存入的数据类型</p>
 <p><strong>代码：</strong></p>
-<pre><code class="language-java">/**
+<pre><code class="language-java">@SessionAttributes(value = {&quot;msg&quot;}) //把msg=zoick存入到session域中
+public class AnnoController {
+    
+    /**
      * SessionAttrubutes注解
      *
      * @return
@@ -700,6 +723,8 @@ value：指定存入属性的名称</p>
         status.setComplete();
         return &quot;success&quot;;
     }
+
+}
 
 </code></pre>
 
