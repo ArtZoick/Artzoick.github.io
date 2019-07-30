@@ -1,0 +1,656 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title> spring_1　概述、IOC、DI | 清汤牛肉锅</title>
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1564469806849">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143265163-1');
+</script>
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://ArtZoick.github.io/">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1564469806849" alt="">
+  </a>
+  <h1 class="site-title">
+    清汤牛肉锅
+  </h1>
+  <p class="site-description">
+    温故而知新
+
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/beef" class="menu">
+          牛肉锅
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+               spring_1　概述、IOC、DI
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-30
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://ArtZoick.github.io//tag/VwirVE4DD" class="post-tag">
+                  # Spring
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="一-spring-概述">一、Spring 概述</h2>
+<h3 id="1-spring-是什么">1、spring 是什么</h3>
+<p>​		Spring是分层的 Java SE/EE应用 full-stack 轻量级开源框架，以 IoC（Inverse Of Control：反转控制）和 AOP（Aspect Oriented Programming：面向切面编程）为内核，提供了展现层 SpringMVC 和持久层 Spring JDBC 以及业务层事务管理等众多的企业级应用技术，还能整合开源世界众多著名的第三方框架和类库，逐渐成为使用最多的Java EE 企业应用开源框架。</p>
+<h3 id="2-spring-的优势">2、spring 的优势</h3>
+<p><strong>方便解耦，简化开发:</strong> 通过 Spring提供的 IoC容器，将对象间的依赖关系交由 Spring进行控制<br>
+<strong>AOP编程的支持:</strong> 面向切面的编程<br>
+<strong>声明式事务的支持:</strong> 通过声明式方式灵活的进行事务的管理<br>
+<strong>方便程序的测试:</strong> 可以用非容器依赖的编程方式进行几乎所有的测试工作<br>
+<strong>方便集成各种优秀框架:</strong> 提供了对各种优秀框架（Struts、Hibernate、Hessian、Quartz<br>
+等）的直接支持<br>
+<strong>降低 JavaEE API 的使用难度</strong><br>
+<strong>Java 源码是经典学习范例</strong></p>
+<h3 id="3-spring-的体系结构">3、spring 的体系结构</h3>
+<p><img src="https://ArtZoick.github.io//post-images/spring/1.png" alt=""></p>
+<h2 id="二-ioc-的概念和作用">二、IOC 的概念和作用</h2>
+<h3 id="1-什么是程序的耦合">1、什么是程序的耦合</h3>
+<p>在软件工程中，耦合指的就是就是对象之间的依赖性。对象之间的耦合越高，维护成本越高。因此对象的设计应使类和构件之间的耦合最小。软件设计中通常用耦合度和内聚度作为衡量模块独立程度的标准。 划分模块的一个准则就是<strong>高内聚低耦合</strong>。</p>
+<h3 id="2-控制反转-inversion-of-control">2、控制反转-Inversion Of Control</h3>
+<p><strong>之前创建对象的方式：</strong><br>
+在业务层中调用持久层代码为private IAccountDao accountDao = new AccountDaoImpl();如果此时没有持久层实现类，编译将不能通过。这种编译期依赖关系应该被杜绝，耦合度过高。<strong>（获取对象主动new）</strong></p>
+<p><strong>IOC方式：</strong><br>
+对象的创建权反转(交给)给spring的IOC容器，从而实现了程序的解耦合。<strong>（获取对象通过IOC）</strong></p>
+<h2 id="三-使用-spring-的-ioc-解决程序耦合">三、使用 spring 的 IOC 解决程序耦合</h2>
+<h3 id="1-入门案例">1、入门案例</h3>
+<p>框架结构：<br>
+<img src="https://ArtZoick.github.io//post-images/spring/2.png" alt=""></p>
+<h4 id="0-导入坐标">(0) 导入坐标</h4>
+<pre><code class="language-xml">&lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.1.6.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+</code></pre>
+<h4 id="1-创建业务层接口和实现类">(1) 创建业务层接口和实现类</h4>
+<pre><code class="language-java">/**
+ * 业务层接口
+ */
+public interface IAccountService {
+    public void saveAccount();
+}
+</code></pre>
+<pre><code class="language-java">/**
+ * 业务层接口的实现类
+ */
+public class AccountServiceImpl implements IAccountService {
+
+    private IAccountDao accountDao = new AccountDaoImpl(); //此处的依赖关系有待解决
+
+    public void saveAccount(){
+        accountDao.saveAccount();
+    }
+}
+</code></pre>
+<h4 id="2-创建持久层接口和实现类">(2) 创建持久层接口和实现类</h4>
+<pre><code class="language-java">/**
+ * 账户的持久层接口
+ */
+public interface IAccountDao {
+
+    /**
+     * 模拟保存账户
+     */
+    void saveAccount();
+}
+
+</code></pre>
+<pre><code class="language-java">/**
+ * 账户的持久层实现类
+ */
+public class AccountDaoImpl implements IAccountDao {
+
+    /**
+     * 模拟保存账户
+     */
+    public void saveAccount() {
+        System.out.println(&quot;Baocunle zhang hu&quot;);
+    }
+}
+</code></pre>
+<h4 id="3-类路径下创建beanxml配置文件">(3) 类路径下创建bean.xml配置文件</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
+
+    &lt;!--把对象的创建交给spring来管理--&gt;
+    &lt;bean id=&quot;accountService&quot; class=&quot;top.zoick.service.impl.AccountServiceImpl&quot;&gt;&lt;/bean&gt;
+
+    &lt;bean id=&quot;accountDao&quot; class=&quot;top.zoick.dao.impl.AccountDaoImpl&quot;&gt;&lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+<p><strong>bean 标签:</strong> 用于配置让 spring 创建对象，并且存入 ioc 容器之中<br>
+　　<strong>id 属性:</strong> 对象的唯一标识。<br>
+　　<strong>class 属性:</strong> 指定要创建对象的全限定类名</p>
+<h4 id="4-测试配置是否成功">(4) 测试配置是否成功</h4>
+<pre><code class="language-java">/**
+ * 模拟一个表现层，用于调用业务层
+ */
+public class Client {
+
+    public static void main(String[] args) {
+
+        //1.获取核心容器对象
+        ApplicationContext ac = new ClassPathXmlApplicationContext(&quot;bean.xml&quot;);
+        //2.根据id获取Bean对象,两种方式
+        IAccountService as = (IAccountService) ac.getBean(&quot;accountService&quot;);
+        IAccountDao adao = ac.getBean(&quot;accountDao&quot;,IAccountDao.class);
+
+
+        System.out.println(as);
+        System.out.println(adao);
+    }
+</code></pre>
+<h3 id="2-spring-基于-xml-的-ioc-细节">2、Spring 基于 XML 的 IOC 细节</h3>
+<h4 id="1-核心容器的两个接口引发出的问题">(1) 核心容器的两个接口引发出的问题：</h4>
+<p><strong>ApplicationContext:</strong>　　单例对象适用　　　常用此接口<br>
+它在构建核心容器时，创建对象采取的策略是采用立即加载的方式。也就是说，只要一读取完配置文件马上就创建配置文件中配置的对象。</p>
+<p><strong>BeanFactory:</strong> 　　　　　多例对象使用<br>
+它在构建核心容器时，创建对象采取的策略是采用延迟加载的方式。也就是说，什么时候根据id获取对象了，什么时候才真正的创建对象。</p>
+<h4 id="2-applicationcontext-接口">(2) ApplicationContext 接口</h4>
+<p><strong>ClassPathXmlApplicationContext:</strong> 它可以加载类路径下的配置文件，要求配置文件必须在类路径下。不在的话，加载不了。(更常用)<br>
+<strong>FileSystemXmlApplicationContext:</strong> 它可以加载磁盘任意路径下的配置文件(必须有访问权限）<br>
+<strong>AnnotationConfigApplicationContext:</strong> 它是用于读取注解创建容器的，是明天的内容。</p>
+<h3 id="3-ioc-中-bean-标签">3、IOC 中 bean 标签</h3>
+<h4 id="1-bean标签">(1) bean标签</h4>
+<p><strong>作用:</strong><br>
+　　用于配置对象让 spring 来创建的。<br>
+　　默认情况下它调用的是类中的无参构造函数。如果没有无参构造函数则不能创建成功。<br>
+<strong>属性：</strong><br>
+　　<strong>id:</strong> 给对象在容器中提供一个唯一标识。用于获取对象。<br>
+　　<strong>class:</strong> 指定类的全限定类名。用于反射创建对象。默认情况下调用无参构造函数。<br>
+　　<strong>scope:</strong> 指定对象的作用范围。<br>
+　　　　<em>singleton:</em>  默认值，单例的。<br>
+　　　　<em>prototype:</em> 多例的。<br>
+　　　　<em>request:</em> 作用于web应用的请求范围<br>
+　　　　<em>session:</em> 作用于web应用的会话范围<br>
+　　　　<em>global session:</em> WEB 项目中,应用在 Portlet 环境.如果没有 Portlet 环境那么globalSession 相当于 session。<br>
+　　<strong>init-method:</strong> 指定类中的初始化方法名称。<br>
+　　<strong>destroy-method:</strong> 指定类中销毁方法名称。</p>
+<h4 id="2-bean-的作用范围和生命周期">(2) bean 的作用范围和生命周期</h4>
+<p>bean对象的生命周期<br>
+　　<strong>单例对象</strong><br>
+　　　　出生：当容器创建时对象出生<br>
+　　　　活着：只要容器还在，对象一直活着<br>
+　　　　 死亡：容器销毁，对象消亡<br>
+　　　　总结：单例对象的生命周期和容器相同<br>
+　　<strong>多例对象</strong><br>
+　　　　出生：当我们使用对象时spring框架为我们创建<br>
+　　　　活着：对象只要是在使用过程中就一直活着。<br>
+　　　　死亡：当对象长时间不用，且没有别的对象引用时，由Java的垃圾回收器回收</p>
+<h4 id="3-实例化-bean-的三种方式">(3) 实例化 Bean 的三种方式</h4>
+<pre><code class="language-xml">&lt;!--第一种方式：使用默认构造函数创建
+            在spring的配置文件中使用bean标签，配以id和class属性之后，且没有其他的属性和标签时。
+            采用的就是默认构造函数创建bean对象，此时如果类没有默认构造函数，则对象无法创建
+    --&gt;
+    &lt;bean id=&quot;accountService_1&quot; class=&quot;top.zoick.service.impl.AccountServiceImpl&quot;/&gt;
+</code></pre>
+<pre><code class="language-xml">&lt;!--第二种方式:使用普通工厂中的方法创建对象（使用某个类中的方法创建对象，并存入Spring容器）
+			先把工厂的创建交给 spring 来管理。
+然后在使用工厂的 bean 来调用里面的方法
+factory-bean 属性：用于指定实例工厂 bean 的 id。
+factory-method 属性：用于指定实例工厂中创建对象的方法。
+--&gt;
+    &lt;bean id=&quot;instanceFactory&quot; class=&quot;top.zoick.factory.InstanceFactory&quot; /&gt;
+    &lt;bean id=&quot;accountService_2&quot; factory-bean=&quot;instanceFactory&quot; factory-method=&quot;getAccountService1&quot;/&gt;
+
+</code></pre>
+<pre><code class="language-xml">&lt;!-- 第三种方式：使用工厂中的静态方法创建对象（使用某个类中的静态方法创建对象，并存入spring容器)
+			id 属性：指定 bean 的 id，用于从容器中获取
+			class 属性：指定静态工厂的全限定类名
+			factory-method 属性：指定生产对象的静态方法
+--&gt;
+    &lt;bean id=&quot;accountService_3&quot; class=&quot;top.zoick.factory.StaticFactory&quot; factory-method=&quot;getAccountService2&quot;&gt;&lt;/bean&gt;
+
+</code></pre>
+<h3 id="4-spring-的依赖注入">4、spring 的依赖注入</h3>
+<h4 id="1-依赖注入的概念">(1) 依赖注入的概念</h4>
+<p>依赖注入：Dependency Injection。它是 spring 框架核心 ioc 的具体实现。<br>
+程序在编写时，通过控制反转，把对象的创建交给了 spring，但是代码中不可能出现没有依赖的情况。<br>
+ioc 解耦只是降低它们的依赖关系，但不会消除。例如：业务层仍会调用持久层的方法。<br>
+那这种业务层和持久层的依赖关系，在使用 spring 之后，就让 spring 来维护了。<br>
+简单的说，就是让框架把持久层对象传入业务层，而不用自己去获取。</p>
+<p><strong>能注入的数据:</strong> 有三类<br>
+　　基本类型和String<br>
+　　其他bean类型（在配置文件中或者注解配置过的bean）<br>
+　　复杂类型/集合类型<br>
+<strong>注入的方式:</strong> 有三种<br>
+　　第一种：使用构造函数提供<br>
+　　第二种：使用set方法提供<br>
+　　第三种：使用注解提供</p>
+<h4 id="2-构造函数注入">(2) 构造函数注入</h4>
+<p>IAccountService的实现类AccountServiceImpl</p>
+<pre><code class="language-java">public class AccountServiceImpl implements IAccountService {
+
+    //如果是经常变化的数据，并不适用于注入的方式
+    private String name;
+    private Integer age;
+    private Date birthday;
+
+    //构造函数注入
+    public AccountServiceImpl(String name,Integer age,Date birthday){
+        this.name = name;
+        this.age = age;
+        this.birthday = birthday;
+    }
+
+    public AccountServiceImpl() {
+        System.out.println(&quot;对象创建了&quot;);
+    }
+
+    @Override
+    public void saveAccount(){
+        System.out.println(&quot;service中的saveAccount方法执行了&quot;);
+    }
+
+}
+
+
+</code></pre>
+<p>bean.xml中</p>
+<pre><code class="language-xml">    &lt;bean id=&quot;accountService&quot; class=&quot;top.zoick.service.impl.AccountServiceImpl&quot;&gt;
+        &lt;constructor-arg name=&quot;name&quot; value=&quot;泰斯特&quot;&gt;&lt;/constructor-arg&gt;
+        &lt;constructor-arg name=&quot;age&quot; value=&quot;18&quot;&gt;&lt;/constructor-arg&gt;
+        &lt;constructor-arg name=&quot;birthday&quot; ref=&quot;now&quot;&gt;&lt;/constructor-arg&gt;
+    &lt;/bean&gt;
+    &lt;!-- 配置一个日期对象 --&gt;
+    &lt;bean id=&quot;now&quot; class=&quot;java.util.Date&quot;&gt;&lt;/bean&gt;
+
+</code></pre>
+<p>标签出现的位置：bean标签的内部<br>
+使用的标签:　constructor-arg<br>
+<strong>constructor-arg标签中的属性:</strong><br>
+　　<strong>type</strong>：用于指定要注入的数据的数据类型，该数据类型也是构造函数中某个或某些参数的类型<br>
+　　<strong>index</strong>：用于指定要注入的数据给构造函数中指定索引位置的参数赋值。索引的位置是从0开始<br>
+　　<strong>name</strong>：用于指定给构造函数中指定名称的参数赋值　　　　　　　　　　<strong>常用的</strong><br>
+　　=<mark><mark><mark><mark><mark><mark><mark><mark>以上三个用于指定给构造函数中哪个参数赋值</mark></mark></mark></mark></mark></mark></mark></mark>===<br>
+　　<strong>value</strong>：用于提供基本类型和String类型的数据<br>
+　　<strong>ref</strong>：用于指定其他的bean类型数据。它指的就是在spring的Ioc核心容器中出现过的bean对象</p>
+<p>优势：<br>
+　　在获取bean对象时，注入数据是必须的操作，否则对象无法创建成功。<br>
+弊端：<br>
+　　改变了bean对象的实例化方式，使我们在创建对象时，如果用不到这些数据，也必须提供。</p>
+<h4 id="3-set-方法注入">(3) set 方法注入</h4>
+<p>顾名思义，就是在类中提供需要注入成员的 set 方法。</p>
+<p>IAccountService的实现类AccountServiceImpl</p>
+<pre><code class="language-java">/**
+ * 账户的业务层实现类
+ */
+public class AccountServiceImpl2 implements IAccountService {
+
+    //如果是经常变化的数据，并不适用于注入的方式
+    private String name;
+    private Integer age;
+    private Date birthday;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    @Override
+    public void  saveAccount(){
+        System.out.println(&quot;service中的saveAccount方法执行了。。。&quot;+name+&quot;,&quot;+age+&quot;,&quot;+birthday);
+    }
+
+
+}
+
+</code></pre>
+<p>bean.xml中</p>
+<pre><code class="language-xml">    &lt;bean id=&quot;accountService2&quot; class=&quot;top.zoick.service.impl.AccountServiceImpl2&quot;&gt;
+        &lt;property name=&quot;name&quot; value=&quot;TEST&quot; &gt;&lt;/property&gt;
+        &lt;property name=&quot;age&quot; value=&quot;21&quot;&gt;&lt;/property&gt;
+        &lt;property name=&quot;birthday&quot; ref=&quot;now&quot;&gt;&lt;/property&gt;
+    &lt;/bean&gt;
+	&lt;!-- 配置一个日期对象 --&gt;
+    &lt;bean id=&quot;now&quot; class=&quot;java.util.Date&quot;&gt;&lt;/bean&gt;
+
+</code></pre>
+<p>出现的位置：bean标签的内部<br>
+涉及的标签：property<br>
+<strong>property标签的属性:</strong><br>
+　　<strong>name:</strong> 用于指定注入时所调用的set方法名称<br>
+　　<strong>value:</strong> 用于提供基本类型和String类型的数据<br>
+　　<strong>ref:</strong> 用于指定其他的bean类型数据。它指的就是在spring的Ioc核心容器中出现过的bean对象<br>
+优势：<br>
+　　创建对象时没有明确的限制，可以直接使用默认构造函数<br>
+弊端：<br>
+　　如果有某个成员必须有值，则获取对象是有可能set方法没有执行。</p>
+<h4 id="4-复杂类型的注入">(4) 复杂类型的注入</h4>
+<p>IAccountService的实现类AccountServiceImpl</p>
+<pre><code class="language-java">public class AccountServiceImpl3 implements IAccountService {
+
+    private String[] myStrs;
+    private List&lt;String&gt; myList;
+    private Set&lt;String&gt; mySet;
+    private Map&lt;String,String&gt; myMap;
+    private Properties myProps;
+
+    public void setMyStrs(String[] myStrs) {
+        this.myStrs = myStrs;
+    }
+
+    public void setMyList(List&lt;String&gt; myList) {
+        this.myList = myList;
+    }
+
+    public void setMySet(Set&lt;String&gt; mySet) {
+        this.mySet = mySet;
+    }
+
+    public void setMyMap(Map&lt;String, String&gt; myMap) {
+        this.myMap = myMap;
+    }
+
+    public void setMyProps(Properties myProps) {
+        this.myProps = myProps;
+    }
+
+
+    @Override
+    public void  saveAccount(){
+        System.out.println(Arrays.toString(myStrs));
+        System.out.println(myList);
+        System.out.println(mySet);
+        System.out.println(myMap);
+        System.out.println(myProps);
+    }
+    
+}
+
+
+</code></pre>
+<p>bean.xml中</p>
+<pre><code class="language-xml">    &lt;bean id=&quot;accountService3&quot; class=&quot;top.zoick.service.impl.AccountServiceImpl3&quot;&gt;
+        &lt;property name=&quot;myStrs&quot;&gt;
+            &lt;set&gt;
+                &lt;value&gt;AAA&lt;/value&gt;
+                &lt;value&gt;BBB&lt;/value&gt;
+                &lt;value&gt;CCC&lt;/value&gt;
+            &lt;/set&gt;
+        &lt;/property&gt;
+
+        &lt;property name=&quot;myList&quot;&gt;
+            &lt;array&gt;
+                &lt;value&gt;AAA&lt;/value&gt;
+                &lt;value&gt;BBB&lt;/value&gt;
+                &lt;value&gt;CCC&lt;/value&gt;
+            &lt;/array&gt;
+        &lt;/property&gt;
+
+        &lt;property name=&quot;mySet&quot;&gt;
+            &lt;list&gt;
+                &lt;value&gt;AAA&lt;/value&gt;
+                &lt;value&gt;BBB&lt;/value&gt;
+                &lt;value&gt;CCC&lt;/value&gt;
+            &lt;/list&gt;
+        &lt;/property&gt;
+
+        &lt;property name=&quot;myMap&quot;&gt;
+            &lt;props&gt;
+                &lt;prop key=&quot;testC&quot;&gt;ccc&lt;/prop&gt;
+                &lt;prop key=&quot;testD&quot;&gt;ddd&lt;/prop&gt;
+            &lt;/props&gt;
+        &lt;/property&gt;
+
+        &lt;property name=&quot;myProps&quot;&gt;
+            &lt;map&gt;
+                &lt;entry key=&quot;testA&quot; value=&quot;aaa&quot;/&gt;
+                &lt;entry key=&quot;testB&quot;&gt;
+                    &lt;value&gt;BBB&lt;/value&gt;
+                &lt;/entry&gt;
+            &lt;/map&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+
+</code></pre>
+<p>复杂类型的注入/集合类型的注入<br>
+　　用于给List结构集合注入的标签：<br>
+　　　　list array set<br>
+　　用于个Map结构集合注入的标签:<br>
+　　　　map  props<br>
+　　结构相同，标签可以互换</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%80-spring-%E6%A6%82%E8%BF%B0">一、Spring 概述</a>
+<ul>
+<li><a href="#1-spring-%E6%98%AF%E4%BB%80%E4%B9%88">1、spring 是什么</a></li>
+<li><a href="#2-spring-%E7%9A%84%E4%BC%98%E5%8A%BF">2、spring 的优势</a></li>
+<li><a href="#3-spring-%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84">3、spring 的体系结构</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-ioc-%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E4%BD%9C%E7%94%A8">二、IOC 的概念和作用</a>
+<ul>
+<li><a href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E7%A8%8B%E5%BA%8F%E7%9A%84%E8%80%A6%E5%90%88">1、什么是程序的耦合</a></li>
+<li><a href="#2-%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC-inversion-of-control">2、控制反转-Inversion Of Control</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-%E4%BD%BF%E7%94%A8-spring-%E7%9A%84-ioc-%E8%A7%A3%E5%86%B3%E7%A8%8B%E5%BA%8F%E8%80%A6%E5%90%88">三、使用 spring 的 IOC 解决程序耦合</a>
+<ul>
+<li><a href="#1-%E5%85%A5%E9%97%A8%E6%A1%88%E4%BE%8B">1、入门案例</a>
+<ul>
+<li><a href="#0-%E5%AF%BC%E5%85%A5%E5%9D%90%E6%A0%87">(0) 导入坐标</a></li>
+<li><a href="#1-%E5%88%9B%E5%BB%BA%E4%B8%9A%E5%8A%A1%E5%B1%82%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%AE%9E%E7%8E%B0%E7%B1%BB">(1) 创建业务层接口和实现类</a></li>
+<li><a href="#2-%E5%88%9B%E5%BB%BA%E6%8C%81%E4%B9%85%E5%B1%82%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%AE%9E%E7%8E%B0%E7%B1%BB">(2) 创建持久层接口和实现类</a></li>
+<li><a href="#3-%E7%B1%BB%E8%B7%AF%E5%BE%84%E4%B8%8B%E5%88%9B%E5%BB%BAbeanxml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">(3) 类路径下创建bean.xml配置文件</a></li>
+<li><a href="#4-%E6%B5%8B%E8%AF%95%E9%85%8D%E7%BD%AE%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F">(4) 测试配置是否成功</a></li>
+</ul>
+</li>
+<li><a href="#2-spring-%E5%9F%BA%E4%BA%8E-xml-%E7%9A%84-ioc-%E7%BB%86%E8%8A%82">2、Spring 基于 XML 的 IOC 细节</a>
+<ul>
+<li><a href="#1-%E6%A0%B8%E5%BF%83%E5%AE%B9%E5%99%A8%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%8E%A5%E5%8F%A3%E5%BC%95%E5%8F%91%E5%87%BA%E7%9A%84%E9%97%AE%E9%A2%98">(1) 核心容器的两个接口引发出的问题：</a></li>
+<li><a href="#2-applicationcontext-%E6%8E%A5%E5%8F%A3">(2) ApplicationContext 接口</a></li>
+</ul>
+</li>
+<li><a href="#3-ioc-%E4%B8%AD-bean-%E6%A0%87%E7%AD%BE">3、IOC 中 bean 标签</a>
+<ul>
+<li><a href="#1-bean%E6%A0%87%E7%AD%BE">(1) bean标签</a></li>
+<li><a href="#2-bean-%E7%9A%84%E4%BD%9C%E7%94%A8%E8%8C%83%E5%9B%B4%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">(2) bean 的作用范围和生命周期</a></li>
+<li><a href="#3-%E5%AE%9E%E4%BE%8B%E5%8C%96-bean-%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F">(3) 实例化 Bean 的三种方式</a></li>
+</ul>
+</li>
+<li><a href="#4-spring-%E7%9A%84%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">4、spring 的依赖注入</a>
+<ul>
+<li><a href="#1-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E7%9A%84%E6%A6%82%E5%BF%B5">(1) 依赖注入的概念</a></li>
+<li><a href="#2-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E6%B3%A8%E5%85%A5">(2) 构造函数注入</a></li>
+<li><a href="#3-set-%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5">(3) set 方法注入</a></li>
+<li><a href="#4-%E5%A4%8D%E6%9D%82%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%B3%A8%E5%85%A5">(4) 复杂类型的注入</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://ArtZoick.github.io//post/springmvc_2">
+              <h3 class="post-title">
+                SpringMVC_2 响应数据、文件上传、异常处理、拦截器
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a2471d09bddb5be481ee',
+    clientSecret: '05d427fb27f873cfabace27b9f042f2c7f23000f',
+    repo: 'ArtZoick.github.io',
+    owner: 'ArtZoick',
+    admin: ['ArtZoick'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank" onclick="alert('盲生，你发现了华点！');">学习强国</a>
+<script src="//code.tidio.co/5fh6jaqvluqj8jjuf5zlqrf5tlzpktnx.js"></script> | 
+  <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
