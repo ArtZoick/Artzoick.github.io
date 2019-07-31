@@ -5,7 +5,7 @@
 <title>牛肉锅 | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1564562417969">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1564563054764">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1564562417969" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1564563054764" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -147,6 +147,8 @@
 
         <div class="site-footer">
   <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank" onclick="alert('盲生，你发现了华点！');">学习强国</a>
+
+<!--Tido对话插件-->
 <script src="//code.tidio.co/5fh6jaqvluqj8jjuf5zlqrf5tlzpktnx.js"></script>
 <style>
 .text-popup {
@@ -184,6 +186,37 @@ l,max:2e4};m.id=l,m.style.cssText="position:fixed;top:0;left:0;z-index:"+d.z+";o
 window.οnresize=o,window.οnmοusemοve=function(n){n=n||window.event,y.x=n.clientX,y.y=n.clientY},window.οnmοuseοut=function(){y
 .x=null,y.y=null};for(var s=[],f=0;d.n>f;f++){var h=w()*a,g=w()*c,v=2*w()-1,p=2*w()-1;s.push({x:h,y:g,xa:v,ya:p,max:6e3})}u=
 s.concat([y]),setTimeout(function(){i()},100)}();
+</script>
+
+<!--鼠标点击-->
+<script type=”text/javascript”>
+var a_idx = 0;
+jQuery(document).ready(function($) {
+$(“body”).click(function(e) {
+var a = new Array(“富强”, “民主”, “文明”, “和谐”, “自由”, “平等”, “公正” ,”法治”, “爱国”, “敬业”, “诚信”, “友善”);
+var $i = $(“<span/>”).text(a[a_idx]);
+a_idx = (a_idx + 1) % a.length;
+var x = e.pageX,
+y = e.pageY;
+$i.css({
+“z-index”: 999999999999999999999999999999999999999999999999999999999999999999999,
+“top”: y – 20,
+“left”: x,
+“position”: “absolute”,
+“font-weight”: “bold”,
+“color”: “#ff6651”
+});
+$(“body”).append($i);
+$i.animate({
+“top”: y – 180,
+“opacity”: 0
+},
+1500,
+function() {
+$i.remove();
+});
+});
+});
 </script> | 
   <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
 </div>
