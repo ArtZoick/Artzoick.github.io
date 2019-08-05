@@ -1,0 +1,1105 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>spring_2  注解、整合 Junit | 清汤牛肉锅</title>
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1564975007076">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143265163-1');
+</script>
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://ArtZoick.github.io/">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1564975007076" alt="">
+  </a>
+  <h1 class="site-title">
+    清汤牛肉锅
+  </h1>
+  <p class="site-description">
+    温故而知新
+
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/beef" class="menu">
+          牛肉锅
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              spring_2  注解、整合 Junit
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-08-05
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="一-基于注解使用-spring-的-ioc">一、基于注解使用 spring 的 IOC</h2>
+<h3 id="1-注解的入门案例">1、 注解的入门案例</h3>
+<h4 id="框架结构">框架结构</h4>
+<p><img src="https://ArtZoick.github.io//post-images/spring/3.png" alt=""></p>
+<h4 id="1-导入坐标">(1) 导入坐标</h4>
+<pre><code class="language-xml">&lt;!--只需要spring-context--&gt;
+&lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.1.6.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+</code></pre>
+<h4 id="2-持久层接口及其实现类">(2) 持久层接口及其实现类</h4>
+<pre><code class="language-java">/**
+ * 账户的持久层接口
+ */
+public interface IAccountDao {
+
+    /**
+     * 模拟保存账户
+     */
+    void saveAccount();
+}
+</code></pre>
+<pre><code class="language-java">/**
+ * 账户的持久层实现类
+ */
+@Repository(&quot;accountDao1&quot;)
+public class AccountDaoImpl implements IAccountDao {
+
+    /**
+     * 模拟保存账户
+     */
+    public void saveAccount() {
+        System.out.println(&quot;保存账户11111111111111&quot;);
+    }
+}
+
+</code></pre>
+<h4 id="3-业务层接口及其实现类">(3) 业务层接口及其实现类</h4>
+<pre><code class="language-java">/**
+ * 业务层接口
+ */
+public interface IAccountService {
+    public void saveAccount();
+}
+</code></pre>
+<pre><code class="language-java">/**
+ * 业务层接口实现类
+ */
+@Service(value = &quot;accountService&quot;)
+public class AccountServiceImpl implements IAccountService {
+
+//    @Autowired
+//    @Qualifier(value = &quot;accountDao2&quot;)
+    @Resource(name = &quot;accountDao1&quot;)
+    private IAccountDao accountDao;
+
+    @PostConstruct
+    private void init(){
+        System.out.println(&quot;初始化方法执行了...&quot;);
+    }
+
+    @PreDestroy
+    private void destory(){
+        System.out.println(&quot;销毁方法执行了...&quot;);
+    }
+
+    public void saveAccount(){
+        accountDao.saveAccount();
+    }
+}
+
+</code></pre>
+<p>(4) 类路径下创建bean.xml配置文件</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd&quot;
+       &gt;
+
+    &lt;!--告知spring创建容器时需要扫描的包，配置所需要的标签不是在beans的约束中，而是一个名为context名称空间和约束--&gt;
+    &lt;context:component-scan base-package=&quot;top.zoick&quot;&gt;&lt;/context:component-scan&gt;
+&lt;/beans&gt;
+</code></pre>
+<h4 id="5-测试配置是否成功">(5) 测试配置是否成功</h4>
+<pre><code class="language-java">/**
+ * 模拟一个表现层，用于调用业务层
+ */
+public class Client {
+
+    public static void main(String[] args) {
+
+        //1.获取核心容器对象
+        ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext(&quot;bean.xml&quot;);
+        //2.根据id获取Bean对象,两种方式
+        IAccountService as = (IAccountService) ac.getBean(&quot;accountService&quot;);
+//        System.out.println(as);
+//
+//        IAccountDao adao = ac.getBean(&quot;accountDao&quot;, IAccountDao.class);
+//        System.out.println(adao);
+
+        as.saveAccount();
+        ac.close();
+    }
+}
+</code></pre>
+<h3 id="2-入门案例中的一些注解说明">2、入门案例中的一些注解说明</h3>
+<h4 id="0-曾经的xml配置">(0) 曾经的XML配置：</h4>
+<pre><code class="language-xml">&lt;bean id=&quot;accountService&quot; class=&quot;top.zoick.service.impl.AccountServiceImpl&quot;&gt;
+      scope=&quot;&quot;  init-method=&quot;&quot; destroy-method=&quot;&quot;&gt;
+      &lt;property name=&quot;&quot;  value=&quot;&quot; | ref=&quot;&quot;&gt; &lt;/property&gt;
+&lt;/bean&gt;
+</code></pre>
+<h4 id="1-用于创建对象的">(1) 用于创建对象的</h4>
+<p>他们的作用就和在XML配置文件中编写一个&lt;bean&gt;标签实现的功能是一样的<br>
+<em>相当于：&lt;bean id=&quot;&quot; class=&quot;&quot;&gt;</em><br>
+<em><strong>Component:</strong></em><br>
+　　作用：用于把当前类对象存入spring容器中<br>
+　　属性：<br>
+　　　　value：用于指定bean的id。当我们不写时，它的默认值是当前类名，且首字母改小写。<br>
+<em><strong>Controller:</strong></em> 一般用在表现层<br>
+<em><strong>Service:</strong></em> 一般用在业务层<br>
+<em><strong>Repository:</strong></em> 一般用在持久层<br>
+以上三个注解他们的作用和属性与Component是一模一样。<br>
+他们三个是spring框架为我们提供明确的三层使用的注解，使我们的三层对象更加清晰</p>
+<h4 id="2-用于注入数据的">(2) 用于注入数据的</h4>
+<p>他们的作用就和在xml配置文件中的bean标签中写一个&lt;property&gt;标签的作用是一样的<br>
+<em>相当于：&lt;property name=&quot;&quot; ref=&quot;&quot;&gt; 　　&lt;property name=&quot;&quot; value=&quot;&quot;&gt;</em><br>
+<em><strong>Autowired:</strong></em><br>
+　　<strong>作用:</strong> 自动按类型注入。只要容器中有唯一的一个bean对象类型和要注入的变量类型匹配，就可以注入成功<br>
+　　　　　如果ioc容器中没有任何bean的类型和要注入的变量类型匹配，则报错。<br>
+　　　　　如果Ioc容器中有多个类型匹配时：<br>
+　　　　　出现位置：<br>
+　　　　　　　可以是变量上，也可以是方法上<br>
+　　　　　细节：<br>
+　　　　　　　在使用注解注入时，set方法就不是必须的了。<br>
+<em><strong>Qualifier:</strong></em><br>
+　　<strong>作用:</strong> 在按照类中注入的基础之上再按照名称注入。它在给类成员注入时不能单独使用。但是在给方法参数注入时可以（后面会写）<br>
+　　<strong>属性:</strong><br>
+　　　　value：用于指定注入bean的id。<br>
+<em><strong>Resource:</strong></em><br>
+　　<strong>作用:</strong> 直接按照bean的id注入。它可以独立使用<br>
+　　<strong>属性:</strong><br>
+　　　　name: 用于指定bean的id。<br>
+以上三个注入都只能注入其他bean类型的数据，而基本类型和String类型无法使用上述注解实现。<br>
+另外，集合类型的注入只能通过XML来实现。</p>
+<p><em><strong>Value:</strong></em><br>
+　　<strong>作用:</strong> 用于注入基本类型和String类型的数据<br>
+　　<strong>属性:</strong><br>
+　　　　value：用于指定数据的值。它可以使用spring中SpEL(也就是spring的el表达式）<br>
+　　　　　　　　SpEL的写法：${表达式}</p>
+<h4 id="3-用于改变作用范围的">(3) 用于改变作用范围的</h4>
+<p>他们的作用就和在bean标签中使用scope属性实现的功能是一样的<br>
+<em>相当于：&lt;bean id=&quot;&quot; class=&quot;&quot; scope=&quot;&quot;&gt;</em><br>
+<em><strong>Scope:</strong></em><br>
+　　<strong>作用:</strong> 用于指定bean的作用范围<br>
+　　<strong>属性:</strong><br>
+　　　　value：指定范围的取值。常用取值：singleton prototype</p>
+<h4 id="4-和生命周期相关">(4) 和生命周期相关</h4>
+<p>他们的作用就和在bean标签中使用init-method和destroy-methode的作用是一样的<br>
+相当于：<bean id="" class="" init-method="" destroy-method="" /><br>
+<strong>PreDestroy:</strong><br>
+　　作用：用于指定销毁方法<br>
+<strong>PostConstruct:</strong><br>
+　　作用：用于指定初始化方法</p>
+<h2 id="二-使用-spring-的-ioc-的实现账户的crud-xml配置">二、使用 spring  的 IOC 的实现账户的CRUD (XML配置)</h2>
+<h3 id="1-相关案例">1、相关案例</h3>
+<h4 id="框架结构-2">框架结构</h4>
+<p>和上基本差不多</p>
+<h4 id="1-导入坐标-2">(1) 导入坐标</h4>
+<pre><code class="language-xml">&lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.1.6.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+            &lt;version&gt;5.0.2.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;commons-dbutils&lt;/groupId&gt;
+            &lt;artifactId&gt;commons-dbutils&lt;/artifactId&gt;
+            &lt;version&gt;1.4&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.15&lt;/version&gt;
+        &lt;/dependency&gt;
+		&lt;!--c3p0连接池--&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;c3p0&lt;/groupId&gt;
+            &lt;artifactId&gt;c3p0&lt;/artifactId&gt;
+            &lt;version&gt;0.9.1.2&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;junit&lt;/groupId&gt;
+            &lt;artifactId&gt;junit&lt;/artifactId&gt;
+            &lt;version&gt;4.12&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+            &lt;version&gt;1.18.4&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+</code></pre>
+<h4 id="2-创建数据库和编写实体类">(2) 创建数据库和编写实体类</h4>
+<pre><code class="language-sql">create table account(
+		id int primary key auto_increment,
+		name varchar(40),
+		money float
+)character set utf8 collate utf8_general_ci;
+
+insert into account(name,money) values('aaa',1000);
+insert into account(name,money) values('bbb',1000);
+insert into account(name,money) values('ccc',1000);
+</code></pre>
+<pre><code class="language-java">/**
+ * @author zoick
+ * @date 2019/7/30 19:39
+ */
+@Getter
+@Setter
+@ToString
+public class Account implements Serializable {
+
+    private Integer id;
+    private String name;
+    private Float money;
+}
+</code></pre>
+<h4 id="3-持久层接口及其实现类">(3) 持久层接口及其实现类</h4>
+<pre><code class="language-java">/**
+ * @author zoick
+ * @date 2019/7/30 19:51
+ */
+public interface IAccountDao {
+
+    /**
+     * 查询所有
+     * @return
+     */
+    List&lt;Account&gt; findAllAccount();
+
+    /**
+     * 查询一个
+     * @param accountId
+     * @return
+     */
+    Account findAccountByID(Integer accountId);
+
+    /**
+     * 保存
+     * @param account
+     */
+    void saveAccount(Account account);
+
+    /**
+     * 更新
+     * @param account
+     */
+    void updateAccount(Account account);
+
+    /**
+     * 删除
+     * @param accountId
+     */
+    void deleteAccount(Integer accountId);
+}
+</code></pre>
+<pre><code class="language-java">public class AccountDaoImpl implements IAccountDao {
+
+    private QueryRunner runner;
+
+    public void setRunner(QueryRunner runner) {
+        this.runner = runner;
+    }
+
+    @Override
+    public List&lt;Account&gt; findAllAccount() {
+        try{
+            return runner.query(&quot;select * from account&quot;,new BeanListHandler&lt;Account&gt;(Account.class));
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Account findAccountByID(Integer accountId) {
+        try{
+            return runner.query(&quot;select * from account where id = ? &quot;,new BeanHandler&lt;Account&gt;(Account.class),accountId);
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void saveAccount(Account account) {
+        try{
+            runner.update(&quot;insert into account(name,money)values(?,?)&quot;,account.getName(),account.getMoney());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateAccount(Account account) {
+        try{
+            runner.update(&quot;update account set name=?,money=? where id=?&quot;,account.getName(),account.getMoney(),account.getId());
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteAccount(Integer accountId) {
+        try{
+            runner.update(&quot;delete from account where id=?&quot;,accountId);
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+</code></pre>
+<p>(4) 业务层接口及其实现类</p>
+<pre><code class="language-java">/**
+ * 账户的业务层接口
+ * @author zoick
+ * @date 2019/7/30 19:38
+ */
+public interface IAccountService {
+
+    /**
+     * 查询所有
+     * @return
+     */
+    List&lt;Account&gt; findAllAccount();
+
+    /**
+     * 查询一个
+     * @param accountId
+     * @return
+     */
+    Account findAccountByID(Integer accountId);
+
+    /**
+     * 保存
+     * @param account
+     */
+    void saveAccount(Account account);
+
+    /**
+     * 更新
+     * @param account
+     */
+    void updateAccount(Account account);
+
+    /**
+     * 删除
+     * @param accountId
+     */
+    void deleteAccount(Integer accountId);
+}
+
+</code></pre>
+<pre><code class="language-java">public class AccountServiceImpl implements IAccountService {
+
+    private IAccountDao accountDao;
+
+    public void setAccountDao(IAccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+    /**
+     * 查询所有
+     *
+     * @return
+     */
+    @Override
+    public List&lt;Account&gt; findAllAccount() {
+        return accountDao.findAllAccount();
+    }
+
+    /**
+     * 查询一个
+     *
+     * @param accountId
+     * @return
+     */
+    @Override
+    public Account findAccountByID(Integer accountId) {
+        return accountDao.findAccountByID(accountId);
+    }
+
+    /**
+     * 保存
+     *
+     * @param account
+     */
+    @Override
+    public void saveAccount(Account account) {
+        accountDao.saveAccount(account);
+    }
+
+    /**
+     * 更新
+     *
+     * @param account
+     */
+    @Override
+    public void updateAccount(Account account) {
+        accountDao.updateAccount(account);
+    }
+
+    /**
+     * 删除
+     *
+     * @param accountId
+     */
+    @Override
+    public void deleteAccount(Integer accountId) {
+        accountDao.deleteAccount(accountId);
+    }
+}
+</code></pre>
+<h4 id="4-beanxml-配置">(4) bean.xml 配置</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
+
+&lt;!--配置Service--&gt;
+&lt;bean id=&quot;accountService&quot; class=&quot;top.zoick.service.impl.AccountServiceImpl&quot;&gt;
+    &lt;!--注入dao--&gt;
+    &lt;property name=&quot;accountDao&quot; ref=&quot;accountDao&quot;&gt;&lt;/property&gt;
+&lt;/bean&gt;
+&lt;!--配置dao对象--&gt;
+&lt;bean id=&quot;accountDao&quot; class=&quot;top.zoick.dao.impl.AccountDaoImpl&quot;&gt;
+    &lt;!--注入QueryRunner--&gt;
+    &lt;property name=&quot;runner&quot; ref=&quot;runner&quot;&gt;&lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;!--配置QueryRunner--&gt;
+&lt;bean id=&quot;runner&quot; class=&quot;org.apache.commons.dbutils.QueryRunner&quot; scope=&quot;prototype&quot;&gt;
+    &lt;!--注入数据源--&gt;
+    &lt;constructor-arg name=&quot;ds&quot; ref=&quot;dataSource&quot; &gt;&lt;/constructor-arg&gt;
+&lt;/bean&gt;
+
+&lt;bean name=&quot;dataSource&quot; class=&quot;com.mchange.v2.c3p0.ComboPooledDataSource&quot;&gt;
+    &lt;!--连接数据库的必备信息--&gt;
+    &lt;property name=&quot;driverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot;&gt;&lt;/property&gt;
+    &lt;property name=&quot;jdbcUrl&quot; value=&quot;jdbc:mysql://localhost:3306/eesy&quot;&gt;&lt;/property&gt;
+    &lt;property name=&quot;user&quot; value=&quot;root&quot;&gt;&lt;/property&gt;
+    &lt;property name=&quot;password&quot; value=&quot;root&quot;&gt;&lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<h4 id="5-测试">(5) 测试</h4>
+<pre><code class="language-java">/**
+ * 使用Junit单元测试：测试我们的配置
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = &quot;classpath:bean.xml&quot;)
+public class AccountServiceTest {
+
+    @Autowired
+    private IAccountService as;
+
+    @Test
+    public void testFindAll() {
+
+        //3.执行方法
+        List&lt;Account&gt; accounts = as.findAllAccount();
+        for(Account account : accounts){
+            System.out.println(account);
+        }
+    }
+
+    @Test
+    public void testFindOne() {
+        //1.获取容器
+        ApplicationContext ac = new ClassPathXmlApplicationContext(&quot;bean.xml&quot;);
+        //2.得到业务层对象
+        IAccountService as = ac.getBean(&quot;accountService&quot;, IAccountService.class);
+        //3.执行方法
+        Account account = as.findAccountByID(1);
+        System.out.println(account);
+    }
+
+    @Test
+    public void testSave() {
+        //1.获取容器
+        ApplicationContext ac = new ClassPathXmlApplicationContext(&quot;bean.xml&quot;);
+        //2.得到业务层对象
+        IAccountService as = ac.getBean(&quot;accountService&quot;, IAccountService.class);
+        Account account = new Account();
+        account.setName(&quot;test&quot;);
+        account.setMoney(12345f);
+        //3.执行方法
+        as.saveAccount(account);
+
+    }
+
+    @Test
+    public void testUpdate() {
+        //1.获取容器
+        ApplicationContext ac = new ClassPathXmlApplicationContext(&quot;bean.xml&quot;);
+        //2.得到业务层对象
+        IAccountService as = ac.getBean(&quot;accountService&quot;, IAccountService.class);
+        //3.执行方法
+        Account account = as.findAccountByID(4);
+        account.setMoney(23456f);
+        as.updateAccount(account);
+    }
+
+    @Test
+    public void testDelete() {
+        //1.获取容器
+        ApplicationContext ac = new ClassPathXmlApplicationContext(&quot;bean.xml&quot;);
+        //2.得到业务层对象
+        IAccountService as = ac.getBean(&quot;accountService&quot;, IAccountService.class);
+        //3.执行方法
+        as.deleteAccount(4);
+    }
+}
+
+</code></pre>
+<h3 id="2-一些总结说明">2、一些总结说明</h3>
+<h2 id="三-账户的crud-withoutxml">三、账户的CRUD ( withoutXML)</h2>
+<h3 id="1-相关案例-2">1、相关案例</h3>
+<h4 id="框架结构-3">框架结构</h4>
+<p><img src="https://ArtZoick.github.io//post-images/spring/4.png" alt=""></p>
+<h4 id="1-无xml纯注解配置思路">(1) 无xml纯注解配置思路</h4>
+<p>使用配置类来配置bean.xml中的相关配置</p>
+<h4 id="2-待改造的问题">(2) 待改造的问题</h4>
+<p>我们发现，之所以我们现在离不开 xml 配置文件，是因为我们有一句很关键的配置：</p>
+<pre><code class="language-xml">&lt;!-- 告知spring框架在，读取配置文件，创建容器时，扫描注解，依据注解创建对象，并存入容器中 --&gt;
+&lt;context:component-scan base-package=&quot;com.itheima&quot;&gt;&lt;/context:component-scan&gt;
+如果他要也能用注解配置，那么我们就离脱离 xml 文件又进了一步。
+
+另外，数据源和 QueryRunner 的配置也需要靠注解来实现。
+&lt;!--配置QueryRunner--&gt;
+&lt;bean id=&quot;runner&quot; class=&quot;org.apache.commons.dbutils.QueryRunner&quot; scope=&quot;prototype&quot;&gt;
+    &lt;!--注入数据源--&gt;
+    &lt;constructor-arg name=&quot;ds&quot; ref=&quot;dataSource&quot; &gt;&lt;/constructor-arg&gt;
+&lt;/bean&gt;
+
+&lt;bean name=&quot;dataSource&quot; class=&quot;com.mchange.v2.c3p0.ComboPooledDataSource&quot;&gt;
+    &lt;!--连接数据库的必备信息--&gt;
+    &lt;property name=&quot;driverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot;&gt;&lt;/property&gt;
+    &lt;property name=&quot;jdbcUrl&quot; value=&quot;jdbc:mysql://localhost:3306/eesy&quot;&gt;&lt;/property&gt;
+    &lt;property name=&quot;user&quot; value=&quot;root&quot;&gt;&lt;/property&gt;
+    &lt;property name=&quot;password&quot; value=&quot;root&quot;&gt;&lt;/property&gt;
+&lt;/bean&gt;
+
+</code></pre>
+<h4 id="3-新注解说明">(3) 新注解说明</h4>
+<h5 id="configuration"><em><strong>@Configuration</strong></em></h5>
+<p>**作用： **<br>
+用于指定当前类是一个 spring 配置类，当创建容器时会从该类上加载注解。获取容器时需要使用<br>
+AnnotationApplicationContext(有@Configuration 注解的类.class)。<br>
+<strong>属性：</strong><br>
+value: 用于指定配置类的字节码<br>
+<strong>示例:</strong></p>
+<pre><code class="language-java">@Configuration
+public class SpringConfiguration {
+}
+</code></pre>
+<p><strong>注意:</strong><br>
+已经把配置文件用类来代替了，但是如何配置创建容器时要扫描的包呢？<br>
+请看下一个注解***@ComponentScan***。</p>
+<h5 id="componentscan"><em><strong>@ComponentScan</strong></em></h5>
+<p><strong>作用:</strong><br>
+用于指定 spring 在初始化容器时要扫描的包。作用和在 spring 的 xml 配置文件中的：<br>
+&lt;context:component-scan base-package=&quot;top.zoick&quot;/&gt;是一样的。<br>
+**属性: **<br>
+basePackages：用于指定要扫描的包。和该注解中的 value 属性作用一样。<br>
+<strong>示例:</strong></p>
+<pre><code class="language-java">@Configuration
+@ComponentScan(&quot;com.itheima&quot;)
+public class SpringConfiguration {
+}
+</code></pre>
+<p><strong>注意:</strong><br>
+我们已经配置好了要扫描的包，但是数据源和 Runner 对象如何从配置文件中移除呢？<br>
+请看下一个注解**@Bean**。</p>
+<h5 id="bean"><em><strong>@Bean</strong></em></h5>
+<p><strong>作用:</strong><br>
+该注解只能写在方法上，表明使用此方法创建一个对象，并且放入 spring 容器。<br>
+<strong>属性:</strong><br>
+name：给当前@Bean 注解方法创建的对象指定一个名称(即 bean 的 id）。<br>
+<strong>示例:</strong></p>
+<pre><code class="language-java">/**
+ * 和spring连接数据库相关的配置类
+ */
+
+//@Configuration  //当配置类作为AnnotationConfigApplicationContext对象创建的参数时，该注解可以不写。但是后面test时并没有将其作为参数，故此处不可省略
+public class JdbcConfig {
+
+    @Value(&quot;${jdbc.driver}&quot;)
+    private String driver;
+
+    @Value(&quot;${jdbc.url}&quot;)
+    private String url;
+
+    @Value(&quot;${jdbc.username}&quot;)
+    private String username;
+
+    @Value(&quot;${jdbc.password}&quot;)
+    private String password;
+
+    /**
+     * 用于创建一个QueryRunner对象也存入容器中
+     * @param dataSource
+     * @return
+     */
+    @Bean(name = &quot;ruuner&quot;)
+    @Scope(&quot;prototype&quot;)
+    public QueryRunner createQueryRunner(@Qualifier(&quot;ds1&quot;) DataSource dataSource){
+
+        return new QueryRunner(dataSource);
+    }
+
+    /**
+     * 创建数据源对象并存入spring容器中
+     * @return
+     */
+    @Bean(name = &quot;ds2&quot;)
+    public DataSource createDataSource() {
+        try {
+            ComboPooledDataSource ds = new ComboPooledDataSource();
+            ds.setDriverClass(&quot;com.mysql.cj.jdbc.Driver&quot;);
+            ds.setJdbcUrl(&quot;jdbc:mysql://localhost:3306/eesy&quot;);
+            ds.setUser(&quot;root&quot;);
+            ds.setPassword(&quot;root&quot;);
+            return ds;
+        } catch (PropertyVetoException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    @Bean(name=&quot;ds1&quot;)
+    public DataSource createDataSource1(){
+        try {
+            ComboPooledDataSource ds = new ComboPooledDataSource();
+            ds.setDriverClass(driver);
+            ds.setJdbcUrl(&quot;jdbc:mysql://localhost:3306/eesy02&quot;);
+            ds.setUser(username);
+            ds.setPassword(password);
+            return ds;
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+}
+</code></pre>
+<p><strong>注意:</strong><br>
+我们已经把数据源和 Runner 从配置文件中移除了，此时可以删除 bean.xml 了。<br>
+但是由于没有了配置文件，创建数据源的配置又都写死在类中了。如何把它们配置出来呢？<br>
+请看下一个注解**@PropertySource**。</p>
+<h5 id="propertysource"><em><strong>@PropertySource</strong></em></h5>
+<p><strong>作用:</strong><br>
+用于加载.properties 文件中的配置。例如我们配置数据源时，可以把连接数据库的信息写到<br>
+properties 配置文件中，就可以使用此注解指定 properties 配置文件的位置。<br>
+<strong>属性:</strong><br>
+value[]：用于指定 properties 文件位置。如果是在类路径下，需要写上 classpath:<br>
+<strong>示例:</strong><br>
+上一个示例已经使用了，这个注解写在主配置文件上</p>
+<p>jdbc.properties 文件：<br>
+jdbc.driver=com.mysql.cj.jdbc.Driver<br>
+jdbc.url=jdbc:mysql://localhost:3306/eesy<br>
+jdbc.username=root<br>
+jdbc.password=root</p>
+<p>注意:<br>
+此时我们已经有了两个配置类，但是他们还没有关系。如何建立他们的关系呢？<br>
+请看下一个注解 <strong>@Import</strong>。</p>
+<h5 id="import"><em><strong>@Import</strong></em></h5>
+<p><strong>作用:</strong><br>
+用于导入其他配置类，在引入其他配置类时，可以不用再写@Configuration 注解。写上也没问题。<br>
+<strong>属性:</strong><br>
+value[]：用于指定其他配置类的字节码。</p>
+<pre><code class="language-java">@Configuration
+@ComponentScan(basePackages = {&quot;top.zoick&quot;})
+@Import(JdbcConfig.class)
+@PropertySource(&quot;classpath:jdbcConfig.properties&quot;)
+public class SpringConfiguration {
+
+}
+</code></pre>
+<p><strong>注意:</strong><br>
+我们已经把要配置的都配置好了，但是新的问题产生了，由于没有配置文件了，如何获取容器呢？<br>
+请看下一小节。</p>
+<h4 id="4-通过注解获取容器">(4)  通过注解获取容器</h4>
+<pre><code class="language-java">ApplicationContext ac =
+new AnnotationConfigApplicationContext(SpringConfiguration.class);
+</code></pre>
+<h3 id="2-spring-整合-junit">2、Spring 整合 Junit</h3>
+<h4 id="1-问题">(1) 问题</h4>
+<p>在测试类中，每个测试方法都有以下两行代码：</p>
+<pre><code class="language-java">ApplicationContext ac = new ClassPathXmlApplicationContext(&quot;bean.xml&quot;);
+IAccountService as = ac.getBean(&quot;accountService&quot;,IAccountService.class);
+</code></pre>
+<p>这两行代码的作用是获取容器，如果不写的话，直接会提示空指针异常。所以又不能轻易删掉。</p>
+<h4 id="2-解决思路分析">(2) 解决思路分析</h4>
+<p>针对上述问题，我们需要的是程序能自动帮我们创建容器。一旦程序能自动为我们创建 spring 容器，就<br>
+无须手动创建了，问题也就解决了。<br>
+这时，我们需要依靠 spring 框架，因为它提供了一个运行器，可以读取配置文件（或注解）来创建容器。我<br>
+们只需要告诉它配置文件在哪就行了。</p>
+<h4 id="3-步骤">(3) 步骤</h4>
+<h5 id="a-导入spring-test依赖">a、导入spring-test依赖</h5>
+<h5 id="b-runwith-注解替换原有运行器">b、@RunWith 注解替换原有运行器</h5>
+<h5 id="c-使用contextconfiguration-指定-spring-配置文件的位置">c、使用@ContextConfiguration 指定 spring 配置文件的位置</h5>
+<p>@ContextConfiguration 注解：<br>
+　　　　<strong>locations</strong> 属性：用于指定配置文件的位置。如果是类路径下，需要用 classpath:表明<br>
+　　　　<strong>classes</strong> 属性：用于指定注解的类。当不使用 xml 配置时，需要用此属性指定注解类的位置。</p>
+<pre><code class="language-java">@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SpringConfiguration.class)
+public class AccountServiceTest {
+
+
+    @Autowired
+    private IAccountService as;
+
+    @Test
+    public void testFindAll() {
+
+        //3.执行方法
+        List&lt;Account&gt; accounts = as.findAllAccount();
+        for(Account account : accounts){
+            System.out.println(account);
+        }
+    }
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%80-%E5%9F%BA%E4%BA%8E%E6%B3%A8%E8%A7%A3%E4%BD%BF%E7%94%A8-spring-%E7%9A%84-ioc">一、基于注解使用 spring 的 IOC</a>
+<ul>
+<li><a href="#1-%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%85%A5%E9%97%A8%E6%A1%88%E4%BE%8B">1、 注解的入门案例</a>
+<ul>
+<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84">框架结构</a></li>
+<li><a href="#1-%E5%AF%BC%E5%85%A5%E5%9D%90%E6%A0%87">(1) 导入坐标</a></li>
+<li><a href="#2-%E6%8C%81%E4%B9%85%E5%B1%82%E6%8E%A5%E5%8F%A3%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB">(2) 持久层接口及其实现类</a></li>
+<li><a href="#3-%E4%B8%9A%E5%8A%A1%E5%B1%82%E6%8E%A5%E5%8F%A3%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB">(3) 业务层接口及其实现类</a></li>
+<li><a href="#5-%E6%B5%8B%E8%AF%95%E9%85%8D%E7%BD%AE%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F">(5) 测试配置是否成功</a></li>
+</ul>
+</li>
+<li><a href="#2-%E5%85%A5%E9%97%A8%E6%A1%88%E4%BE%8B%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E6%B3%A8%E8%A7%A3%E8%AF%B4%E6%98%8E">2、入门案例中的一些注解说明</a>
+<ul>
+<li><a href="#0-%E6%9B%BE%E7%BB%8F%E7%9A%84xml%E9%85%8D%E7%BD%AE">(0) 曾经的XML配置：</a></li>
+<li><a href="#1-%E7%94%A8%E4%BA%8E%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84">(1) 用于创建对象的</a></li>
+<li><a href="#2-%E7%94%A8%E4%BA%8E%E6%B3%A8%E5%85%A5%E6%95%B0%E6%8D%AE%E7%9A%84">(2) 用于注入数据的</a></li>
+<li><a href="#3-%E7%94%A8%E4%BA%8E%E6%94%B9%E5%8F%98%E4%BD%9C%E7%94%A8%E8%8C%83%E5%9B%B4%E7%9A%84">(3) 用于改变作用范围的</a></li>
+<li><a href="#4-%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%9B%B8%E5%85%B3">(4) 和生命周期相关</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E4%BD%BF%E7%94%A8-spring-%E7%9A%84-ioc-%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%B4%A6%E6%88%B7%E7%9A%84crud-xml%E9%85%8D%E7%BD%AE">二、使用 spring  的 IOC 的实现账户的CRUD (XML配置)</a>
+<ul>
+<li><a href="#1-%E7%9B%B8%E5%85%B3%E6%A1%88%E4%BE%8B">1、相关案例</a>
+<ul>
+<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84-2">框架结构</a></li>
+<li><a href="#1-%E5%AF%BC%E5%85%A5%E5%9D%90%E6%A0%87-2">(1) 导入坐标</a></li>
+<li><a href="#2-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%96%E5%86%99%E5%AE%9E%E4%BD%93%E7%B1%BB">(2) 创建数据库和编写实体类</a></li>
+<li><a href="#3-%E6%8C%81%E4%B9%85%E5%B1%82%E6%8E%A5%E5%8F%A3%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB">(3) 持久层接口及其实现类</a></li>
+<li><a href="#4-beanxml-%E9%85%8D%E7%BD%AE">(4) bean.xml 配置</a></li>
+<li><a href="#5-%E6%B5%8B%E8%AF%95">(5) 测试</a></li>
+</ul>
+</li>
+<li><a href="#2-%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93%E8%AF%B4%E6%98%8E">2、一些总结说明</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-%E8%B4%A6%E6%88%B7%E7%9A%84crud-withoutxml">三、账户的CRUD ( withoutXML)</a>
+<ul>
+<li><a href="#1-%E7%9B%B8%E5%85%B3%E6%A1%88%E4%BE%8B-2">1、相关案例</a>
+<ul>
+<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84-3">框架结构</a></li>
+<li><a href="#1-%E6%97%A0xml%E7%BA%AF%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE%E6%80%9D%E8%B7%AF">(1) 无xml纯注解配置思路</a></li>
+<li><a href="#2-%E5%BE%85%E6%94%B9%E9%80%A0%E7%9A%84%E9%97%AE%E9%A2%98">(2) 待改造的问题</a></li>
+<li><a href="#3-%E6%96%B0%E6%B3%A8%E8%A7%A3%E8%AF%B4%E6%98%8E">(3) 新注解说明</a>
+<ul>
+<li><a href="#configuration">***@Configuration***</a></li>
+<li><a href="#componentscan">***@ComponentScan***</a></li>
+<li><a href="#bean">***@Bean***</a></li>
+<li><a href="#propertysource">***@PropertySource***</a></li>
+<li><a href="#import">***@Import***</a></li>
+</ul>
+</li>
+<li><a href="#4-%E9%80%9A%E8%BF%87%E6%B3%A8%E8%A7%A3%E8%8E%B7%E5%8F%96%E5%AE%B9%E5%99%A8">(4)  通过注解获取容器</a></li>
+</ul>
+</li>
+<li><a href="#2-spring-%E6%95%B4%E5%90%88-junit">2、Spring 整合 Junit</a>
+<ul>
+<li><a href="#1-%E9%97%AE%E9%A2%98">(1) 问题</a></li>
+<li><a href="#2-%E8%A7%A3%E5%86%B3%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90">(2) 解决思路分析</a></li>
+<li><a href="#3-%E6%AD%A5%E9%AA%A4">(3) 步骤</a>
+<ul>
+<li><a href="#a-%E5%AF%BC%E5%85%A5spring-test%E4%BE%9D%E8%B5%96">a、导入spring-test依赖</a></li>
+<li><a href="#b-runwith-%E6%B3%A8%E8%A7%A3%E6%9B%BF%E6%8D%A2%E5%8E%9F%E6%9C%89%E8%BF%90%E8%A1%8C%E5%99%A8">b、@RunWith 注解替换原有运行器</a></li>
+<li><a href="#c-%E4%BD%BF%E7%94%A8contextconfiguration-%E6%8C%87%E5%AE%9A-spring-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%8D%E7%BD%AE">c、使用@ContextConfiguration 指定 spring 配置文件的位置</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://ArtZoick.github.io//post/spring_2">
+              <h3 class="post-title">
+                spring_2  注解、整合 Junit
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a2471d09bddb5be481ee',
+    clientSecret: '05d427fb27f873cfabace27b9f042f2c7f23000f',
+    repo: 'ArtZoick.github.io',
+    owner: 'ArtZoick',
+    admin: ['ArtZoick'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank" onclick="alert('盲生，你发现了华点！');">学习强国</a>
+
+<!--Tido对话插件-->
+<script src="//code.tidio.co/5fh6jaqvluqj8jjuf5zlqrf5tlzpktnx.js"></script>
+<style>
+.text-popup {
+    animation: textPopup 1s;
+    color: red;
+    user-select: none;
+    white-space: nowrap;
+    position: absolute;
+    z-index: 99;
+}
+@keyframes textPopup {
+    0%, 100% {
+        opacity: 0;
+    }
+    5% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px);    
+    }
+}
+</style>
+<script type="text/javascript" src="https://cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js">
+!function(){function n(n,e,t){return n.getAttribute(e)||t}function e(n){return document.getElementsByTagName(n)}
+function t(){var t=e("script"),o=t.length,i=t[o-1];return{l:o,z:n(i,"zIndex",-1),o:n(i,"opacity",.5),c:n(i,"color","0,0,0")
+,n:n(i,"count",99)}}function o(){a=m.width=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidt
+h,c=m.height=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight}function i(){r.clearRect
+(0,0,a,c);var n,e,t,o,m,l;s.forEach(function(i,x){for(i.x+=i.xa,i.y+=i.ya,i.xa*=i.x>a||i.x<0?-1:1,i.ya*=i.y>c||i.y<0?-1:1,r.
+fillRect(i.x-.5,i.y-.5,1,1),e=x+1;e<u.length;e++)n=u[e],null!==n.x&&null!==n.y&&(o=i.x-n.x,m=i.y-n.y,l=o*o+m*m,l<n.max&&(n===
+y&&l>=n.max/2&&(i.x-=.03*o,i.y-=.03*m),t=(n.max-l)/n.max,r.beginPath(),r.lineWidth=t/2,r.strokeStyle="rgba("+d.c+","+(t+.2)+")
+",r.moveTo(i.x,i.y),r.lineTo(n.x,n.y),r.stroke()))}),x(i)}var a,c,u,m=document.createElement("canvas"),d=t(),l="c_n"+d.l,r=m.
+getContext("2d"),x=window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.
+oRequestAnimationFrame||window.msRequestAnimationFrame||function(n){window.setTimeout(n,1e3/45)},w=Math.random,y={x:null,y:nul
+l,max:2e4};m.id=l,m.style.cssText="position:fixed;top:0;left:0;z-index:"+d.z+";opacity:"+d.o,e("body")[0].appendChild(m),o(),
+window.οnresize=o,window.οnmοusemοve=function(n){n=n||window.event,y.x=n.clientX,y.y=n.clientY},window.οnmοuseοut=function(){y
+.x=null,y.y=null};for(var s=[],f=0;d.n>f;f++){var h=w()*a,g=w()*c,v=2*w()-1,p=2*w()-1;s.push({x:h,y:g,xa:v,ya:p,max:6e3})}u=
+s.concat([y]),setTimeout(function(){i()},100)}();
+</script>
+
+<!--鼠标点击-->
+<!--富强-->
+<script type="text/javascript"> 
+/* 鼠标特效 */ 
+var a_idx = 0; 
+jQuery(document).ready(function($) { 
+    $("body").click(function(e) { 
+        var a = new Array("富强", "民主", "文明", "和谐", "自由", "平等", "公正" ,"法治", "爱国", "敬业", "诚信", "友善"); 
+        var $i = $("<span/>").text(a[a_idx]); 
+        a_idx = (a_idx + 1) % a.length; 
+        var x = e.pageX, 
+        y = e.pageY; 
+        $i.css({ 
+            "z-index": 999, 
+            "top": y - 20, 
+            "left": x, 
+            "position": "absolute", 
+            "font-weight": "bold", 
+            "color": "#ff6651" 
+        }); 
+        $("body").append($i); 
+        $i.animate({ 
+            "top": y - 180, 
+            "opacity": 0 
+        }, 
+        1500, 
+        function() { 
+            $i.remove(); 
+        }); 
+    }); 
+}); 
+</script>
+<!--edn--富强--> | 
+  <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
