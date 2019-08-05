@@ -5,7 +5,7 @@
 <title>spring_2  注解、整合 Junit | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1564975007076">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1564981673093">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1564975007076" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1564981673093" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -675,7 +675,7 @@ public class AccountServiceTest {
 </code></pre>
 <h4 id="3-新注解说明">(3) 新注解说明</h4>
 <h5 id="configuration"><em><strong>@Configuration</strong></em></h5>
-<p>**作用： **<br>
+<p>**作用: **<br>
 用于指定当前类是一个 spring 配置类，当创建容器时会从该类上加载注解。获取容器时需要使用<br>
 AnnotationApplicationContext(有@Configuration 注解的类.class)。<br>
 <strong>属性：</strong><br>
@@ -687,12 +687,12 @@ public class SpringConfiguration {
 </code></pre>
 <p><strong>注意:</strong><br>
 已经把配置文件用类来代替了，但是如何配置创建容器时要扫描的包呢？<br>
-请看下一个注解***@ComponentScan***。</p>
+请看下一个注解 <em><strong>@ComponentScan</strong></em>。</p>
 <h5 id="componentscan"><em><strong>@ComponentScan</strong></em></h5>
 <p><strong>作用:</strong><br>
 用于指定 spring 在初始化容器时要扫描的包。作用和在 spring 的 xml 配置文件中的：<br>
 &lt;context:component-scan base-package=&quot;top.zoick&quot;/&gt;是一样的。<br>
-**属性: **<br>
+<strong>属性:</strong><br>
 basePackages：用于指定要扫描的包。和该注解中的 value 属性作用一样。<br>
 <strong>示例:</strong></p>
 <pre><code class="language-java">@Configuration
@@ -702,7 +702,7 @@ public class SpringConfiguration {
 </code></pre>
 <p><strong>注意:</strong><br>
 我们已经配置好了要扫描的包，但是数据源和 Runner 对象如何从配置文件中移除呢？<br>
-请看下一个注解**@Bean**。</p>
+请看下一个注解 <strong>@Bean</strong>。</p>
 <h5 id="bean"><em><strong>@Bean</strong></em></h5>
 <p><strong>作用:</strong><br>
 该注解只能写在方法上，表明使用此方法创建一个对象，并且放入 spring 容器。<br>
@@ -778,7 +778,7 @@ public class JdbcConfig {
 <p><strong>注意:</strong><br>
 我们已经把数据源和 Runner 从配置文件中移除了，此时可以删除 bean.xml 了。<br>
 但是由于没有了配置文件，创建数据源的配置又都写死在类中了。如何把它们配置出来呢？<br>
-请看下一个注解**@PropertySource**。</p>
+请看下一个注解 <strong>@PropertySource</strong>。</p>
 <h5 id="propertysource"><em><strong>@PropertySource</strong></em></h5>
 <p><strong>作用:</strong><br>
 用于加载.properties 文件中的配置。例如我们配置数据源时，可以把连接数据库的信息写到<br>
