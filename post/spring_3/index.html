@@ -1,0 +1,934 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spring_3 AOP | 清汤牛肉锅</title>
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565179466656">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143265163-1');
+</script>
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://ArtZoick.github.io/">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565179466656" alt="">
+  </a>
+  <h1 class="site-title">
+    清汤牛肉锅
+  </h1>
+  <p class="site-description">
+    温故而知新
+
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/beef" class="menu">
+          牛肉锅
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Spring_3 AOP
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-08-07
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://ArtZoick.github.io//tag/VwirVE4DD" class="post-tag">
+                  # Spring
+                </a>
+              
+                <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
+                  # 框架
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="一-aop-的相关概念">一、AOP 的相关概念</h2>
+<h3 id="1-aop概述">1、AOP概述</h3>
+<h4 id="1-什么是-aop">(1) 什么是 AOP</h4>
+<p>AOP：全称是 Aspect Oriented Programming 即：面向切面编程。<br>
+简单的说它就是把我们程序重复的代码抽取出来，在需要执行的时候，使用动态代理的技术，在不修改源码的<br>
+基础上，对我们的已有方法进行增强。</p>
+<h4 id="2-aop-的作用及优势">(2) AOP 的作用及优势</h4>
+<p><strong>作用:</strong><br>
+在程序运行期间，不修改源码对已有方法进行增强。<br>
+<strong>优势:</strong><br>
+减少重复代码　　提高开发效率　　维护方便</p>
+<h4 id="3-aop-的实现方式">(3) AOP 的实现方式</h4>
+<p>使用动态代理技术</p>
+<h3 id="2-aop-的具体应用">2、AOP 的具体应用</h3>
+<h4 id="1-动态代理回顾">(1) 动态代理回顾</h4>
+<p>字节码随用随创建，随用随加载。<br>
+它与静态代理的区别也在于此。因为静态代理是字节码一上来就创建好，并完成加载。<br>
+装饰者模式就是静态代理的一种体现。</p>
+<h4 id="2-动态代理常用的有两种方式">(2) 动态代理常用的有两种方式</h4>
+<p><strong>基于接口的动态代理</strong><br>
+提供者：JDK 官方的 Proxy 类。<br>
+要求：被代理类最少实现一个接口。</p>
+<p><strong>基于子类的动态代理</strong><br>
+提供者：第三方的 CGLib，如果报 asmxxxx 异常，需要导入 asm.jar。<br>
+要求：被代理类不能用 final 修饰的类（最终类）。</p>
+<h4 id="3-使用-jdk-官方的-proxy-类创建代理对象">(3) 使用 JDK 官方的 Proxy 类创建代理对象</h4>
+<p>对生产厂家要求的接口</p>
+<pre><code class="language-java">public interface IProducer {
+
+    /**
+     * 销售
+     * @param money
+     */
+    public void saleProduct(float money);
+
+    /**
+     * 售后
+     * @param money
+     */
+    public void afterService(float money);
+}
+
+</code></pre>
+<p>实现要求接口的厂家类</p>
+<pre><code class="language-java">public class Producer implements IProducer{
+
+    /**
+     * 销售
+     * @param money
+     */
+    @Override
+    public void saleProduct(float money){
+        System.out.println(&quot;销售产品，并拿到钱：&quot;+money);
+    }
+
+    /**
+     * 售后
+     * @param money
+     */
+    @Override
+    public void afterService(float money){
+        System.out.println(&quot;提供售后服务，并拿到钱：&quot;+money);
+    }
+}
+</code></pre>
+<p>模拟一个消费者</p>
+<pre><code class="language-java">/**
+ * 模拟一个消费者
+ */
+public class Client {
+
+    public static void main(String[] args) {
+        
+        //new一个厂家
+        final Producer producer = new Producer();
+
+        /*
+         *  如何创建代理对象：
+         *      使用Proxy类中的newProxyInstance方法
+         *  创建代理对象的要求：
+         *      被代理类最少实现一个接口，如果没有则不能使用
+         *  newProxyInstance方法的参数：
+         *      ClassLoader：类加载器
+         *          它是用于加载代理对象字节码的。和被代理对象使用相同的类加载器。固定写法。
+         *      Interfaces：和被代理对象具有相同的行为。实现相同的接口。
+         *          
+         *      InvocationHandler：用于提供增强的代码
+         *          它是让我们写如何代理。我们一般都是些一个该接口的实现类，通常情况下都是匿名内部类，但不是必须的。
+         *          此接口的实现类都是谁用谁写。
+         */
+       IProducer proxyProducer = (IProducer) Proxy.newProxyInstance(producer.getClass().getClassLoader(),
+                producer.getClass().getInterfaces(),
+                new InvocationHandler() {
+                    /**
+                     * 作用：执行被代理对象的任何接口方法都会经过该方法
+                     * 方法参数的含义
+                     * @param proxy   代理对象的引用
+                     * @param method  当前执行的方法
+                     * @param args    当前执行方法所需的参数
+                     * @return        和被代理对象方法有相同的返回值
+                     * @throws Throwable
+                     */
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        //提供增强的代码
+                        Object returnValue = null;
+
+                        //1.获取方法执行的参数
+                        Float money = (Float)args[0];
+                        //2.判断当前方法是不是销售
+                        if(&quot;saleProduct&quot;.equals(method.getName())) {
+                            returnValue = method.invoke(producer, money*0.8f);
+                        }
+                        return returnValue;
+                    }
+                });
+        
+        
+        proxyProducer.saleProduct(10000f);
+    }
+}
+</code></pre>
+<h4 id="4-使用-cglib-的-的-enhancer-类创建代理对象">(4) 使用 CGLib 的 的 Enhancer 类创建代理对象</h4>
+<p>不实现接口，子类的动态代理</p>
+<pre><code class="language-java">/**
+ * 一个生产者
+ */
+public class Producer {
+
+    //销售
+    public void saleProduct(float money){
+        System.out.println(&quot;销售产品，并拿到钱：&quot;+money);
+    }
+
+    //售后
+    public void afterService(float money){
+        System.out.println(&quot;提供售后服务，并拿到钱：&quot;+money);
+    }
+}
+</code></pre>
+<pre><code class="language-java">
+/**
+ * 模拟一个消费者
+ */
+public class Client {
+
+    public static void main(String[] args) {
+        final Producer producer = new Producer();
+
+        /**
+         *  基于子类的动态代理：
+         *      涉及的类：Enhancer
+         *      提供者：第三方cglib库
+         *  如何创建代理对象：
+         *      使用Enhancer类中的create方法
+         *  创建代理对象的要求：
+         *      被代理类不能是最终类
+         *  create方法的参数：
+         *      Class：字节码
+         *          它是用于指定被代理对象的字节码。
+         *
+         *      Callback：用于提供增强的代码
+         *          它是让我们写如何代理。我们一般都是些一个该接口的实现类，通常情况下都是匿名内部类，但不是必须的。
+         *          此接口的实现类都是谁用谁写。
+         *          我们一般写的都是该接口的子接口实现类：MethodInterceptor
+         */
+        Producer cglibProducer = (Producer)Enhancer.create(producer.getClass(), new MethodInterceptor() {
+            /**
+             * 执行被代理对象的任何方法都会经过该方法
+             * @param proxy
+             * @param method
+             * @param args
+             *    以上三个参数和基于接口的动态代理中invoke方法的参数是一样的
+             * @param methodProxy ：当前执行方法的代理对象
+             * @return
+             * @throws Throwable
+             */
+            @Override
+            public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+                //提供增强的代码
+                Object returnValue = null;
+
+                //1.获取方法执行的参数
+                Float money = (Float)args[0];
+                //2.判断当前方法是不是销售
+                if(&quot;saleProduct&quot;.equals(method.getName())) {
+                    returnValue = method.invoke(producer, money*0.8f);
+                }
+                return returnValue;
+            }
+        });
+        cglibProducer.saleProduct(12000f);
+    }
+}
+
+</code></pre>
+<h2 id="二-spring-中的-aop">二、Spring 中的 AOP</h2>
+<h3 id="1-spring-中-aop-的细节">1、 Spring 中 AOP 的细节</h3>
+<h4 id="1-aop-相关术语">(1) AOP 相关术语</h4>
+<p><strong>Joinpoint (连接点):</strong><br>
+所谓连接点是指那些被拦截到的点。在 spring 中,这些点指的是方法,因为 spring 只支持方法类型的连接点。</p>
+<p><strong>Pointcut (切入点):</strong><br>
+所谓切入点是指我们要对哪些 Joinpoint 进行拦截的定义。</p>
+<p><strong>Advice (通知/增强):</strong><br>
+所谓通知是指拦截到 Joinpoint 之后所要做的事情就是通知。<br>
+通知的类型：前置通知,后置通知,异常通知,最终通知,环绕通知。</p>
+<p><strong>Introduction (引介):</strong><br>
+引介是一种特殊的通知在不修改类代码的前提下, Introduction 可以在运行期为类动态地添加一些方法或 Field。</p>
+<p><strong>Target (目标对象):</strong><br>
+代理的目标对象。</p>
+<p><strong>Weaving (织入):</strong><br>
+是指把增强应用到目标对象来创建新的代理对象的过程。<br>
+spring 采用动态代理织入，而 AspectJ 采用编译期织入和类装载期织入。</p>
+<p>**Proxy (代理): **<br>
+一个类被 AOP 织入增强后，就产生一个结果代理类。</p>
+<p>**Aspect (切面): **<br>
+是切入点和通知（引介）的结合。</p>
+<h4 id="2-关于代理的选择">(2)  关于代理的选择</h4>
+<p>在 spring 中，框架会根据目标类是否实现了接口来决定采用哪种动态代理的方式。</p>
+<h3 id="2-基于-xml-的-aop-配置">2、基于 XML 的 AOP 配置</h3>
+<h4 id="1-导入坐标">(1) 导入坐标</h4>
+<pre><code class="language-xml">    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.1.6.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--解析切入点表达式--&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.aspectj&lt;/groupId&gt;
+            &lt;artifactId&gt;aspectjweaver&lt;/artifactId&gt;
+            &lt;version&gt;1.9.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+</code></pre>
+<h4 id="2-service包中的iaccountservice和其实现类implaccountserviceimpl">(2) service包中的IAccountService和其实现类impl.AccountServiceImpl</h4>
+<pre><code class="language-java">public interface IAccountService {
+
+    /**
+     * 模拟保存账户
+     */
+    void saveAccount();
+
+    /**
+     * 模拟更新账户
+     * @param i
+     */
+    void updateAccount(int i);
+
+    /**
+     * 删除账户
+     * @return
+     */
+    int deleteAccount();
+}
+</code></pre>
+<pre><code class="language-java">public class AccountServiceImpl implements IAccountService {
+
+    /**
+     * 模拟保存账户
+     */
+    @Override
+    public void saveAccount() {
+        System.out.println(&quot;保存...&quot;);
+    }
+
+    /**
+     * 模拟更新账户
+     * @param i
+     */
+    @Override
+    public void updateAccount(int i) {
+        System.out.println(&quot;更新...&quot;);
+
+    }
+
+    /**
+     * 删除账户
+     * @return
+     */
+    @Override
+    public int deleteAccount() {
+        System.out.println(&quot;删除...&quot;);
+        return 0;
+    }
+}
+</code></pre>
+<h4 id="3-logger通知类">(3) Logger通知类</h4>
+<pre><code class="language-java">/**
+ * 用户记录日志的工具类，它里面提供了公共的代码
+ */
+public class Logger {
+
+    /**
+     * 前置通知
+     */
+    public void beforePrintLog() {
+        System.out.println(&quot;logger类中的 前置通知&quot;);
+    }
+
+    /**
+     * 后置通知
+     */
+    public void afterReturningPrintLog() {
+        System.out.println(&quot;logger类中的 后置通知&quot;);
+    }
+
+    /**
+     * 异常通知
+     */
+    public void afterThrowingPrintLog() {
+        System.out.println(&quot;logger类中的 异常通知&quot;);
+    }
+
+    /**
+     * 最终通知
+     */
+    public void afterPrintLog() {
+        System.out.println(&quot;logger类中的 最终通知&quot;);
+    }
+
+    /**
+     * 环绕通知
+     * 问题：
+     *      当我们配置了环绕通知之后，切入点方法没有执行，而通知方法执行了。
+     * 分析：
+     *      通过对比动态代理中的环绕通知代码，发现动态代理的环绕通知有明确的切入点方法调用，而我们的代码中没有。
+     * 解决：
+     *      Spring框架为我们提供了一个接口：ProceedingJoinPoint。该接口有一个方法proceed()，此方法就相当于明确调用切入点方法。
+     *      该接口可以作为环绕通知的方法参数，在程序执行时，spring框架会为我们提供该接口的实现类供我们使用。
+     *
+     * spring中的环绕通知：
+     *      它是spring框架为我们提供的一种可以在代码中手动控制增强方法何时执行的方式。
+     */
+    public Object aroundPrintLog(ProceedingJoinPoint pjp) {
+        Object rtValue = null;
+        try {
+            Object[] args = pjp.getArgs();//得到方法执行所需的参数
+
+            System.out.println(&quot;Logger类中的aroundPringLog方法开始记录日志了。。。前置&quot;);
+
+            rtValue = pjp.proceed(args);//明确调用业务层方法（切入点方法）
+
+            System.out.println(&quot;Logger类中的aroundPringLog方法开始记录日志了。。。后置&quot;);
+
+            return rtValue;
+        } catch (Throwable t) {
+            System.out.println(&quot;Logger类中的aroundPringLog方法开始记录日志了。。。异常&quot;);
+            throw new RuntimeException(t);
+        } finally {
+            System.out.println(&quot;Logger类中的aroundPringLog方法开始记录日志了。。。最终&quot;);
+        }
+    }
+}
+
+</code></pre>
+<h4 id="4-beanxml-配置">(4) bean.xml 配置</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd&quot;&gt;
+
+    &lt;!-- 配置srping的Ioc,把service对象配置进来--&gt;
+    &lt;bean id=&quot;accountService&quot; class=&quot;top.zoick.service.impl.AccountServiceImpl&quot;&gt;&lt;/bean&gt;
+
+
+    &lt;!-- 配置Logger类 --&gt;
+    &lt;bean id=&quot;logger&quot; class=&quot;top.zoick.utils.Logger&quot;&gt;&lt;/bean&gt;
+
+    &lt;!--配置AOP--&gt;
+    &lt;aop:config&gt;
+        &lt;!--配置切入点表达式，id属性用于指定表达式唯一标识 expression属性用于指定表达式内容
+                此标签写在aop:aspect标签内部只能当前切面使用。
+                它还可以写在aop:aspect外面，此时就变成了所有切面可用。注意：由于约束的要求，若要写在外面一定要放在aop:aspect前面
+            --&gt;
+        &lt;aop:pointcut id=&quot;pt1&quot; expression=&quot;execution(* top.zoick.service.impl.*.*(..))&quot;/&gt;
+
+        &lt;!--配置切面 --&gt;
+        &lt;aop:aspect id=&quot;logAdvice&quot; ref=&quot;logger&quot;&gt;
+            &lt;!-- 配置前置通知: 在切入点方法执行之前执行
+            &lt;aop:before method=&quot;beforePrintLog&quot; pointcut-ref=&quot;pt1&quot;&gt;&lt;/aop:before&gt;--&gt;
+
+            &lt;!-- 配置后置通知：在切入点方法正常执行之后执行，它和异常通知永远只能执行一个
+            &lt;aop:after-returning method=&quot;afterReturningPrintLog&quot; pointcut-ref=&quot;pt1&quot;&gt;&lt;/aop:after-returning&gt;--&gt;
+
+            &lt;!-- 配置异常通知：在切入点方法执行产生异常后执行。他和后置通知永远只能执行一个
+            &lt;aop:after-throwing method=&quot;afterThrowingPrintLog&quot; pointcut-ref=&quot;pt1&quot;&gt;&lt;/aop:after-throwing&gt;--&gt;
+
+            &lt;!-- 配置最终通知，无论切入点方法是否正常执行它都会在其后面执行
+            &lt;aop:after method=&quot;afterPrintLog&quot; pointcut-ref=&quot;pt1&quot;&gt;&lt;/aop:after&gt;--&gt;
+
+            &lt;!--配置环绕通知 详细的注释在Logger类中--&gt;
+            &lt;aop:around method=&quot;aroundPrintLog&quot; pointcut-ref=&quot;pt1&quot;&gt;&lt;/aop:around&gt;
+        &lt;/aop:aspect&gt;
+    &lt;/aop:config&gt;
+&lt;/beans&gt;
+</code></pre>
+<h4 id="spring中基于xml的aop配置步骤"><strong>spring中基于XML的AOP配置步骤</strong></h4>
+<p>1、把通知Bean也交给spring来管理</p>
+<p>2、使用<strong>aop:config</strong>标签表明开始AOP的配置</p>
+<p>3、使用<strong>aop:aspect</strong>标签表明配置切面<br>
+　　　　id属性：是给切面提供一个唯一标识<br>
+　　　　ref属性：是指定通知类bean的Id。</p>
+<p>4、在aop:aspect标签的内部使用对应标签来配置通知的类型<br>
+　　<strong>aop:before</strong>：表示配置前置通知<br>
+　　　　method属性：用于指定Logger类中哪个方法是前置通知<br>
+　　　　ponitcut-ref：用于指定切入点的表达式的引用<br>
+　　　　poinitcut：用于指定切入点表达式<br>
+　　<strong>aop:after-returning</strong>: 后置通知：在切入点方法正常执行之后执行，它和异常通知永远只能执行一个<br>
+　　<strong>aop:after-throwing</strong>: 异常通知：在切入点方法执行产生异常后执行。他和后置通知永远只能执行一个<br>
+　　<strong>aop:after</strong>: 最终通知，无论切入点方法是否正常执行它都会在其后面执行</p>
+<p><strong>aop:around</strong>: 环绕通知 详细的注释在Logger类中，<em><strong>通常情况下，环绕通知都是独立使用的</strong></em></p>
+<p><strong>切入点表达式相关的注意:</strong></p>
+<pre><code>切入点表达式的写法：
+    关键字：execution(表达式)
+    表达式：
+        访问修饰符  返回值  包名.包名.包名...类名.方法名(参数列表)
+    标准的表达式写法：
+        public void top.zoick.service.impl.AccountServiceImpl.saveAccount()
+    访问修饰符可以省略
+        void top.zoick.service.impl.AccountServiceImpl.saveAccount()
+    返回值可以使用通配符，表示任意返回值
+        * top.zoick.service.impl.AccountServiceImpl.saveAccount()
+    包名可以使用通配符，表示任意包。但是有几级包，就需要写几个*.
+        * *.*.*.*.AccountServiceImpl.saveAccount())
+    包名可以使用..表示当前包及其子包
+        * *..AccountServiceImpl.saveAccount()
+    类名和方法名都可以使用*来实现通配
+        * *..*.*()
+    参数列表：
+        可以直接写数据类型：
+            基本类型直接写名称           int
+            引用类型写包名.类名的方式   java.lang.String
+        可以使用通配符表示任意类型，但是必须有参数
+        可以使用..表示有无参数均可，有参数可以是任意类型
+    全通配写法：
+        * *..*.*(..)
+
+    实际开发中切入点表达式的通常写法：
+        切到业务层实现类下的所有方法
+            * top.zoick.service.impl.*.*(..)
+
+
+&lt;aop:pointcut&gt;配置切入点表达式，id属性用于指定表达式唯一标识 expression属性用于指定表达式内容
+    此标签写在aop:aspect标签内部只能当前切面使用。
+    它还可以写在aop:aspect外面，此时就变成了所有切面可用。注意：由于约束的要求，若要写在外面一定要放在aop:aspect前面
+&lt;aop:pointcut id=&quot;pt1&quot; expression=&quot;execution(* top.zoick.service.impl.*.*(..))&quot;/&gt;
+</code></pre>
+<h5 id="5-测试">(5) 测试</h5>
+<pre><code class="language-java">public class AOTest {
+    public static void main(String[] args) {
+        //1.获取容器
+        ApplicationContext ac = new ClassPathXmlApplicationContext(&quot;bean.xml&quot;);
+        //2.获取对象
+        IAccountService accountService = (IAccountService) ac.getBean(&quot;accountService&quot;);
+        //3.执行方法
+        accountService.saveAccount();
+    }
+}
+</code></pre>
+<h3 id="3-基于注解的-aop-配置">3、基于注解的 AOP 配置</h3>
+<h4 id="1-service类中implaccountserviceimpl">(1) service类中impl.AccountServiceImpl</h4>
+<pre><code class="language-java">@Service(&quot;accountService&quot;)
+public class AccountServiceImpl implements IAccountService {
+
+    /**
+     * 模拟保存账户
+     */
+    @Override
+    public void saveAccount() {
+
+        System.out.println(&quot;保存...&quot;);
+
+    }
+
+    /**
+     * 模拟更新账户
+     * @param i
+     */
+    @Override
+    public void updateAccount(int i) {
+        System.out.println(&quot;更新...&quot;);
+
+    }
+
+    /**
+     * 删除账户
+     *
+     * @return
+     */
+    @Override
+    public int deleteAccount() {
+        System.out.println(&quot;删除...&quot;);
+        return 0;
+    }
+}
+
+</code></pre>
+<h4 id="2-utils中的logger">(2) utils中的Logger</h4>
+<pre><code class="language-java">/**
+ * 用户记录日志的工具类，它里面提供了公共的代码
+ */
+@Component(&quot;logger&quot;)
+@Aspect
+public class Logger {
+
+    @Pointcut(&quot;execution(* top.zoick.service.impl.*.*(..))&quot;)
+    private void pt1(){}
+
+    /**
+     * 前置通知
+     */
+//    @Before(&quot;pt1()&quot;)
+    public void beforePrintLog() {
+        System.out.println(&quot;logger类中的 前置通知&quot;);
+    }
+
+    /**
+     * 后置通知
+     */
+//    @AfterReturning(&quot;pt1()&quot;)
+    public void afterReturningPrintLog() {
+        System.out.println(&quot;logger类中的 后置通知&quot;);
+    }
+
+    /**
+     * 异常通知
+     */
+//    @AfterThrowing(&quot;pt1()&quot;)
+    public void afterThrowingPrintLog() {
+        System.out.println(&quot;logger类中的 异常通知&quot;);
+    }
+
+    /**
+     * 最终通知
+     */
+//    @After(&quot;pt1()&quot;)
+    public void afterPrintLog() {
+        System.out.println(&quot;logger类中的 最终通知&quot;);
+    }
+
+    @Around(&quot;pt1()&quot;)
+    public Object aroundPrintLog(ProceedingJoinPoint pjp) {
+        Object rtValue = null;
+        try {
+            Object[] args = pjp.getArgs();//得到方法执行所需的参数
+
+            System.out.println(&quot;Logger类中的aroundPringLog方法开始记录日志了。。。前置&quot;);
+
+            rtValue = pjp.proceed(args);//明确调用业务层方法（切入点方法）
+
+            System.out.println(&quot;Logger类中的aroundPringLog方法开始记录日志了。。。后置&quot;);
+
+            return rtValue;
+        } catch (Throwable t) {
+            System.out.println(&quot;Logger类中的aroundPringLog方法开始记录日志了。。。异常&quot;);
+            throw new RuntimeException(t);
+        } finally {
+            System.out.println(&quot;Logger类中的aroundPringLog方法开始记录日志了。。。最终&quot;);
+        }
+    }
+}
+
+</code></pre>
+<h4 id="3-beanxml">(3) bean.xml</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+    &lt;!--注解扫描--&gt;
+    &lt;context:component-scan base-package=&quot;top.zoick&quot;/&gt;
+
+
+    &lt;!--配置spring开启AOP注解--&gt;
+    &lt;aop:aspectj-autoproxy&gt;&lt;/aop:aspectj-autoproxy&gt;
+
+
+&lt;/beans&gt;
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%80-aop-%E7%9A%84%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5">一、AOP 的相关概念</a>
+<ul>
+<li><a href="#1-aop%E6%A6%82%E8%BF%B0">1、AOP概述</a>
+<ul>
+<li><a href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-aop">(1) 什么是 AOP</a></li>
+<li><a href="#2-aop-%E7%9A%84%E4%BD%9C%E7%94%A8%E5%8F%8A%E4%BC%98%E5%8A%BF">(2) AOP 的作用及优势</a></li>
+<li><a href="#3-aop-%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F">(3) AOP 的实现方式</a></li>
+</ul>
+</li>
+<li><a href="#2-aop-%E7%9A%84%E5%85%B7%E4%BD%93%E5%BA%94%E7%94%A8">2、AOP 的具体应用</a>
+<ul>
+<li><a href="#1-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%9B%9E%E9%A1%BE">(1) 动态代理回顾</a></li>
+<li><a href="#2-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%89%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F">(2) 动态代理常用的有两种方式</a></li>
+<li><a href="#3-%E4%BD%BF%E7%94%A8-jdk-%E5%AE%98%E6%96%B9%E7%9A%84-proxy-%E7%B1%BB%E5%88%9B%E5%BB%BA%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1">(3) 使用 JDK 官方的 Proxy 类创建代理对象</a></li>
+<li><a href="#4-%E4%BD%BF%E7%94%A8-cglib-%E7%9A%84-%E7%9A%84-enhancer-%E7%B1%BB%E5%88%9B%E5%BB%BA%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1">(4) 使用 CGLib 的 的 Enhancer 类创建代理对象</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-spring-%E4%B8%AD%E7%9A%84-aop">二、Spring 中的 AOP</a>
+<ul>
+<li><a href="#1-spring-%E4%B8%AD-aop-%E7%9A%84%E7%BB%86%E8%8A%82">1、 Spring 中 AOP 的细节</a>
+<ul>
+<li><a href="#1-aop-%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD">(1) AOP 相关术语</a></li>
+<li><a href="#2-%E5%85%B3%E4%BA%8E%E4%BB%A3%E7%90%86%E7%9A%84%E9%80%89%E6%8B%A9">(2)  关于代理的选择</a></li>
+</ul>
+</li>
+<li><a href="#2-%E5%9F%BA%E4%BA%8E-xml-%E7%9A%84-aop-%E9%85%8D%E7%BD%AE">2、基于 XML 的 AOP 配置</a>
+<ul>
+<li><a href="#1-%E5%AF%BC%E5%85%A5%E5%9D%90%E6%A0%87">(1) 导入坐标</a></li>
+<li><a href="#2-service%E5%8C%85%E4%B8%AD%E7%9A%84iaccountservice%E5%92%8C%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BBimplaccountserviceimpl">(2) service包中的IAccountService和其实现类impl.AccountServiceImpl</a></li>
+<li><a href="#3-logger%E9%80%9A%E7%9F%A5%E7%B1%BB">(3) Logger通知类</a></li>
+<li><a href="#4-beanxml-%E9%85%8D%E7%BD%AE">(4) bean.xml 配置</a></li>
+<li><a href="#spring%E4%B8%AD%E5%9F%BA%E4%BA%8Exml%E7%9A%84aop%E9%85%8D%E7%BD%AE%E6%AD%A5%E9%AA%A4"><strong>spring中基于XML的AOP配置步骤</strong></a>
+<ul>
+<li><a href="#5-%E6%B5%8B%E8%AF%95">(5) 测试</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-%E5%9F%BA%E4%BA%8E%E6%B3%A8%E8%A7%A3%E7%9A%84-aop-%E9%85%8D%E7%BD%AE">3、基于注解的 AOP 配置</a>
+<ul>
+<li><a href="#1-service%E7%B1%BB%E4%B8%ADimplaccountserviceimpl">(1) service类中impl.AccountServiceImpl</a></li>
+<li><a href="#2-utils%E4%B8%AD%E7%9A%84logger">(2) utils中的Logger</a></li>
+<li><a href="#3-beanxml">(3) bean.xml</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://ArtZoick.github.io//post/spring_2">
+              <h3 class="post-title">
+                spring_2  注解、整合 Junit
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a2471d09bddb5be481ee',
+    clientSecret: '05d427fb27f873cfabace27b9f042f2c7f23000f',
+    repo: 'ArtZoick.github.io',
+    owner: 'ArtZoick',
+    admin: ['ArtZoick'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank" onclick="alert('盲生，你发现了华点！');">学习强国</a>
+
+<!--Tido对话插件-->
+<script src="//code.tidio.co/5fh6jaqvluqj8jjuf5zlqrf5tlzpktnx.js"></script>
+<style>
+.text-popup {
+    animation: textPopup 1s;
+    color: red;
+    user-select: none;
+    white-space: nowrap;
+    position: absolute;
+    z-index: 99;
+}
+@keyframes textPopup {
+    0%, 100% {
+        opacity: 0;
+    }
+    5% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px);    
+    }
+}
+</style>
+<script type="text/javascript" src="https://cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js">
+!function(){function n(n,e,t){return n.getAttribute(e)||t}function e(n){return document.getElementsByTagName(n)}
+function t(){var t=e("script"),o=t.length,i=t[o-1];return{l:o,z:n(i,"zIndex",-1),o:n(i,"opacity",.5),c:n(i,"color","0,0,0")
+,n:n(i,"count",99)}}function o(){a=m.width=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidt
+h,c=m.height=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight}function i(){r.clearRect
+(0,0,a,c);var n,e,t,o,m,l;s.forEach(function(i,x){for(i.x+=i.xa,i.y+=i.ya,i.xa*=i.x>a||i.x<0?-1:1,i.ya*=i.y>c||i.y<0?-1:1,r.
+fillRect(i.x-.5,i.y-.5,1,1),e=x+1;e<u.length;e++)n=u[e],null!==n.x&&null!==n.y&&(o=i.x-n.x,m=i.y-n.y,l=o*o+m*m,l<n.max&&(n===
+y&&l>=n.max/2&&(i.x-=.03*o,i.y-=.03*m),t=(n.max-l)/n.max,r.beginPath(),r.lineWidth=t/2,r.strokeStyle="rgba("+d.c+","+(t+.2)+")
+",r.moveTo(i.x,i.y),r.lineTo(n.x,n.y),r.stroke()))}),x(i)}var a,c,u,m=document.createElement("canvas"),d=t(),l="c_n"+d.l,r=m.
+getContext("2d"),x=window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.
+oRequestAnimationFrame||window.msRequestAnimationFrame||function(n){window.setTimeout(n,1e3/45)},w=Math.random,y={x:null,y:nul
+l,max:2e4};m.id=l,m.style.cssText="position:fixed;top:0;left:0;z-index:"+d.z+";opacity:"+d.o,e("body")[0].appendChild(m),o(),
+window.οnresize=o,window.οnmοusemοve=function(n){n=n||window.event,y.x=n.clientX,y.y=n.clientY},window.οnmοuseοut=function(){y
+.x=null,y.y=null};for(var s=[],f=0;d.n>f;f++){var h=w()*a,g=w()*c,v=2*w()-1,p=2*w()-1;s.push({x:h,y:g,xa:v,ya:p,max:6e3})}u=
+s.concat([y]),setTimeout(function(){i()},100)}();
+</script>
+
+<!--鼠标点击-->
+<!--富强-->
+<script type="text/javascript"> 
+/* 鼠标特效 */ 
+var a_idx = 0; 
+jQuery(document).ready(function($) { 
+    $("body").click(function(e) { 
+        var a = new Array("富强", "民主", "文明", "和谐", "自由", "平等", "公正" ,"法治", "爱国", "敬业", "诚信", "友善"); 
+        var $i = $("<span/>").text(a[a_idx]); 
+        a_idx = (a_idx + 1) % a.length; 
+        var x = e.pageX, 
+        y = e.pageY; 
+        $i.css({ 
+            "z-index": 999, 
+            "top": y - 20, 
+            "left": x, 
+            "position": "absolute", 
+            "font-weight": "bold", 
+            "color": "#ff6651" 
+        }); 
+        $("body").append($i); 
+        $i.animate({ 
+            "top": y - 180, 
+            "opacity": 0 
+        }, 
+        1500, 
+        function() { 
+            $i.remove(); 
+        }); 
+    }); 
+}); 
+</script>
+<!--edn--富强--> | 
+  <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
