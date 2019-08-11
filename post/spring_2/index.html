@@ -5,7 +5,7 @@
 <title>spring_2  注解、整合 Junit | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565449178606">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565507297169">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565449178606" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565507297169" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -114,8 +114,6 @@
               <div class="post-content">
                 <h2 id="一-基于注解使用-spring-的-ioc">一、基于注解使用 spring 的 IOC</h2>
 <h3 id="1-注解的入门案例">1、 注解的入门案例</h3>
-<h4 id="框架结构">框架结构</h4>
-<p><img src="https://ArtZoick.github.io//post-images/spring/3.png" alt=""></p>
 <h4 id="1-导入坐标">(1) 导入坐标</h4>
 <pre><code class="language-xml">&lt;!--只需要spring-context--&gt;
 &lt;dependencies&gt;
@@ -286,7 +284,7 @@ public class Client {
 　　作用：用于指定初始化方法</p>
 <h2 id="二-使用-spring-的-ioc-的实现账户的crud-xml配置">二、使用 spring  的 IOC 的实现账户的CRUD (XML配置)</h2>
 <h3 id="1-相关案例">1、相关案例</h3>
-<h4 id="框架结构-2">框架结构</h4>
+<h4 id="框架结构">框架结构</h4>
 <p>和上基本差不多</p>
 <h4 id="1-导入坐标-2">(1) 导入坐标</h4>
 <pre><code class="language-xml">&lt;dependencies&gt;
@@ -655,7 +653,7 @@ public class AccountServiceTest {
 <h3 id="2-一些总结说明">2、一些总结说明</h3>
 <h2 id="三-账户的crud-withoutxml">三、账户的CRUD ( withoutXML)</h2>
 <h3 id="1-相关案例-2">1、相关案例</h3>
-<h4 id="框架结构-3">框架结构</h4>
+<h4 id="框架结构-2">框架结构</h4>
 <p><img src="https://ArtZoick.github.io//post-images/spring/4.png" alt=""></p>
 <h4 id="1-无xml纯注解配置思路">(1) 无xml纯注解配置思路</h4>
 <p>使用配置类来配置bean.xml中的相关配置</p>
@@ -871,7 +869,6 @@ public class AccountServiceTest {
 <ul>
 <li><a href="#1-%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%85%A5%E9%97%A8%E6%A1%88%E4%BE%8B">1、 注解的入门案例</a>
 <ul>
-<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84">框架结构</a></li>
 <li><a href="#1-%E5%AF%BC%E5%85%A5%E5%9D%90%E6%A0%87">(1) 导入坐标</a></li>
 <li><a href="#2-%E6%8C%81%E4%B9%85%E5%B1%82%E6%8E%A5%E5%8F%A3%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB">(2) 持久层接口及其实现类</a></li>
 <li><a href="#3-%E4%B8%9A%E5%8A%A1%E5%B1%82%E6%8E%A5%E5%8F%A3%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB">(3) 业务层接口及其实现类</a></li>
@@ -893,7 +890,7 @@ public class AccountServiceTest {
 <ul>
 <li><a href="#1-%E7%9B%B8%E5%85%B3%E6%A1%88%E4%BE%8B">1、相关案例</a>
 <ul>
-<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84-2">框架结构</a></li>
+<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84">框架结构</a></li>
 <li><a href="#1-%E5%AF%BC%E5%85%A5%E5%9D%90%E6%A0%87-2">(1) 导入坐标</a></li>
 <li><a href="#2-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%96%E5%86%99%E5%AE%9E%E4%BD%93%E7%B1%BB">(2) 创建数据库和编写实体类</a></li>
 <li><a href="#3-%E6%8C%81%E4%B9%85%E5%B1%82%E6%8E%A5%E5%8F%A3%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB">(3) 持久层接口及其实现类</a></li>
@@ -908,7 +905,7 @@ public class AccountServiceTest {
 <ul>
 <li><a href="#1-%E7%9B%B8%E5%85%B3%E6%A1%88%E4%BE%8B-2">1、相关案例</a>
 <ul>
-<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84-3">框架结构</a></li>
+<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84-2">框架结构</a></li>
 <li><a href="#1-%E6%97%A0xml%E7%BA%AF%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE%E6%80%9D%E8%B7%AF">(1) 无xml纯注解配置思路</a></li>
 <li><a href="#2-%E5%BE%85%E6%94%B9%E9%80%A0%E7%9A%84%E9%97%AE%E9%A2%98">(2) 待改造的问题</a></li>
 <li><a href="#3-%E6%96%B0%E6%B3%A8%E8%A7%A3%E8%AF%B4%E6%98%8E">(3) 新注解说明</a>
