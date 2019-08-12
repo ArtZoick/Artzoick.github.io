@@ -5,7 +5,7 @@
 <title>spring_2  注解、整合 Junit | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565507297169">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565591765383">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565507297169" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565591765383" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -653,8 +653,6 @@ public class AccountServiceTest {
 <h3 id="2-一些总结说明">2、一些总结说明</h3>
 <h2 id="三-账户的crud-withoutxml">三、账户的CRUD ( withoutXML)</h2>
 <h3 id="1-相关案例-2">1、相关案例</h3>
-<h4 id="框架结构-2">框架结构</h4>
-<p><img src="https://ArtZoick.github.io//post-images/spring/4.png" alt=""></p>
 <h4 id="1-无xml纯注解配置思路">(1) 无xml纯注解配置思路</h4>
 <p>使用配置类来配置bean.xml中的相关配置</p>
 <h4 id="2-待改造的问题">(2) 待改造的问题</h4>
@@ -681,7 +679,7 @@ public class AccountServiceTest {
 </code></pre>
 <h4 id="3-新注解说明">(3) 新注解说明</h4>
 <h5 id="configuration"><em><strong>@Configuration</strong></em></h5>
-<p>**作用: **<br>
+<p><strong>作用:</strong><br>
 用于指定当前类是一个 spring 配置类，当创建容器时会从该类上加载注解。获取容器时需要使用<br>
 AnnotationApplicationContext(有@Configuration 注解的类.class)。<br>
 <strong>属性：</strong><br>
@@ -702,7 +700,7 @@ public class SpringConfiguration {
 basePackages：用于指定要扫描的包。和该注解中的 value 属性作用一样。<br>
 <strong>示例:</strong></p>
 <pre><code class="language-java">@Configuration
-@ComponentScan(&quot;com.itheima&quot;)
+@ComponentScan(&quot;top.zoick&quot;)
 public class SpringConfiguration {
 }
 </code></pre>
@@ -905,7 +903,6 @@ public class AccountServiceTest {
 <ul>
 <li><a href="#1-%E7%9B%B8%E5%85%B3%E6%A1%88%E4%BE%8B-2">1、相关案例</a>
 <ul>
-<li><a href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84-2">框架结构</a></li>
 <li><a href="#1-%E6%97%A0xml%E7%BA%AF%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE%E6%80%9D%E8%B7%AF">(1) 无xml纯注解配置思路</a></li>
 <li><a href="#2-%E5%BE%85%E6%94%B9%E9%80%A0%E7%9A%84%E9%97%AE%E9%A2%98">(2) 待改造的问题</a></li>
 <li><a href="#3-%E6%96%B0%E6%B3%A8%E8%A7%A3%E8%AF%B4%E6%98%8E">(3) 新注解说明</a>
