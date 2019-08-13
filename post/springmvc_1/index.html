@@ -5,7 +5,7 @@
 <title>SpringMVC_1 入门、参数绑定、常用注解 | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565591765383">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565687358243">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565591765383" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565687358243" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -322,11 +322,11 @@ public class HelloController {
 　　细节：路径可以不编写 / 表示应用的根目录开始<br>
 　　细节：${ pageContext.request.contextPath }也可以省略不写，但是路径上不能写 /</p>
 <p><strong>3、RequestMapping的属性</strong><br>
-　　path 指定请求路径的url<br>
-　　value value属性和path属性是一样的<br>
-　　method 指定该方法的请求方式  示例：@RequestMapping(value=&quot;/saveAccount&quot;,method=RequestMethod.POST)<br>
-　　params 指定限制请求参数的条件<br>
-　　headers 发送的请求中必须包含的请求头</p>
+　　<strong>path</strong> 指定请求路径的url<br>
+　　<strong>value</strong> value属性和path属性是一样的<br>
+　　<strong>method</strong> 指定该方法的请求方式  示例：    　　　　@RequestMapping(value=&quot;/saveAccount&quot;,method=RequestMethod.POST)<br>
+　　<strong>params</strong> 指定限制请求参数的条件<br>
+　　<strong>headers</strong> 发送的请求中必须包含的请求头</p>
 <h2 id="三-请求参数的绑定">三、请求参数的绑定</h2>
 <h3 id="1-请求参数的绑定说明">1、请求参数的绑定说明</h3>
 <p>1、绑定机制<br>

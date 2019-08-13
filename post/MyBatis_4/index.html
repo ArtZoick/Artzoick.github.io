@@ -5,7 +5,7 @@
 <title>MyBatis_4	多表查询  | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565591765383">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1565687358243">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565591765383" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1565687358243" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -114,7 +114,7 @@
               <div class="post-content">
                 <h2 id="一对一的关系映射">一对一的关系映射</h2>
 <h3 id="示例">示例</h3>
-<p>查询所有账户的时候同时获得当前账户的所有信息（多表查询常用方法）</p>
+<p>查询所有操作,同时获取到用户下所有账户的信息（多表查询常用方法）</p>
 <h3 id="sql-语句">sql 语句</h3>
 <p>sql 语句查询所有账户的时候同时获得当前账户的所有信息</p>
 <pre><code class="language-sql">select u.*,a.id as aid,a.uid,a.money from account a ,user u where u.id=a.uid;
@@ -136,9 +136,16 @@
     }
 
 </code></pre>
-<h3 id="2accountdao的接口中">2.AccountDao的接口中</h3>
-<pre><code class="language-java"> //查询所有账户
+<h3 id="2iaccountdao的接口中">2.IAccountDao的接口中</h3>
+<pre><code class="language-java">public interface IAccountDao {
+
+    /**
+     * 查询所有账户
+     * @return
+     */
     List&lt;Account&gt; findAll();
+}
+
 </code></pre>
 <h3 id="3accountdao的mapper中">3.AccountDao的mapper中</h3>
 <pre><code class="language-xml">&lt;mapper namespace=&quot;top.zoick.dao.IAccountDao&quot;&gt;
@@ -232,15 +239,19 @@ public class User implements Serializable {
  List&lt;User&gt; findAll();
 </code></pre>
 <h3 id="3userdao的mapper中">3.UserDao的mapper中</h3>
-<pre><code class="language-xml">&lt;!--定义封装user和account的resultMap type主表实体类--&gt;
-    &lt;resultMap id=&quot;userAccountMap&quot; type=&quot;User&quot;&gt;
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
 
+&lt;mapper namespace=&quot;top.zoick.dao.IUserDao&quot;&gt;
+    &lt;!--定义封装user和account的resultMap type主表实体类--&gt;
+    &lt;resultMap id=&quot;userAccountMap&quot; type=&quot;User&quot;&gt;
         &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
         &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
         &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
         &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
         &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
-
         &lt;!--一对多的关系映射，配置user封装accounts的内容--&gt;
         &lt;!--其中的property指的是从表的集合引用 ofType从表实体类--&gt;
         &lt;collection property=&quot;accounts&quot; ofType=&quot;Account&quot;&gt;
@@ -250,10 +261,11 @@ public class User implements Serializable {
         &lt;/collection&gt;
     &lt;/resultMap&gt;
 
-    &lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  --&gt;
+    &lt;!--配置查询所有  其中id不能乱写必须是dao接口中的方法  resultType写的是实体类的全路径--&gt;
     &lt;select id=&quot;findAll&quot; resultMap=&quot;userAccountMap&quot;&gt;
-       select * from user u left outer join account a on u.id = a.uid
+          select * from user u left outer join account a on u.id = a.uid
     &lt;/select&gt;
+&lt;/mapper&gt;
 </code></pre>
 <p>注意：一对一用的是association，一对多以及多对多用的是collection。</p>
 <h3 id="4userdao的测试类中">4.UserDao的测试类中</h3>
@@ -342,29 +354,44 @@ public class Role implements Serializable {
 }
 
 </code></pre>
-<h3 id="2roledao的接口中定义该方法">2.RoleDao的接口中定义该方法</h3>
-<pre><code class="language-java">List&lt;Role&gt; findAll();
+<h3 id="2iroledao接口中定义该方法">2.IRoleDao接口中定义该方法</h3>
+<pre><code class="language-java">public interface IRoleDao {
+    /**
+     * 查询所有角色
+     * @return
+     */
+    List&lt;Role&gt; findAll();
+}
+
 </code></pre>
-<h3 id="3roledao的mapper中">3.RoleDao的mapper中</h3>
-<pre><code class="language-xml"> &lt;resultMap id=&quot;roleMap&quot; type=&quot;role&quot;&gt;
-        &lt;id property=&quot;roleId&quot; column=&quot;rid&quot;&gt;&lt;/id&gt;
-        &lt;result property=&quot;roleName&quot; column=&quot;role_name&quot;&gt;&lt;/result&gt;
-        &lt;result property=&quot;roleDesc&quot; column=&quot;role_desc&quot;&gt;&lt;/result&gt;
+<h3 id="3iroledao的mapper中">3.IRoleDao的mapper中</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;top.zoick.dao.IRoleDao&quot;&gt;
+    &lt;!--定义role表的resultmap--&gt;
+    &lt;resultMap id=&quot;roleMap&quot; type=&quot;role&quot;&gt;
+        &lt;!--此处id的column由于sql语句中将role表中的id改为rid，故column也要变为rid--&gt;
+        &lt;id property=&quot;roleId&quot; column=&quot;rid&quot;/&gt;
+        &lt;result property=&quot;roleName&quot; column=&quot;role_name&quot;/&gt;
+        &lt;result property=&quot;roleDesc&quot; column=&quot;role_desc&quot;/&gt;
         &lt;collection property=&quot;users&quot; ofType=&quot;user&quot;&gt;
-            &lt;id property=&quot;id&quot; column=&quot;id&quot;&gt;&lt;/id&gt;
-            &lt;result property=&quot;username&quot; column=&quot;username&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;address&quot; column=&quot;address&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;sex&quot; column=&quot;sex&quot;&gt;&lt;/result&gt;
-            &lt;result property=&quot;birthday&quot; column=&quot;birthday&quot;&gt;&lt;/result&gt;
+            &lt;id column=&quot;id&quot; property=&quot;id&quot;/&gt;
+            &lt;result column=&quot;username&quot; property=&quot;username&quot;/&gt;
+            &lt;result column=&quot;address&quot; property=&quot;address&quot;/&gt;
+            &lt;result column=&quot;sex&quot; property=&quot;sex&quot;/&gt;
+            &lt;result column=&quot;birthday&quot; property=&quot;birthday&quot;/&gt;
         &lt;/collection&gt;
     &lt;/resultMap&gt;
 
-
+    &lt;!--查询所有--&gt;
     &lt;select id=&quot;findAll&quot; resultMap=&quot;roleMap&quot;&gt;
-       select u.*,r.id as rid,r.role_name,r.role_desc from role r
-        left outer join user_role ur on r.id = ur.rid
-        left outer join user u on u.id=ur.uid
+        select u.*, r.id as rid,r.role_name,r.role_desc from role r
+         left outer join user_role ur on r.id=ur.rid
+         left outer join user u on u.id = ur.uid
     &lt;/select&gt;
+&lt;/mapper&gt;
 </code></pre>
 <h3 id="4roledao的测试类中">4.RoleDao的测试类中</h3>
 <pre><code class="language-java">@Test
@@ -465,7 +492,7 @@ public class User implements Serializable {
 <li><a href="#%E7%A4%BA%E4%BE%8B">示例</a></li>
 <li><a href="#sql-%E8%AF%AD%E5%8F%A5">sql 语句</a></li>
 <li><a href="#1%E4%BB%8E%E8%A1%A8%E5%AE%9E%E4%BD%93%E5%BA%94%E8%AF%A5%E5%8C%85%E5%90%AB%E4%B8%80%E4%B8%AA%E4%B8%BB%E8%A1%A8%E5%AE%9E%E4%BD%93%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8">1.	从表实体应该包含一个主表实体的对象引用</a></li>
-<li><a href="#2accountdao%E7%9A%84%E6%8E%A5%E5%8F%A3%E4%B8%AD">2.AccountDao的接口中</a></li>
+<li><a href="#2iaccountdao%E7%9A%84%E6%8E%A5%E5%8F%A3%E4%B8%AD">2.IAccountDao的接口中</a></li>
 <li><a href="#3accountdao%E7%9A%84mapper%E4%B8%AD">3.AccountDao的mapper中</a></li>
 <li><a href="#4accountdao%E7%9A%84%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%B8%AD">4.AccountDao的测试类中</a></li>
 <li><a href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%96%B9%E6%B3%95%E6%98%AF%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAaccountuser%E7%B1%BB">第二种方法是创建一个AccountUser类</a></li>
@@ -500,8 +527,8 @@ public class User implements Serializable {
 </ul>
 </li>
 <li><a href="#1%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BD%93%E8%A1%A8%E4%B8%AD%E5%8C%85%E5%90%AB%E5%8F%A6%E4%B8%80%E4%B8%AA%E5%AE%9E%E4%BD%93%E8%A1%A8%E7%9A%84%E9%9B%86%E5%90%88%E5%BC%95%E7%94%A8">1.一个实体表中包含另一个实体表的集合引用</a></li>
-<li><a href="#2roledao%E7%9A%84%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%AE%9A%E4%B9%89%E8%AF%A5%E6%96%B9%E6%B3%95">2.RoleDao的接口中定义该方法</a></li>
-<li><a href="#3roledao%E7%9A%84mapper%E4%B8%AD">3.RoleDao的mapper中</a></li>
+<li><a href="#2iroledao%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%AE%9A%E4%B9%89%E8%AF%A5%E6%96%B9%E6%B3%95">2.IRoleDao接口中定义该方法</a></li>
+<li><a href="#3iroledao%E7%9A%84mapper%E4%B8%AD">3.IRoleDao的mapper中</a></li>
 <li><a href="#4roledao%E7%9A%84%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%B8%AD">4.RoleDao的测试类中</a></li>
 <li><a href="#5%E6%88%90%E5%8A%9F%E8%BF%90%E8%A1%8C%E5%AE%9E%E7%8E%B0%E4%B8%8A%E8%BF%B0%E5%8A%9F%E8%83%BD-2">5.成功运行（实现上述功能）</a></li>
 <li><a href="#">!</a></li>
