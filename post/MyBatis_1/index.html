@@ -5,7 +5,7 @@
 <title>MyBatis_1	简介 | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569834607">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569964592">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569834607" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569964592" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -97,7 +97,7 @@
                 2019-07-03
               </span>
               <span>
-                2 min read
+                7 min read
               </span>
               
                 <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
@@ -149,10 +149,10 @@ user_name	userName</p>
 <em>实体类中的属性和数据库表的字段名称保持一致。</em></p>
 <h2 id="5-mybatis的入门">5、mybatis的入门</h2>
 <h3 id="表的创建与数据的插入">表的创建与数据的插入</h3>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/0_1.png" alt=""></p>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/0_2.png" alt=""></p>
+<figure data-type="image" tabindex="1"><img src="https://ArtZoick.github.io//post-images/mybatis/0_1.png" alt=""></figure>
+<figure data-type="image" tabindex="2"><img src="https://ArtZoick.github.io//post-images/mybatis/0_2.png" alt=""></figure>
 <h3 id="mybatis环境搭建demo的基本架构">mybatis环境搭建demo的基本架构</h3>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/1.png" alt=""></p>
+<figure data-type="image" tabindex="3"><img src="https://ArtZoick.github.io//post-images/mybatis/1.png" alt=""></figure>
 <p><strong>第一步：创建maven工程并导入坐标</strong></p>
 <p><strong>第二步：创建实体类和dao的接口</strong></p>
 <p><strong>第三步：创建Mybatis的主配置文件</strong></p>
@@ -238,11 +238,11 @@ class　　　　Resources　　使用类加载器读取配置文件的类<br>
 class　　　　SqlSessionFactoryBuilder　　用于创建一个SqlsessionFactory对象<br>
 interface　　SqlSessionFactory　　用于打开一个新的SqlSession<br>
 interface　　SqlSession　　自定义MYbatis中和数据库交互的核心类</p>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/2.png" alt=""></p>
+<figure data-type="image" tabindex="4"><img src="https://ArtZoick.github.io//post-images/mybatis/2.png" alt=""></figure>
 <p>自定义mybatis开发流程图:</p>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/2_2.png" alt=""></p>
+<figure data-type="image" tabindex="5"><img src="https://ArtZoick.github.io//post-images/mybatis/2_2.png" alt=""></figure>
 <p>Project结构：</p>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/2_1.png" alt=""></p>
+<figure data-type="image" tabindex="6"><img src="https://ArtZoick.github.io//post-images/mybatis/2_1.png" alt=""></figure>
 <p>1.读取配置文件用io包里的Resources<br>
 2.读出所需要的信息交给SqlSessionFactoryBuilder构建者<br>
 3.构建者使用工具类XMLConfigBuilder构建出DefaultSqlsessionFactory工厂对象，xml读取的信息保存在Configuration里<br>

@@ -5,7 +5,7 @@
 <title>SpringMVC_2 响应数据、文件上传、异常处理、拦截器 | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569834607">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569964592">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569834607" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569964592" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -97,7 +97,7 @@
                 2019-07-26
               </span>
               <span>
-                5 min read
+                18 min read
               </span>
               
                 <a href="https://ArtZoick.github.io//tag/springmvc" class="post-tag">
@@ -495,7 +495,7 @@ public String fileupload2(HttpServletRequest request, MultipartFile upload) thro
 <h2 id="三-springmvc的异常处理">三、SpringMVC的异常处理</h2>
 <h3 id="1-异常处理思路">1、异常处理思路</h3>
 <p>Controller调用service，service调用dao，异常都是向上抛出的，最终有DispatcherServlet找异常处理器进行异常的处理。</p>
-<p><img src="https://ArtZoick.github.io//post-images/springmvc/exception_1.bmp" alt=""></p>
+<figure data-type="image" tabindex="1"><img src="https://ArtZoick.github.io//post-images/springmvc/exception_1.bmp" alt=""></figure>
 <h3 id="2-springmvc的异常处理">2、SpringMVC的异常处理</h3>
 <h4 id="1自定义异常类">(1)自定义异常类</h4>
 <pre><code class="language-java">
@@ -636,7 +636,7 @@ public class SysException extends Exception{
     &lt;/mvc:interceptors&gt;
 </code></pre>
 <h4 id="3多个拦截器执行流程">(3)多个拦截器执行流程</h4>
-<p><img src="https://ArtZoick.github.io//post-images/springmvc/interceptor_1.bmp" alt=""></p>
+<figure data-type="image" tabindex="2"><img src="https://ArtZoick.github.io//post-images/springmvc/interceptor_1.bmp" alt=""></figure>
 <h3 id="3-handlerinterceptor接口中的方法">3、HandlerInterceptor接口中的方法</h3>
 <h4 id="1prehandle方法是controller方法执行前拦截的方法">(1)preHandle方法是controller方法执行前拦截的方法</h4>
 <p>可以使用request或者response跳转到指定的页面<br>

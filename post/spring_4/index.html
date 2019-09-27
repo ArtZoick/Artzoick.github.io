@@ -5,7 +5,7 @@
 <title>Spring_4 JdbcTemplate、事务控制 | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569834607">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569964592">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569834607" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569964592" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -97,7 +97,7 @@
                 2019-08-10
               </span>
               <span>
-                9 min read
+                27 min read
               </span>
               
                 <a href="https://ArtZoick.github.io//tag/VwirVE4DD" class="post-tag">
@@ -452,15 +452,15 @@ public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
 <h3 id="2-spring-中事务控制的-api-介绍">2、Spring 中事务控制的 API 介绍</h3>
 <h4 id="1-platformtransactionmanager">(1) PlatformTransactionManager</h4>
 <p>此接口是 spring 的事务管理器，它里面提供了我们常用的操作事务的方法，如下图：</p>
-<p><img src="https://ArtZoick.github.io//post-images/spring/3.png" alt=""></p>
+<figure data-type="image" tabindex="1"><img src="https://ArtZoick.github.io//post-images/spring/3.png" alt=""></figure>
 <p><strong>真正管理事务的对象:</strong><br>
 org.springframework.jdbc.datasource.DataSourceTransactionManager 使用 Spring JDBC 或 或 iBatis 进行持久化数据时使用<br>
 org.springframework.orm.hibernate5.HibernateTransactionManager 使用Hibernate 版本进行持久化数据时使用</p>
 <h4 id="2-transactiondefinition">(2) TransactionDefinition</h4>
 <p>它是事务的定义信息对象，里面有如下方法：</p>
-<p><img src="https://ArtZoick.github.io//post-images/spring/4.png" alt=""></p>
+<figure data-type="image" tabindex="2"><img src="https://ArtZoick.github.io//post-images/spring/4.png" alt=""></figure>
 <h5 id="a-事务的隔离级别">a、事务的隔离级别</h5>
-<p><img src="https://ArtZoick.github.io//post-images/spring/5.png" alt=""></p>
+<figure data-type="image" tabindex="3"><img src="https://ArtZoick.github.io//post-images/spring/5.png" alt=""></figure>
 <h5 id="b-事务的传播行为">b、事务的传播行为</h5>
 <p><strong>REQUIRED:</strong> 如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。一般的选<br>
 择（默认值）<br>
@@ -476,10 +476,10 @@ NESTED: 如果当前存在事务，则在嵌套事务内执行。如果当前没
 <p>建议查询时设置为只读。</p>
 <h4 id="3-transactionstatus">(3) TransactionStatus</h4>
 <p>此接口提供的是事务具体的运行状态，方法介绍如下图：</p>
-<p><img src="https://ArtZoick.github.io//post-images/spring/6.png" alt=""></p>
+<figure data-type="image" tabindex="4"><img src="https://ArtZoick.github.io//post-images/spring/6.png" alt=""></figure>
 <h3 id="3-基于-xml-的声明式事务控制配置方式-重点">3、基于 XML 的声明式事务控制（配置方式 ）重点</h3>
 <h4 id="项目结构">项目结构</h4>
-<p><img src="https://ArtZoick.github.io//post-images/spring/7.png" alt=""></p>
+<figure data-type="image" tabindex="5"><img src="https://ArtZoick.github.io//post-images/spring/7.png" alt=""></figure>
 <h4 id="1-导入坐标-2">(1) 导入坐标</h4>
 <pre><code class="language-xml">&lt;dependencies&gt;
     &lt;dependency&gt;

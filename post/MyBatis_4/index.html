@@ -5,7 +5,7 @@
 <title>MyBatis_4	多表查询  | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569834607">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569964592">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569834607" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569964592" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -97,7 +97,7 @@
                 2019-07-03
               </span>
               <span>
-                5 min read
+                14 min read
               </span>
               
                 <a href="https://ArtZoick.github.io//tag/framework" class="post-tag">
@@ -216,7 +216,7 @@ public void findAll(){
 <pre><code class="language-sql">select * from user u left outer join account a on u.id = a.uid
 </code></pre>
 <p>left join（左连接）是left outer join的简写，返回左表中所有记录和右表中连接字段相等的记录，即返回的记录数和左表的记录数一样</p>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/7.png" alt=""></p>
+<figure data-type="image" tabindex="1"><img src="https://ArtZoick.github.io//post-images/mybatis/7.png" alt=""></figure>
 <h3 id="1主表实体中应该包含从表实体的集合引用">1.主表实体中应该包含从表实体的集合引用</h3>
 <p>User类中</p>
 <pre><code class="language-java">@Getter
@@ -282,7 +282,7 @@ public class User implements Serializable {
     }
 </code></pre>
 <h3 id="5成功运行实现上述功能">5.成功运行（实现上述功能）</h3>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/8.png" alt=""></p>
+<figure data-type="image" tabindex="2"><img src="https://ArtZoick.github.io//post-images/mybatis/8.png" alt=""></figure>
 <h2 id="多对多的关系映射">多对多的关系映射</h2>
 <h3 id="示例用户与角色">示例：用户与角色</h3>
 <p>一个用户可以有多个角色<br>
@@ -321,9 +321,9 @@ CREATE TABLE `user_role` (
 insert  into `user_role`(`UID`,`RID`) values (41,1),(45,1),(41,2);
 </code></pre>
 <h4 id="表数据如下">表数据如下：</h4>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/9.png" alt=""></p>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/9_1.png" alt=""></p>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/9_2.png" alt=""></p>
+<figure data-type="image" tabindex="3"><img src="https://ArtZoick.github.io//post-images/mybatis/9.png" alt=""></figure>
+<figure data-type="image" tabindex="4"><img src="https://ArtZoick.github.io//post-images/mybatis/9_1.png" alt=""></figure>
+<figure data-type="image" tabindex="5"><img src="https://ArtZoick.github.io//post-images/mybatis/9_2.png" alt=""></figure>
 <h4 id="sql语句多表外链接查询语句">sql语句(多表外链接查询语句)</h4>
 <pre><code class="language-sql">select u.*, r.id as rid,r.role_name,r.role_desc from role r   
 left outer join user_role ur on r.id = ur.rid   
@@ -335,7 +335,7 @@ left outer join user u on u.id=ur.uid
 再以这两个表组合的表左外连接user表，连接条件u.id=ur.uid 。</p>
 <p><strong>注意：</strong><a href="https://jingyan.baidu.com/article/60ccbceb9578f164cab197f4.html">数据库连接（内链接，外连接（左连接，右连接）</a></p>
 <h4 id="查询结果">查询结果</h4>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/10.png" alt=""></p>
+<figure data-type="image" tabindex="6"><img src="https://ArtZoick.github.io//post-images/mybatis/10.png" alt=""></figure>
 <h3 id="1一个实体表中包含另一个实体表的集合引用">1.一个实体表中包含另一个实体表的集合引用</h3>
 <p>由于是多对多的关系所有不分从表和主表</p>
 <pre><code class="language-java">@Setter
@@ -478,7 +478,7 @@ public class User implements Serializable {
 <hr>
 <h1 id="jndi">JNDI</h1>
 <p>JNDI是 Java 命名与目录接口（Java Naming and Directory Interface），在J2EE规范中是重要的规范之一。</p>
-<p><img src="https://ArtZoick.github.io//post-images/mybatis/11.png" alt=""></p>
+<figure data-type="image" tabindex="7"><img src="https://ArtZoick.github.io//post-images/mybatis/11.png" alt=""></figure>
 <hr>
 <h2 id="源码点这里">源码：<a href="https://github.com/ArtZoick/MyBatis">点🐔这里</a></h2>
 

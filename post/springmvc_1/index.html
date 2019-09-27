@@ -5,7 +5,7 @@
 <title>SpringMVC_1 入门、参数绑定、常用注解 | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569834607">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1569569964592">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569834607" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1569569964592" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -97,7 +97,7 @@
                 2019-07-22
               </span>
               <span>
-                6 min read
+                22 min read
               </span>
               
                 <a href="https://ArtZoick.github.io//tag/springmvc" class="post-tag">
@@ -127,7 +127,7 @@
 4、Controller：用来接收用户的请求，整个流程的控制器。用来进行数据校验等。</p>
 <h2 id="二-springmvc的入门案例">二、SpringMVC的入门案例</h2>
 <h3 id="基本框架如下">基本框架如下：</h3>
-<p><img src="https://ArtZoick.github.io//post-images/springmvc/1.png" alt=""></p>
+<figure data-type="image" tabindex="1"><img src="https://ArtZoick.github.io//post-images/springmvc/1.png" alt=""></figure>
 <h3 id="1-web工程pom导入坐标">1、WEB工程，pom导入坐标</h3>
 <pre><code class="language-xml">&lt;!-- 版本锁定 --&gt;
 &lt;properties&gt;
@@ -294,7 +294,7 @@ public class HelloController {
 <p><strong>部署到Tomcat服务器上，进行测试即可。</strong></p>
 <hr>
 <h3 id="入门案例的执行过程分析">入门案例的执行过程分析</h3>
-<p><img src="https://ArtZoick.github.io//post-images/springmvc/2.bmp" alt=""></p>
+<figure data-type="image" tabindex="2"><img src="https://ArtZoick.github.io//post-images/springmvc/2.bmp" alt=""></figure>
 <p><strong>1、入门案例的执行流程</strong></p>
 <p>1、当启动Tomcat服务器的时候，因为配置了load-on-startup标签，所以会创建DispatcherServlet对象，<br>
 就会加载springmvc.xml配置文件<br>
@@ -304,7 +304,7 @@ public class HelloController {
 4、根据执行方法的返回值，再根据配置的视图解析器，去指定的目录下查找指定名称的JSP文件。<br>
 5、Tomcat服务器渲染页面，做出响应。</p>
 <p><strong>2、SpringMVC官方提供图形</strong></p>
-<p><img src="https://ArtZoick.github.io//post-images/springmvc/3.bmp" alt=""></p>
+<figure data-type="image" tabindex="3"><img src="https://ArtZoick.github.io//post-images/springmvc/3.bmp" alt=""></figure>
 <p><strong>3、入门案例中的组件分析</strong></p>
 <ol>
 <li>前端控制器（DispatcherServlet）：用户请求到达前端控制器，它就相当于 mvc 模式中的 c，dispatcherServlet 是整个流程控制的中心，由它调用其它组件处理用户的请求，dispatcherServlet 的存在降低了组件之间的耦合性。</li>
