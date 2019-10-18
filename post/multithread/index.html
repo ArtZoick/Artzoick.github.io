@@ -1,0 +1,988 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>多线程基本使用 | 清汤牛肉锅</title>
+<meta name="description" content="温故而知新
+" />
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1571401129058">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143265163-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143265163-1');
+</script>
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://ArtZoick.github.io/">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1571401129058" alt="">
+  </a>
+  <h1 class="site-title">
+    清汤牛肉锅
+  </h1>
+  <p class="site-description">
+    温故而知新
+
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/post/beef" class="menu">
+          牛肉锅
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              多线程基本使用
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-10-18
+              </span>
+              <span>
+                22 min read
+              </span>
+              
+                <a href="https://ArtZoick.github.io//tag/Java" class="post-tag">
+                  # Java
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>参考：<a href="https://snailclimb.top/JavaGuide/#/docs/java/Multithread/JavaConcurrencyBasicsCommonInterviewQuestionsSummary?id=_6-%e8%af%b4%e8%af%b4%e7%ba%bf%e7%a8%8b%e7%9a%84%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f%e5%92%8c%e7%8a%b6%e6%80%81">JavaGuide_Java 并发基础常见面试题总结 </a></p>
+<h2 id="一-基本概念">一、基本概念：</h2>
+<h3 id="程序-进程-线程">程序、进程、线程</h3>
+<p><strong>程序(program)</strong> 是为完成特定任务、用某种语言编写的一组指令的集合。即指一段静态的代码<br>
+**进程(process) **是程序的一次执行过程，或是正在运行的一个程序。<br>
+<strong>线程(thread)</strong> ，进程可进一步细化为线程，是一个程序内部的一条执行路径。</p>
+<figure data-type="image" tabindex="1"><img src="https://ArtZoick.github.io//post-images/MultiThread/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F.png" alt=""></figure>
+<p>多个线程共享堆和方法区，顾会存在线程安全问题</p>
+<p>每个线程独立有栈（虚拟机栈、本地方法栈）和程序计数器</p>
+<h3 id="并行与并发">并行与并发</h3>
+<p>并行：多个CPU同时执行多个任务。比如：多个人同时做不同的事。<br>
+并发：一个CPU(采用时间片)同时执行多个任务。比如：秒杀、多个人做同一件事。</p>
+<h3 id="多线程的优点和缺点">多线程的优点和缺点</h3>
+<p><strong>优点：</strong></p>
+<ul>
+<li>充分利用CPU，避免CPU空转。</li>
+<li>程序响应更快。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>上下文切换的开销<br>
+当CPU从执行一个线程切换到执行另外一个线程的时候，它需要先存储当前线程的本地的数据,程序指针等，然后载入另一个线程的本地数据，程序指针等，最后才开始执行。这种切换称为“上下文切换”。CPU 会在一个上下文中执行一个线程，然后切换到另外一个上下文中执行另外一个线程。上下文切换并不廉价。如果没有必要，应该减少上下文切换的发生。</li>
+<li>增加资源消耗<br>
+线程在运行的时候需要从计算机里面得到一些资源。 除了 CPU,线程还需要一些内存来维持它本地的堆栈。它也需要占用操作系统中一些资源来管理线程。</li>
+<li>编程更复杂<br>
+在多线程访问共享数据的时候,要考虑线程安全问题。</li>
+</ul>
+<h3 id="多线程一定优于单线程吗">多线程一定优于单线程吗</h3>
+<p>不一定,要看具体的任务以及计算机的配置。比如说:</p>
+<ul>
+<li>对于单核CPU,如果是CPU密集型任务,如解压文件，多线程的性能反 而不如单线程性能，因为解压文件需要一直占用CPU资源，如果采用多线程，线程切换导致的开销反而会让性能下降。如果是交互类型的任务,肯定是需要使用多线程的。</li>
+<li>对于多核CPU，对于解压文件来说，多线程肯定优于单线程，因为多个线程能够更加充分利用每个核的资源。</li>
+</ul>
+<h2 id="二-线程的创建和使用">二、线程的创建和使用</h2>
+<h3 id="1-创建线程的四种方法">1、创建线程的四种方法</h3>
+<h4 id="1-继承thread类的方式">(1) 继承Thread类的方式</h4>
+<p>1、 定义子类继承Thread类。<br>
+2、 子类中重写Thread类中的<code>run()</code>方法。<br>
+3、 创建Thread子类对象，即创建了线程对象。<br>
+4、 调用线程对象<code>start()</code>方法：启动线程，调用run方法。</p>
+<pre><code class="language-java">//1. 创建一个继承于Thread类的子类
+class MyThread extends Thread {
+    //2. 重写Thread类的run()
+    @Override
+    public void run() {
+        for (int i = 0; i &lt; 100; i++) {
+            if(i % 2 == 0){
+                System.out.println(Thread.currentThread().getName() + &quot;:&quot; + i);
+            }
+        }
+    }
+}
+
+public class ThreadTest {
+    public static void main(String[] args) {
+        //3. 创建Thread类的子类的对象
+        MyThread t1 = new MyThread();
+
+        //4.通过此对象调用start():①启动当前线程 ② 调用当前线程的run()
+        t1.start();       
+    }
+}
+</code></pre>
+<p>注意点：</p>
+<p>1、 如果自己手动调用<code>run()</code>方法，那么就只是普通方法，没有启动多线程模式。<br>
+2、 run()方法由JVM调用，什么时候调用，执行的过程控制都有操作系统的CPU调度决定。<br>
+3、 想要启动多线程，必须调用<code>start()</code>方法。<br>
+4、 一个线程对象只能调用一次start()方法启动，如果重复调用了，则将抛出异常“IllegalThreadStateException”。</p>
+<h4 id="2-实现runnable接口">(2) 实现Runnable接口</h4>
+<p>1、 创建一个实现了Runnable接口的类<br>
+2、 实现类去实现Runnable中的抽象方法：run()<br>
+3、 创建实现类的对象<br>
+4、 将此对象作为参数传递到Thread类的构造器中，创建Thread类的对象<br>
+5、 通过Thread类的对象调用start()</p>
+<pre><code class="language-java">//1. 创建一个实现了Runnable接口的类
+class MThread implements Runnable{
+    //2. 实现类去实现Runnable中的抽象方法：run()
+    @Override
+    public void run() {
+        for (int i = 0; i &lt; 100; i++) {
+            if(i % 2 == 0){
+                System.out.println(Thread.currentThread().getName() + &quot;:&quot; + i);
+            }
+        }
+    }
+}
+
+
+public class ThreadTest1 {
+    public static void main(String[] args) {
+        //3. 创建实现类的对象
+        MThread mThread = new MThread();
+        //4. 将此对象作为参数传递到Thread类的构造器中，创建Thread类的对象
+        Thread t1 = new Thread(mThread);
+        t1.setName(&quot;线程1&quot;);
+        //5. 通过Thread类的对象调用start():① 启动线程 ②调用当前线程的run()--&gt;调用了Runnable类型的target的run()
+        t1.start();
+
+        //再启动一个线程，遍历100以内的偶数
+        Thread t2 = new Thread(mThread);
+        t2.setName(&quot;线程2&quot;);
+        t2.start();
+    }
+}
+</code></pre>
+<h4 id="3-实现callable接口">(3) 实现Callable接口</h4>
+<p>1、创建一个实现<code>Callable</code>的实现类<br>
+2、实现call方法，将此线程需要执行的操作声明在<code>call()</code>中<br>
+3、创建Callable接口实现类的对象<br>
+4、将此Callable接口实现类的对象作为传递到<code>FutureTask</code>构造器中，创建FutureTask的对象，该 FutureTask 对象封装了该 Callable 对象的 call()方法的返回值。<br>
+5、将FutureTask的对象作为参数传递到Thread类的构造器中，创建Thread对象，并调用<code>start()</code><br>
+6、调用 FutureTask 对象的 get()方法来获得子线程执行结束后的返回值。</p>
+<pre><code class="language-java">//1.创建一个实现Callable的实现类
+class NumThread implements Callable{
+    //2.实现call方法，将此线程需要执行的操作声明在call()中
+    @Override
+    public Object call() throws Exception {
+        int sum = 0;
+        for (int i = 1; i &lt;= 100; i++) {
+            if(i % 2 == 0){
+                System.out.println(i);
+                sum += i;
+            }
+        }
+        return sum;
+    }
+}
+
+
+public class ThreadNew {
+    public static void main(String[] args) {
+        //3.创建Callable接口实现类的对象
+        NumThread numThread = new NumThread();
+        //4.将此Callable接口实现类的对象作为传递到FutureTask构造器中，创建FutureTask的对象
+        FutureTask futureTask = new FutureTask(numThread);
+        //5.将FutureTask的对象作为参数传递到Thread类的构造器中，创建Thread对象，并调用start()
+        new Thread(futureTask).start();
+
+        try {
+            //6.获取Callable中call方法的返回值
+            //get()返回值即为FutureTask构造器参数Callable实现类重写的call()的返回值。
+            Object sum = futureTask.get();
+            System.out.println(&quot;总和为：&quot; + sum);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+<p><strong><code>Callable</code>相对于<code>Runnable</code>的好处</strong></p>
+<ul>
+<li><code>call()</code>方法可以有返回值，<code>run()</code>方法没有</li>
+<li>方法可以抛异常</li>
+<li>支持泛型的返回值</li>
+<li>需要借助<code>FutureTask</code>类，获取返回结果</li>
+</ul>
+<h4 id="4-使用线程池">(4) 使用线程池</h4>
+<p>使用线程池的好处</p>
+<p>1、提高响应速度（减少了创建新线程的时间）<br>
+2、降低资源消耗（重复利用线程池中线程，不需要每次都创建）<br>
+3、便于线程管理</p>
+<pre><code class="language-java">/**
+ *      corePoolSize：核心池的大小
+ *      maximumPoolSize：最大线程数
+ *      keepAliveTime：线程没有任务时最多保持多长时间后会终止
+ */
+
+class NumberThread implements Runnable{
+
+    @Override
+    public void run() {
+        for(int i = 0;i &lt;= 100;i++){
+            //这个线程打印偶数
+            if(i % 2 == 0){
+                System.out.println(Thread.currentThread().getName() + &quot;: &quot; + i);
+            }
+        }
+    }
+}
+
+class NumberThread1 implements Runnable{
+
+    @Override
+    public void run() {
+        for(int i = 0;i &lt;= 100;i++){
+            //这个线程打印奇数
+            if(i % 2 != 0){
+                System.out.println(Thread.currentThread().getName() + &quot;: &quot; + i);
+            }
+        }
+    }
+}
+
+public class ThreadPool {
+
+    public static void main(String[] args) {
+        //1. 提供指定线程数量的线程池
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        ThreadPoolExecutor service1 = (ThreadPoolExecutor) service;
+        //设置线程池的属性
+//        System.out.println(service.getClass());
+//        service1.setCorePoolSize(15);
+//        service1.setKeepAliveTime();
+
+        //2.执行指定的线程的操作。需要提供实现Runnable接口或Callable接口实现类的对象
+        service.execute(new NumberThread());//适合适用于Runnable
+        service.execute(new NumberThread1());//适合适用于Runnable
+
+//        service.submit(Callable callable);//适合使用于Callable
+        //3.关闭连接池
+        service.shutdown();
+    }
+}
+</code></pre>
+<p><strong>线程池相关的API</strong><br>
+<code>ExecutorService</code>：真正的线程池接口。常见子类<code>ThreadPoolExecutor</code></p>
+<p>void <code>execute(Runnable command)</code> ：执行任务/命令，没有返回值，一般用来执行Runnable<br>
+&lt;T&gt; Future&lt;T&gt; <code>submit(Callable\&lt;T&gt; task)</code>：执行任务，有返回值，一般又来执行Callable<br>
+void <code>shutdown()</code> ：关闭连接池</p>
+<p><code>Executors</code>：工具类、线程池的工厂类，用于创建并返回不同类型的线程池</p>
+<ul>
+<li>Executors.newCachedThreadPool()：创建一个可根据需要创建新线程的线程池</li>
+<li>Executors.newFixedThreadPool(n); 创建一个可重用固定线程数的线程</li>
+<li>Executors.newSingleThreadExecutor() ：创建一个只有一个线程的线程</li>
+<li>Executors.newScheduledThreadPool(n)：创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。</li>
+</ul>
+<h3 id="2-thread中常用方法">2、Thread中常用方法</h3>
+<p>1、 <code>start()</code>: 启动当前线程；调用当前线程的run()</p>
+<p>2、 <code>run()</code>: 通常需要重写Thread类中的此方法，将创建的线程要执行的操作声明在此方法中</p>
+<p>3、 <code>currentThread()</code>: 静态方法，返回执行当前代码的线程</p>
+<p>4、 <code>getName()</code>: 获取当前线程的名字</p>
+<p>5、 <code>setName()</code>: 设置当前线程的名字</p>
+<p>6、 <code>yield()</code>: 释放当前cpu的执行权</p>
+<ul>
+<li>暂停当前正在执行的线程，把执行机会让给优先级相同或更高的线程</li>
+<li>若队列中没有同优先级的线程，忽略此方法</li>
+</ul>
+<p>7、 <code>join()</code>: 在线程a中调用线程b的join(),此时线程a就进入阻塞状态，直到线程b完全执行完以后，线程a才结束阻塞状态。</p>
+<p>8、 <code>stop()</code>: 已过时。当执行此方法时，强制结束当前线程。</p>
+<p>9、 <code>sleep(long millitime)</code>: 让当前线程“睡眠”指定的millitime毫秒。在指定的millitime毫秒时间内，当前线程是阻塞状态。</p>
+<p>10、 <code>isAlive()</code>: 判断当前线程是否存活</p>
+<h3 id="3-线程的调度">3、线程的调度</h3>
+<p>Java 的调度方法</p>
+<ul>
+<li>同优先级线程组成先进先出队列（先到先服务），使用时间片策略</li>
+<li>对高优先级，使用优先调度的抢占式策略</li>
+</ul>
+<h3 id="4-线程的优先级">4、线程的优先级</h3>
+<h4 id="1-线程的优先级等级">(1) 线程的优先级等级</h4>
+<p><strong>MAX_PRIORITY</strong> ：10<br>
+<strong>MIN _PRIORITY</strong> ：1<br>
+<strong>NORM_PRIORITY</strong> ：5</p>
+<h4 id="2-涉及的方法">(2) 涉及的方法</h4>
+<p><code>getPriority()</code> ： 返回线程优先值</p>
+<p><code>setPriority(int newPriority)</code> ：改变线程的优先级</p>
+<h4 id="3-说明">(3) 说明</h4>
+<ul>
+<li>线程创建时继承父线程的优先级</li>
+<li>低优先级只是获得调度的概率低，并非一定是在高优先级线程之后才被调用</li>
+</ul>
+<h2 id="三-线程的生命周期和状态">三、线程的生命周期和状态</h2>
+<p>Java 线程在运行的生命周期中的指定时刻只可能处于下面 6 种不同状态的其中一个状态（图源《Java 并发编程艺术》4.1.4 节）。</p>
+<figure data-type="image" tabindex="2"><img src="https://ArtZoick.github.io//post-images/MultiThread/Java%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81.png" alt=""></figure>
+<p>线程在生命周期中并不是固定处于某一个状态而是随着代码的执行在不同状态之间切换。Java 线程状态变迁如下图所示（图源《Java 并发编程艺术》4.1.4 节）：</p>
+<figure data-type="image" tabindex="3"><img src="https://ArtZoick.github.io//post-images/MultiThread/Java+%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81%E5%8F%98%E8%BF%81.png" alt=""></figure>
+<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
+<p>当线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong> 状态。进入等待状态的线程需要依靠其他线程的通知才能够返回到运行状态，而 <strong>TIME_WAITING(超时等待)</strong> 状态相当于在等待状态的基础上增加了超时限制，比如通过 <code>sleep（long millis）</code>方法或 <code>wait（long millis）</code>方法可以将 Java 线程置于 TIMED WAITING 状态。当超时时间到达后 Java 线程将会返回到 RUNNABLE 状态。当线程调用同步方法时，在没有获取到锁的情况下，线程将会进入到 <strong>BLOCKED（阻塞）</strong> 状态。线程在执行 Runnable 的<code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
+<p><strong>线程状态另一版本</strong></p>
+<p>在 Java 当中,线程通常都有五种状态,创建、就绪、运行、阻塞和死亡。</p>
+<ul>
+<li>第一是创建状态。在生成线程对象,并没有调用该对象的 start 方法,这是 线程处于创建状态。</li>
+<li>第二是就绪状态。当调用了线程对象的 start 方法之后,该线程就进入了就 绪状态,但是此时线程调度程序还没有把该线程设置为当前线程,此时处于就 绪状态。在线程运行之后,从等待或者睡眠中回来之后,也会处于就绪状态。</li>
+<li>第三是运行状态。线程调度程序将处于就绪状态的线程设置为当前线程, 此时线程就进入了运行状态,开始运行 run 函数当中的代码。</li>
+<li>第四是阻塞状态。线程正在运行的时候,被暂停,通常是为了等待某个事 件的发生(比如说某项资源就绪)之后再继续运行。sleep,wait 等方法都可以导 致线程阻塞。</li>
+<li>第五是死亡状态。如果一个线程的 run 方法执行结束或者异常中断后,该 线程就会死亡。对于已经死亡的线程,无法再使用 start 方法令其进入就绪。</li>
+</ul>
+<h2 id="四-线程的同步">四、线程的同步</h2>
+<h3 id="1-线程安全问题">1、线程安全问题</h3>
+<p>线程不安全的原因：<br>
+当多条语句在操作同一个线程共享数据时，一个线程对多条语句只执行了一部分，还没有执行完，另一个线程参与进来执行。导致共享数据的错误。<br>
+解决办法：<br>
+对多条操作共享数据的语句，只能让一个线程都执行完，在执行过程中，其他线程不可以参与执行。这种情况即使线程出现了阻塞，也不能被改变。</p>
+<h3 id="2-同步的范围">2、同步的范围</h3>
+<h4 id="1-如何确认代码是否存在线程安全">(1) 如何确认代码是否存在线程安全</h4>
+<ul>
+<li>
+<p>明确哪些代码是多线程运行的代码</p>
+</li>
+<li>
+<p>明确多个线程是否共享数据</p>
+</li>
+<li>
+<p>明确多线程运行代码中是否有多条语句中共享数据</p>
+</li>
+</ul>
+<h4 id="2如何解决">(2)如何解决</h4>
+<p>对于多个线程共享数据的语句，只能让一个线程都执行完，在执行过程中，其他线程不可以参与执行</p>
+<p>即所有操作共享数据的这些语句都要放入同步范围中。</p>
+<h4 id="3-注意点">(3) 注意点</h4>
+<p>范围太小：没锁住有安全问题的代码</p>
+<p>范围太大：没发挥多线程的功能，一个线程就把所有共享数据走完了。</p>
+<h3 id="3-锁">3、锁</h3>
+<h4 id="synchronized">synchronized</h4>
+<h5 id="1-synchronized锁是什么">(1) synchronized锁是什么？</h5>
+<p>任意对象都可以作为同步锁。所有对象都自动含有单一的锁（监视器）。<br>
+同步方法的锁：静态方法（类名.class）、非静态方法（this）<br>
+同步代码块：自己指定，很多时候也是指定为this或类名.class</p>
+<h5 id="2-使用方法">(2) 使用方法</h5>
+<h6 id="a-同步代码块">(a) 同步代码块</h6>
+<pre><code class="language-java">synchronized (对象){
+// 需要被同步的代码；
+}
+</code></pre>
+<p><strong>在实现Runnable接口的方式中</strong></p>
+<pre><code class="language-java">class Window1 implements Runnable{
+
+    private int ticket = 100;
+
+    @Override
+    public void run() {
+
+        while(true){
+            synchronized (this){//此时的this:唯一的Window1的对象   
+
+                if (ticket &gt; 0) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println(Thread.currentThread().getName() + &quot;:卖票，票号为：&quot; + ticket);
+                    ticket--;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+public class WindowTest1 {
+    public static void main(String[] args) {
+        Window1 w = new Window1();
+
+        Thread t1 = new Thread(w);
+        Thread t2 = new Thread(w);
+        Thread t3 = new Thread(w);
+
+        t1.setName(&quot;窗口1&quot;);
+        t2.setName(&quot;窗口2&quot;);
+        t3.setName(&quot;窗口3&quot;);
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+}
+</code></pre>
+<p><strong>在继承Thread类的方式中</strong></p>
+<pre><code class="language-java">class Window2 extends Thread{
+    
+        private static int ticket = 100;
+        private static Object obj = new Object();
+
+    @Override
+    public void run() {
+        while(true){
+            //正确的
+//            synchronized (obj){
+            synchronized (Window2.class){//Class clazz = Window2.class,Window2.class只会加载一次
+                //错误的方式：this代表着t1,t2,t3三个对象
+//              synchronized (this){
+
+                if(ticket &gt; 0){
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println(getName() + &quot;：卖票，票号为：&quot; + ticket);
+                    ticket--;
+                }else{
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+public class WindowTest2 {
+    public static void main(String[] args) {
+        Window2 t1 = new Window2();
+        Window2 t2 = new Window2();
+        Window2 t3 = new Window2();
+        t1.setName(&quot;窗口1&quot;);
+        t2.setName(&quot;窗口2&quot;);
+        t3.setName(&quot;窗口3&quot;);
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+
+</code></pre>
+<p>说明：在实现Thread类的方式中，慎用this充当同步监视器，应使用<code>类名.class</code>。因为this是对象，在WindowTest2可以看到new了3个对象。</p>
+<h6 id="b-同步方法">(b) 同步方法</h6>
+<p>synchronized还可以放在方法声明中，表示整个方法为同步方法 。</p>
+<pre><code class="language-java">public synchronized void show (String name){
+	…
+}
+</code></pre>
+<p><strong>在实现Runnable接口的方式中</strong></p>
+<pre><code class="language-java">class Window3 implements Runnable {
+
+    private int ticket = 100;
+
+    @Override
+    public void run() {
+        while (true) {
+            show();//将功能抽取出为一同步方法
+        }
+    }
+
+    private synchronized void show(){//同步监视器：this    
+            if (ticket &gt; 0) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(Thread.currentThread().getName() + &quot;:卖票，票号为：&quot; + ticket);
+
+                ticket--;
+            }
+    }
+}
+
+
+public class WindowTest3 {
+    public static void main(String[] args) {
+        Window3 w = new Window3();
+
+        Thread t1 = new Thread(w);
+        Thread t2 = new Thread(w);
+        Thread t3 = new Thread(w);
+
+        t1.setName(&quot;窗口1&quot;);
+        t2.setName(&quot;窗口2&quot;);
+        t3.setName(&quot;窗口3&quot;);
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+}
+
+</code></pre>
+<p><strong>在继承Thread类的方式中</strong></p>
+<pre><code class="language-java">class Window4 extends Thread {
+
+    private static int ticket = 100;
+
+    @Override
+    public void run() {
+        while (true) {
+            show();
+        }
+    }
+    private static synchronized void show(){//同步监视器：Window4.class
+        //private synchronized void show(){ //同步监视器：t1,t2,t3。此种解决方式是错误的
+        if (ticket &gt; 0) {
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println(Thread.currentThread().getName() + &quot;：卖票，票号为：&quot; + ticket);
+            ticket--;
+        }
+    }
+}
+
+public class WindowTest4 {
+    public static void main(String[] args) {
+        Window4 t1 = new Window4();
+        Window4 t2 = new Window4();
+        Window4 t3 = new Window4();
+
+        t1.setName(&quot;窗口1&quot;);
+        t2.setName(&quot;窗口2&quot;);
+        t3.setName(&quot;窗口3&quot;);
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+</code></pre>
+<p><strong>关于同步方法的总结：</strong></p>
+<ol>
+<li>同步方法仍然涉及到同步监视器，只是不需要我们显式的声明。</li>
+<li>非静态的同步方法，同步监视器是：this，多个对象的时候出错<br>
+静态的同步方法，同步监视器是：当前类本身</li>
+</ol>
+<h4 id="lock">lock</h4>
+<h5 id="1-lock-是什么">(1) lock 是什么</h5>
+<ul>
+<li>java.util.concurrent.locks.Lock接口是控制多个线程对共享资源进行访问的工具。锁提供了对共享资源的独占访问，每次只能有一个线程对Lock对象加锁，线程开始访问共享资源之前应先获得Lock对象。</li>
+<li>ReentrantLock 类实现了 Lock ，它拥有与 synchronized 相同的并发性和内存语义，在实现线程安全的控制中，比较常用的是ReentrantLock，可以显式加锁、释放锁。</li>
+</ul>
+<h5 id="2-lock的使用">(2) lock的使用</h5>
+<pre><code class="language-java">class A {
+    private final ReentrantLock lock = new ReenTrantLock();
+
+    public void m() {
+        lock.lock();
+        try {
+			// 保证线程安全的代码;
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+</code></pre>
+<h4 id="synchronized-与-lock-的对比">synchronized 与 Lock 的对比</h4>
+<p>(1) Lock是显式锁，手动开启和关闭，synchronized是隐式锁，出了作用域自动释放。</p>
+<p>(2) Lock只有代码块锁，synchronized有代码块锁和方法锁。</p>
+<p>(3) 使用Lock锁，JVM将花费较少的时间来调度线程，性能更好。并具有更好的扩展性。（提供更多的之类）</p>
+<h3 id="4-释放锁和不释放锁的操作">4、释放锁和不释放锁的操作</h3>
+<h4 id="1-释放锁的操作">(1) 释放锁的操作</h4>
+<ul>
+<li>当前线程的同步方法、同步方法块执行结束</li>
+<li>当前线程的同步方法、同步方法块中遇到了<code>break</code>，<code>return</code>终止了该代码块</li>
+<li>当前线程的线程的同步方法、同步方法块中出现了未处理的Error或Exception，导致异常结束</li>
+<li>当前线程在同步代码块，同步方法中执行了线程对象的<code>wait()</code>方法，当前线程暂停，并释放锁。</li>
+</ul>
+<h4 id="2-不会释放锁的操作">(2) 不会释放锁的操作</h4>
+<ul>
+<li>线程执行同步代码块或同步方法时，程序调用<code>Thread.sleep()</code>、<code>Thread.yield()</code>方法暂停当前线程的执行</li>
+<li>执行同步代码块的时候，其他线程调用了该线程的<code>suspend()</code>方法来将该线程挂起，该线程不会释放锁</li>
+</ul>
+<h4 id="未完待续锁优化">未完待续...锁优化</h4>
+<h2 id="五-线程的通信">五、线程的通信</h2>
+<h3 id="1-例题交替打印1~100">1、例题：交替打印1~100</h3>
+<pre><code class="language-java">class Number implements Runnable {
+    private int number = 1;
+    private Object obj = new Object();
+
+    @Override
+    public void run() {
+
+        while (true) {
+            synchronized (obj) {
+                obj.notify();
+                if (number &lt;= 100) {
+
+                    System.out.println(Thread.currentThread().getName() + &quot;:&quot; + number);
+                    number++;
+
+                    try {
+                        //使得调用如下wait()方法的线程进入阻塞状态
+                        obj.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+public class CommunicationTest {
+    public static void main(String[] args) {
+        Number number = new Number();
+        Thread t1 = new Thread(number);
+        Thread t2 = new Thread(number);
+
+        t1.setName(&quot;线程1&quot;);
+        t2.setName(&quot;线程2&quot;);
+
+        t1.start();
+        t2.start();
+    }
+}
+
+</code></pre>
+<h3 id="2-线程通信中的方法">2、线程通信中的方法</h3>
+<ul>
+<li><code>wait()</code>:一旦执行此方法，当前线程就进入阻塞状态，并释放同步监视器。</li>
+<li><code>notify()</code>:一旦执行此方法，就会唤醒被wait的一个线程。如果有多个线程被wait，就唤醒优先级高的那个。</li>
+<li><code>notifyAll()</code>:一旦执行此方法，就会唤醒所有被wait的线程。</li>
+</ul>
+<p><strong>说明</strong>：1.<code>wait()</code>，<code>notify()</code>，<code>notifyAll()</code>三个方法必须使用在同步代码块或同步方法中。<br>
+2.<code>wait()</code>，<code>notify()</code>，<code>notifyAll()</code>三个方法的调用者必须是同步代码块或同步方法中的同步监视器。否则，会出现<strong>IllegalMonitorStateException</strong>异常<br>
+3.<code>wait()</code>，<code>notify()</code>，<code>notifyAll()</code>三个方法是定义在java.lang.Object类中。</p>
+<p><strong>扩展 1</strong>: 为什么 wait(),notify(),notifyAll()等方法都定义在 Object 类中?</p>
+<p>因为这三个方法都需要定义在同步代码块或者同步方法中，这三个方法的调用是依赖锁对象的，而同步方法或者同步代码块的锁对象可以是任意对象，那么能被任意对象调用的方法一定是再Object类中。</p>
+<p><strong>扩展2：</strong><code>wait()</code>和 <code>sleep()</code>的区别</p>
+<p>1、这两个方法来自不同的类，<code>sleep()</code>来自<strong>Thread类</strong>，是静态方法；<code>wait()</code>是Object类里的方法　　<em><strong>来自的类不同</strong></em></p>
+<p>2、<code>sleep()</code>将线程挂起指定的时间，并没有释放锁；而<code>wait()</code>方法，释放了锁，使得其他线程可以使用同步控制块或者方法。　　<em><strong>是否释放锁</strong></em></p>
+<p>3、<code>wait()</code>及其相关的两个方法<code>notify()</code>、<code>notifyAll()</code>只能在同步代码块或者同步方法中使用，而<code>sleep()</code>可以在任何地方使用。　　<em><strong>使用范围</strong></em></p>
+<p>**扩展3：**有三个线程 T1,T2,T3,怎么确保它们按顺序执行?</p>
+<p>join()方法</p>
+<p>**扩展4：**什么是线程的上下文切换</p>
+<p>对于单核 CPU,CPU 在一个时刻只能运行一个线程,当在运行一个线程的 过程中转去运行另外一个线程,这个叫做线程上下文切换(对于进程也是类似)。</p>
+<p>线程上下文切换过程中会记录程序计数器、CPU 寄存器的状态等数据。</p>
+<p>虽然多线程可以使得任务执行的效率得到提升,但是由于在线程切换时同 样会带来一定的开销代价,并且多个线程会导致系统资源占用的增加,所以在 进行多线程编程时要注意这些因素。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">一、基本概念：</a>
+<ul>
+<li><a href="#%E7%A8%8B%E5%BA%8F-%E8%BF%9B%E7%A8%8B-%E7%BA%BF%E7%A8%8B">程序、进程、线程</a></li>
+<li><a href="#%E5%B9%B6%E8%A1%8C%E4%B8%8E%E5%B9%B6%E5%8F%91">并行与并发</a></li>
+<li><a href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%BC%98%E7%82%B9%E5%92%8C%E7%BC%BA%E7%82%B9">多线程的优点和缺点</a></li>
+<li><a href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%80%E5%AE%9A%E4%BC%98%E4%BA%8E%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%90%97">多线程一定优于单线程吗</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E4%BD%BF%E7%94%A8">二、线程的创建和使用</a>
+<ul>
+<li><a href="#1-%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E6%B3%95">1、创建线程的四种方法</a>
+<ul>
+<li><a href="#1-%E7%BB%A7%E6%89%BFthread%E7%B1%BB%E7%9A%84%E6%96%B9%E5%BC%8F">(1) 继承Thread类的方式</a></li>
+<li><a href="#2-%E5%AE%9E%E7%8E%B0runnable%E6%8E%A5%E5%8F%A3">(2) 实现Runnable接口</a></li>
+<li><a href="#3-%E5%AE%9E%E7%8E%B0callable%E6%8E%A5%E5%8F%A3">(3) 实现Callable接口</a></li>
+<li><a href="#4-%E4%BD%BF%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0">(4) 使用线程池</a></li>
+</ul>
+</li>
+<li><a href="#2-thread%E4%B8%AD%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95">2、Thread中常用方法</a></li>
+<li><a href="#3-%E7%BA%BF%E7%A8%8B%E7%9A%84%E8%B0%83%E5%BA%A6">3、线程的调度</a></li>
+<li><a href="#4-%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7">4、线程的优先级</a>
+<ul>
+<li><a href="#1-%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E7%AD%89%E7%BA%A7">(1) 线程的优先级等级</a></li>
+<li><a href="#2-%E6%B6%89%E5%8F%8A%E7%9A%84%E6%96%B9%E6%B3%95">(2) 涉及的方法</a></li>
+<li><a href="#3-%E8%AF%B4%E6%98%8E">(3) 说明</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E7%8A%B6%E6%80%81">三、线程的生命周期和状态</a></li>
+<li><a href="#%E5%9B%9B-%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%90%8C%E6%AD%A5">四、线程的同步</a>
+<ul>
+<li><a href="#1-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98">1、线程安全问题</a></li>
+<li><a href="#2-%E5%90%8C%E6%AD%A5%E7%9A%84%E8%8C%83%E5%9B%B4">2、同步的范围</a>
+<ul>
+<li><a href="#1-%E5%A6%82%E4%BD%95%E7%A1%AE%E8%AE%A4%E4%BB%A3%E7%A0%81%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8">(1) 如何确认代码是否存在线程安全</a></li>
+<li><a href="#2%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3">(2)如何解决</a></li>
+<li><a href="#3-%E6%B3%A8%E6%84%8F%E7%82%B9">(3) 注意点</a></li>
+</ul>
+</li>
+<li><a href="#3-%E9%94%81">3、锁</a>
+<ul>
+<li><a href="#synchronized">synchronized</a>
+<ul>
+<li><a href="#1-synchronized%E9%94%81%E6%98%AF%E4%BB%80%E4%B9%88">(1) synchronized锁是什么？</a></li>
+<li><a href="#2-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">(2) 使用方法</a>
+<ul>
+<li><a href="#a-%E5%90%8C%E6%AD%A5%E4%BB%A3%E7%A0%81%E5%9D%97">(a) 同步代码块</a></li>
+<li><a href="#b-%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95">(b) 同步方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#lock">lock</a>
+<ul>
+<li><a href="#1-lock-%E6%98%AF%E4%BB%80%E4%B9%88">(1) lock 是什么</a></li>
+<li><a href="#2-lock%E7%9A%84%E4%BD%BF%E7%94%A8">(2) lock的使用</a></li>
+</ul>
+</li>
+<li><a href="#synchronized-%E4%B8%8E-lock-%E7%9A%84%E5%AF%B9%E6%AF%94">synchronized 与 Lock 的对比</a></li>
+</ul>
+</li>
+<li><a href="#4-%E9%87%8A%E6%94%BE%E9%94%81%E5%92%8C%E4%B8%8D%E9%87%8A%E6%94%BE%E9%94%81%E7%9A%84%E6%93%8D%E4%BD%9C">4、释放锁和不释放锁的操作</a>
+<ul>
+<li><a href="#1-%E9%87%8A%E6%94%BE%E9%94%81%E7%9A%84%E6%93%8D%E4%BD%9C">(1) 释放锁的操作</a></li>
+<li><a href="#2-%E4%B8%8D%E4%BC%9A%E9%87%8A%E6%94%BE%E9%94%81%E7%9A%84%E6%93%8D%E4%BD%9C">(2) 不会释放锁的操作</a></li>
+<li><a href="#%E6%9C%AA%E5%AE%8C%E5%BE%85%E7%BB%AD%E9%94%81%E4%BC%98%E5%8C%96">未完待续...锁优化</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%BA%94-%E7%BA%BF%E7%A8%8B%E7%9A%84%E9%80%9A%E4%BF%A1">五、线程的通信</a>
+<ul>
+<li><a href="#1-%E4%BE%8B%E9%A2%98%E4%BA%A4%E6%9B%BF%E6%89%93%E5%8D%B01~100">1、例题：交替打印1~100</a></li>
+<li><a href="#2-%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95">2、线程通信中的方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://ArtZoick.github.io//post/linkedlist">
+              <h3 class="post-title">
+                3、数据结构之链表
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a2471d09bddb5be481ee',
+    clientSecret: '05d427fb27f873cfabace27b9f042f2c7f23000f',
+    repo: 'ArtZoick.github.io',
+    owner: 'ArtZoick',
+    admin: ['ArtZoick'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  <a href="https://zhidao.baidu.com/question/1867120235416383707.html" target="_blank" onclick="alert('盲生，你发现了华点！');">学习强国</a>
+
+<!--Tido对话插件-->
+<script src="//code.tidio.co/5fh6jaqvluqj8jjuf5zlqrf5tlzpktnx.js"></script>
+<style>
+.text-popup {
+    animation: textPopup 1s;
+    color: red;
+    user-select: none;
+    white-space: nowrap;
+    position: absolute;
+    z-index: 99;
+}
+@keyframes textPopup {
+    0%, 100% {
+        opacity: 0;
+    }
+    5% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px);    
+    }
+}
+</style>
+<script type="text/javascript" src="https://cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js">
+!function(){function n(n,e,t){return n.getAttribute(e)||t}function e(n){return document.getElementsByTagName(n)}
+function t(){var t=e("script"),o=t.length,i=t[o-1];return{l:o,z:n(i,"zIndex",-1),o:n(i,"opacity",.5),c:n(i,"color","0,0,0")
+,n:n(i,"count",99)}}function o(){a=m.width=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidt
+h,c=m.height=window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight}function i(){r.clearRect
+(0,0,a,c);var n,e,t,o,m,l;s.forEach(function(i,x){for(i.x+=i.xa,i.y+=i.ya,i.xa*=i.x>a||i.x<0?-1:1,i.ya*=i.y>c||i.y<0?-1:1,r.
+fillRect(i.x-.5,i.y-.5,1,1),e=x+1;e<u.length;e++)n=u[e],null!==n.x&&null!==n.y&&(o=i.x-n.x,m=i.y-n.y,l=o*o+m*m,l<n.max&&(n===
+y&&l>=n.max/2&&(i.x-=.03*o,i.y-=.03*m),t=(n.max-l)/n.max,r.beginPath(),r.lineWidth=t/2,r.strokeStyle="rgba("+d.c+","+(t+.2)+")
+",r.moveTo(i.x,i.y),r.lineTo(n.x,n.y),r.stroke()))}),x(i)}var a,c,u,m=document.createElement("canvas"),d=t(),l="c_n"+d.l,r=m.
+getContext("2d"),x=window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.
+oRequestAnimationFrame||window.msRequestAnimationFrame||function(n){window.setTimeout(n,1e3/45)},w=Math.random,y={x:null,y:nul
+l,max:2e4};m.id=l,m.style.cssText="position:fixed;top:0;left:0;z-index:"+d.z+";opacity:"+d.o,e("body")[0].appendChild(m),o(),
+window.οnresize=o,window.οnmοusemοve=function(n){n=n||window.event,y.x=n.clientX,y.y=n.clientY},window.οnmοuseοut=function(){y
+.x=null,y.y=null};for(var s=[],f=0;d.n>f;f++){var h=w()*a,g=w()*c,v=2*w()-1,p=2*w()-1;s.push({x:h,y:g,xa:v,ya:p,max:6e3})}u=
+s.concat([y]),setTimeout(function(){i()},100)}();
+</script>
+
+<!--鼠标点击-->
+<!--富强-->
+<script type="text/javascript"> 
+/* 鼠标特效 */ 
+var a_idx = 0; 
+jQuery(document).ready(function($) { 
+    $("body").click(function(e) { 
+        var a = new Array("富强", "民主", "文明", "和谐", "自由", "平等", "公正" ,"法治", "爱国", "敬业", "诚信", "友善"); 
+        var $i = $("<span/>").text(a[a_idx]); 
+        a_idx = (a_idx + 1) % a.length; 
+        var x = e.pageX, 
+        y = e.pageY; 
+        $i.css({ 
+            "z-index": 999, 
+            "top": y - 20, 
+            "left": x, 
+            "position": "absolute", 
+            "font-weight": "bold", 
+            "color": "#ff6651" 
+        }); 
+        $("body").append($i); 
+        $i.animate({ 
+            "top": y - 180, 
+            "opacity": 0 
+        }, 
+        1500, 
+        function() { 
+            $i.remove(); 
+        }); 
+    }); 
+}); 
+</script>
+<!--edn--富强--> | 
+  <a class="rss" href="https://ArtZoick.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      console.log('section.offsetHeight', section.offsetHeight);
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
