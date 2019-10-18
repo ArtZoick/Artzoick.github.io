@@ -5,7 +5,7 @@
 <title>多线程基本使用 | 清汤牛肉锅</title>
 <meta name="description" content="温故而知新
 " />
-<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1571401129058">
+<link rel="shortcut icon" href="https://ArtZoick.github.io//favicon.ico?v=1571402568183">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://ArtZoick.github.io//styles/main.css">
@@ -30,7 +30,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://ArtZoick.github.io/">
-  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1571401129058" alt="">
+  <img class="avatar" src="https://ArtZoick.github.io//images/avatar.png?v=1571402568183" alt="">
   </a>
   <h1 class="site-title">
     清汤牛肉锅
@@ -112,7 +112,7 @@
 <h2 id="一-基本概念">一、基本概念：</h2>
 <h3 id="程序-进程-线程">程序、进程、线程</h3>
 <p><strong>程序(program)</strong> 是为完成特定任务、用某种语言编写的一组指令的集合。即指一段静态的代码<br>
-**进程(process) **是程序的一次执行过程，或是正在运行的一个程序。<br>
+<strong>进程(process)</strong> 是程序的一次执行过程，或是正在运行的一个程序。<br>
 <strong>线程(thread)</strong> ，进程可进一步细化为线程，是一个程序内部的一条执行路径。</p>
 <figure data-type="image" tabindex="1"><img src="https://ArtZoick.github.io//post-images/MultiThread/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F.png" alt=""></figure>
 <p>多个线程共享堆和方法区，顾会存在线程安全问题</p>
@@ -718,15 +718,15 @@ public class CommunicationTest {
 <p><strong>说明</strong>：1.<code>wait()</code>，<code>notify()</code>，<code>notifyAll()</code>三个方法必须使用在同步代码块或同步方法中。<br>
 2.<code>wait()</code>，<code>notify()</code>，<code>notifyAll()</code>三个方法的调用者必须是同步代码块或同步方法中的同步监视器。否则，会出现<strong>IllegalMonitorStateException</strong>异常<br>
 3.<code>wait()</code>，<code>notify()</code>，<code>notifyAll()</code>三个方法是定义在java.lang.Object类中。</p>
-<p><strong>扩展 1</strong>: 为什么 wait(),notify(),notifyAll()等方法都定义在 Object 类中?</p>
+<p><strong>扩展1</strong>: 为什么 wait(),notify(),notifyAll()等方法都定义在 Object 类中?</p>
 <p>因为这三个方法都需要定义在同步代码块或者同步方法中，这三个方法的调用是依赖锁对象的，而同步方法或者同步代码块的锁对象可以是任意对象，那么能被任意对象调用的方法一定是再Object类中。</p>
 <p><strong>扩展2：</strong><code>wait()</code>和 <code>sleep()</code>的区别</p>
 <p>1、这两个方法来自不同的类，<code>sleep()</code>来自<strong>Thread类</strong>，是静态方法；<code>wait()</code>是Object类里的方法　　<em><strong>来自的类不同</strong></em></p>
 <p>2、<code>sleep()</code>将线程挂起指定的时间，并没有释放锁；而<code>wait()</code>方法，释放了锁，使得其他线程可以使用同步控制块或者方法。　　<em><strong>是否释放锁</strong></em></p>
 <p>3、<code>wait()</code>及其相关的两个方法<code>notify()</code>、<code>notifyAll()</code>只能在同步代码块或者同步方法中使用，而<code>sleep()</code>可以在任何地方使用。　　<em><strong>使用范围</strong></em></p>
-<p>**扩展3：**有三个线程 T1,T2,T3,怎么确保它们按顺序执行?</p>
+<p><strong>扩展3：</strong> 有三个线程 T1,T2,T3,怎么确保它们按顺序执行?</p>
 <p>join()方法</p>
-<p>**扩展4：**什么是线程的上下文切换</p>
+<p><strong>扩展4：</strong> 什么是线程的上下文切换</p>
 <p>对于单核 CPU,CPU 在一个时刻只能运行一个线程,当在运行一个线程的 过程中转去运行另外一个线程,这个叫做线程上下文切换(对于进程也是类似)。</p>
 <p>线程上下文切换过程中会记录程序计数器、CPU 寄存器的状态等数据。</p>
 <p>虽然多线程可以使得任务执行的效率得到提升,但是由于在线程切换时同 样会带来一定的开销代价,并且多个线程会导致系统资源占用的增加,所以在 进行多线程编程时要注意这些因素。</p>
